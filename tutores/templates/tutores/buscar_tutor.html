@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container" style="max-width: 1000px; margin: 0 auto; padding: 20px;">
+    <!-- Título principal centrado -->
+    <h1 style="text-align: center; font-weight: bold; margin-bottom: 30px; color: #333;">Buscar Tutor</h1>
+    
+    <!-- Formulario de búsqueda mejorado y centrado -->
+    <div style="display: flex; justify-content: center; margin-bottom: 30px;">
+        <form method="post" class="mb-4" style="display: flex; align-items: center; gap: 15px; max-width: 600px;">
+            {% csrf_token %}
+            <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                <label for="{{ form.nro_documento.id_for_label }}" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333; white-space: nowrap;">
+                    Ingrese el Rut del tutor(*)
+                </label>
+                <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                    {{ form.nro_documento }}
+                    <small style="color: #666; font-size: 12px; margin-top: 3px;">Formato: 12345678-9 (con dígito verificador)</small>
+                </div>
+                {% if form.nro_documento.errors %}
+                    <div style="color: #dc3545; font-size: 12px; margin-top: 5px;">
+                        {% for error in form.nro_documento.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary" style="padding: 8px 20px; border-radius: 5px; background-color: #007bff; border: none; margin-top: 25px; white-space: nowrap;">
+                Buscar
+            </button>
+        </form>
+    </div>
+
+    {% if tutor %}
+        <!-- Bloque "Antecedentes del Tutor/a" con contenedor ajustado -->
+        <div class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 50px;">
+            <div class="card-body" style="padding: 25px;">
+                <h4 class="card-title" style="color: #333; margin-bottom: 20px;">Antecedentes del Tutor/a</h4>
+                
+                <!-- Primera fila de campos -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <label style="display: block; font-weight: bold; color: #666; font-size: 12px; margin-bottom: 5px;">Rut</label>
+                        <input type="text" value="{{ tutor.nro_documento }}" readonly style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: bold; color: #666; font-size: 12px; margin-bottom: 5px;">Nombres</label>
+                        <input type="text" value="{{ tutor.nombres }}" readonly style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: bold; color: #666; font-size: 12px; margin-bottom: 5px;">Apellido Paterno</label>
+                        <input type="text" value="{{ tutor.apellido_paterno }}" readonly style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box;">
+                    </div>
+                </div>
+                
+                <!-- Segunda fila de campos -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                    <div>
+                        <label style="display: block; font-weight: bold; color: #666; font-size: 12px; margin-bottom: 5px;">Apellido Materno</label>
+                        <input type="text" value="{{ tutor.apellido_materno|default:'' }}" readonly style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: bold; color: #666; font-size: 12px; margin-bottom: 5px;">Correo</label>
+                        <input type="email" value="{{ tutor.email|default:'' }}" readonly style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: bold; color: #666; font-size: 12px; margin-bottom: 5px;">Celular</label>
+                        <input type="text" value="{{ tutor.celular|default:'' }}" readonly style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tabla de Mascotas -->
+        <h5 style="color: #333; margin-bottom: 15px; margin-left: 50px;">Mascotas</h5>
+        {% if mascotas %}
+            <div class="table-responsive" style="margin-bottom: 30px; margin: 0 50px;">
+                <table class="table table-striped" style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+                    <thead style="background-color: #f8f9fa;">
+                        <tr>
+                            <th style="padding: 12px; border-bottom: 1px solid #ddd;">Nombre</th>
+                            <th style="padding: 12px; border-bottom: 1px solid #ddd;">Especie</th>
+                            <th style="padding: 12px; border-bottom: 1px solid #ddd;">Raza</th>
+                            <th style="padding: 12px; border-bottom: 1px solid #ddd;">Número de Chip</th>
+                            <th style="padding: 12px; border-bottom: 1px solid #ddd;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mascota in mascotas %}
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ mascota.nombre }}</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ mascota.id_especie.nombre }}</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ mascota.id_raza.nombre }}</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ mascota.nro_chip }}</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee;">
+                                <button class="btn btn-sm" disabled style="background-color: #ffc107; color: #000; border: none; margin-right: 5px; padding: 5px 10px; border-radius: 4px; font-size: 12px;">
+                                    Ver Ficha Clínica
+                                </button>
+                                <button class="btn btn-sm" disabled style="background-color: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 12px;">
+                                    Registrar Atención
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p style="color: #666; margin-bottom: 30px; margin-left: 50px;">No hay mascotas asociadas a este tutor.</p>
+        {% endif %}
+        
+        <!-- Botón centrado -->
+        <div style="text-align: center;">
+            <a href="/mascotas/registrar/" class="btn btn-primary" style="background-color: #007bff; border: none; padding: 10px 25px; border-radius: 5px; text-decoration: none; color: white; font-weight: bold;">
+                Registrar Nueva Mascota
+            </a>
+        </div>
+    {% elif mensaje %}
+        <div class="alert alert-warning mt-4" style="background-color: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 15px; border-radius: 5px; margin: 0 50px;">
+            {{ mensaje }}
+        </div>
+        <div style="text-align: center;">
+            <a href="/tutores/registrar/" class="btn btn-primary" style="background-color: #007bff; border: none; padding: 10px 25px; border-radius: 5px; text-decoration: none; color: white; font-weight: bold;">
+                Registrar Nuevo Tutor
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    /* Estilos adicionales para mejorar la apariencia */
+    .container {
+        font-family: Arial, sans-serif;
+    }
+    
+    /* Estilo para el campo de entrada del formulario */
+    input[type="text"], input[type="email"] {
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        padding: 8px 12px;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+    
+    input[type="text"]:focus, input[type="email"]:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+    }
+    
+    /* Estilo para campos de solo lectura */
+    input[readonly] {
+        background-color: #f8f9fa !important;
+        color: #333 !important;
+        cursor: not-allowed;
+    }
+    
+    /* Mejoras en la tabla */
+    .table th {
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .table td {
+        vertical-align: middle;
+    }
+    
+    /* Estilos para botones */
+    .btn {
+        transition: all 0.3s ease;
+    }
+    
+    .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    /* Estilo para errores de validación */
+    .error-message {
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+    
+    /* Asegurar que todos los elementos usen border-box */
+    * {
+        box-sizing: border-box;
+    }
+</style>
+{% endblock %}
