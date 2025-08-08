@@ -1,6 +1,9 @@
 from django.urls import path
-from .views import buscar_tutor_view
+from . import views
 
 urlpatterns = [
-    path('buscar/', buscar_tutor_view, name='buscar_tutor'),
+    path('buscar/', views.buscar_tutor_view, name='buscar_tutor'),
+    path('registrar/', views.registrar_tutor_view, name='registrar_tutor'),
+    path('cargar-provincias/', views.cargar_provincias, name='cargar_provincias'),
+    path('cargar-comunas/', views.cargar_comunas, name='cargar_comunas'),
 ]
