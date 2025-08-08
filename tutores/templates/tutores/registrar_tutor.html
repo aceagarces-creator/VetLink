@@ -19,7 +19,7 @@
             {% endif %}
             
             <!-- Antecedentes del Tutor/a -->
-            <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 100%;">Antecedentes del Tutor/a</h5>
+            <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 100%;">ANTECEDENTES DEL TUTOR(A)</h5>
             <div class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 auto; width: 100%;">
                 <div class="card-body" style="padding: 12px 25px 12px 25px;">
                     <!-- Primera fila - RUT, Nombres, Apellido Paterno -->
@@ -109,7 +109,7 @@
             </div>
             
             <!-- Dirección Particular -->
-            <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 100%;">Dirección Particular</h5>
+            <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 100%;">DIRECCIÓN PARTICULAR</h5>
             <div class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 auto; width: 100%;">
                 <div class="card-body" style="padding: 12px 25px 12px 25px;">
                     <!-- Primera fila - Región, Provincia, Comuna -->
@@ -308,10 +308,44 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    const btnRegistrarMascota = document.getElementById('btn-registrar-mascota');
-    btnRegistrarMascota.addEventListener('click', function() {
-        window.location.href = '/mascotas/registrar/';
-    });
+    // Validación específica para el campo RUT del tutor
+    const rutInput = document.querySelector('input[name="nro_documento"]');
+    if (rutInput) {
+        rutInput.addEventListener('input', function(e) {
+            let value = this.value;
+            
+            // Solo permitir números, guión y K/k
+            value = value.replace(/[^0-9Kk-]/g, '');
+            
+            // Convertir k minúscula a K mayúscula
+            value = value.replace(/k/g, 'K');
+            
+            // Asegurar que solo haya un guión
+            const parts = value.split('-');
+            if (parts.length > 2) {
+                value = parts[0] + '-' + parts.slice(1).join('');
+            }
+            
+            this.value = value;
+        });
+        
+        // Prevenir pegado de caracteres no válidos
+        rutInput.addEventListener('paste', function(e) {
+            e.preventDefault();
+            let pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            
+            // Limpiar texto pegado
+            pastedText = pastedText.replace(/[^0-9Kk-]/g, '').replace(/k/g, 'K');
+            
+            // Insertar en la posición del cursor
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+            const currentValue = this.value;
+            
+            this.value = currentValue.substring(0, start) + pastedText + currentValue.substring(end);
+            this.setSelectionRange(start + pastedText.length, start + pastedText.length);
+        });
+    }
 });
 </script>
 {% endblock %} 

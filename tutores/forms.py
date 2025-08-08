@@ -14,20 +14,32 @@ class BuscarTutorForm(forms.Form):
         widget=forms.TextInput(attrs={
             'placeholder': 'Ej: 15468064-0',
             'class': 'form-control',
-            'style': 'border-radius: 5px; border: 1px solid #ddd; padding: 10px 12px; font-size: 0.65rem; max-width: 250px;'
+            'style': 'border-radius: 5px; border: 1px solid #ddd; padding: 10px 12px; font-size: 0.65rem; max-width: 250px;',
+            'pattern': '[0-9Kk-]*',
+            'oninput': 'this.value = this.value.replace(/[^0-9Kk-]/g, "").replace(/k/g, "K");'
         })
     )
 
     def clean_nro_documento(self):
         nro_documento = self.cleaned_data['nro_documento']
         
+        # Limpiar el RUT: solo permitir números, guión y K
+        rut_limpio = ''.join(c for c in nro_documento if c.isdigit() or c == '-' or c.upper() == 'K')
+        
+        # Convertir k minúscula a K mayúscula
+        rut_limpio = rut_limpio.replace('k', 'K')
+        
+        # Validar que contenga al menos un guión
+        if '-' not in rut_limpio:
+            raise forms.ValidationError('El RUT debe contener un guión (-) para separar el número del dígito verificador')
+        
         # Validar formato del RUT
-        if not re.match(r'^\d{7,8}-\d$', nro_documento):
+        if not re.match(r'^\d{7,8}-[0-9K]$', rut_limpio):
             raise forms.ValidationError('El RUT debe tener el formato: 15468064-0 (7-8 dígitos, guión y dígito verificador)')
         
         # Validar dígito verificador
-        numero = nro_documento.split('-')[0]
-        dv = nro_documento.split('-')[1]
+        numero = rut_limpio.split('-')[0]
+        dv = rut_limpio.split('-')[1]
         
         # Calcular dígito verificador
         suma = 0
@@ -48,7 +60,7 @@ class BuscarTutorForm(forms.Form):
         if dv.upper() != dv_calculado:
             raise forms.ValidationError('El dígito verificador del RUT no es válido. Verifique el número ingresado.')
         
-        return nro_documento
+        return rut_limpio
 
 class RegistrarTutorForm(forms.Form):
     nro_documento = forms.CharField(
@@ -61,7 +73,9 @@ class RegistrarTutorForm(forms.Form):
         widget=forms.TextInput(attrs={
             'placeholder': 'Ej: 15468064-0',
             'class': 'form-control',
-            'style': 'border-radius: 5px; border: 1px solid #ddd; padding: 10px 12px; font-size: 0.65rem;'
+            'style': 'border-radius: 5px; border: 1px solid #ddd; padding: 10px 12px; font-size: 0.65rem;',
+            'pattern': '[0-9Kk-]*',
+            'oninput': 'this.value = this.value.replace(/[^0-9Kk-]/g, "").replace(/k/g, "K");'
         })
     )
     
@@ -263,13 +277,23 @@ class RegistrarTutorForm(forms.Form):
     def clean_nro_documento(self):
         nro_documento = self.cleaned_data['nro_documento']
         
+        # Limpiar el RUT: solo permitir números, guión y K
+        rut_limpio = ''.join(c for c in nro_documento if c.isdigit() or c == '-' or c.upper() == 'K')
+        
+        # Convertir k minúscula a K mayúscula
+        rut_limpio = rut_limpio.replace('k', 'K')
+        
+        # Validar que contenga al menos un guión
+        if '-' not in rut_limpio:
+            raise forms.ValidationError('El RUT debe contener un guión (-) para separar el número del dígito verificador')
+        
         # Validar formato del RUT
-        if not re.match(r'^\d{7,8}-\d$', nro_documento):
+        if not re.match(r'^\d{7,8}-[0-9K]$', rut_limpio):
             raise forms.ValidationError('El RUT debe tener el formato: 15468064-0 (7-8 dígitos, guión y dígito verificador)')
         
         # Validar dígito verificador
-        numero = nro_documento.split('-')[0]
-        dv = nro_documento.split('-')[1]
+        numero = rut_limpio.split('-')[0]
+        dv = rut_limpio.split('-')[1]
         
         # Calcular dígito verificador
         suma = 0
@@ -292,10 +316,10 @@ class RegistrarTutorForm(forms.Form):
         
         # Solo validar unicidad si no estamos en modo edición
         if not self.tutor_id:
-            if Tutor.objects.filter(nro_documento=nro_documento).exists():
+            if Tutor.objects.filter(nro_documento=rut_limpio).exists():
                 raise forms.ValidationError('Este RUT ya está registrado en el sistema')
         
-        return nro_documento
+        return rut_limpio
 
     def clean_celular(self):
         celular = self.cleaned_data['celular']

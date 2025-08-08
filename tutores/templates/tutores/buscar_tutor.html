@@ -2,7 +2,7 @@
 
 {% block content %}
 <!-- Título principal con espacio superior reducido y en mayúsculas -->
-<h1 style="text-align: center; font-weight: bold; margin-top: 0.1rem; margin-bottom: 20px; color: #333; font-size: 1.3rem; text-transform: uppercase;">Buscar Tutor</h1>
+<h1 style="text-align: center; font-weight: bold; margin-top: 0.1rem; margin-bottom: 20px; color: #333; font-size: 1.3rem; text-transform: uppercase;">CONSULTAR TUTOR</h1>
 
 <!-- Formulario de búsqueda reorganizado horizontalmente -->
 <div style="display: flex; justify-content: center; margin-bottom: 30px;">
@@ -31,7 +31,7 @@
 
 {% if tutor %}
     <!-- Título "Antecedentes del Tutor/a" movido fuera del contenedor -->
-    <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 80%; margin-left: auto; margin-right: auto;">Antecedentes del Tutor/a</h5>
+    <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 80%; margin-left: auto; margin-right: auto;">ANTECEDENTES DEL TUTOR(A)</h5>
     
     <!-- Bloque "Antecedentes del Tutor/a" con ancho ajustado al 80% -->
     <div class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 auto; width: 80%;">
@@ -71,7 +71,7 @@
     </div>
     
     <!-- Tabla de Mascotas con ancho ajustado al 80% -->
-    <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 80%; margin-left: auto; margin-right: auto;">Mascotas</h5>
+    <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 80%; margin-left: auto; margin-right: auto;">MASCOTAS ASOCIADAS</h5>
     {% if mascotas %}
         <div class="table-responsive" style="margin-bottom: 30px; width: 80%; margin-left: auto; margin-right: auto;">
             <table class="table table-striped" style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden; width: 100%;">
@@ -112,7 +112,7 @@
     
     <!-- Botón centrado con espaciado adecuado -->
     <div style="text-align: center; margin-top: 1.5rem;">
-        <a href="/mascotas/registrar/" class="btn btn-primary" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+        <a href="/mascotas/registrar/?tutor_id={{ tutor.id_tutor }}" class="btn btn-primary" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;">
             Registrar Nueva Mascota
         </a>
     </div>
@@ -126,6 +126,49 @@
         </a>
     </div>
 {% endif %}
+
+<script>
+// Validación específica para el campo RUT del tutor
+document.addEventListener('DOMContentLoaded', function() {
+    const rutInput = document.querySelector('input[name="nro_documento"]');
+    if (rutInput) {
+        rutInput.addEventListener('input', function(e) {
+            let value = this.value;
+            
+            // Solo permitir números, guión y K/k
+            value = value.replace(/[^0-9Kk-]/g, '');
+            
+            // Convertir k minúscula a K mayúscula
+            value = value.replace(/k/g, 'K');
+            
+            // Asegurar que solo haya un guión
+            const parts = value.split('-');
+            if (parts.length > 2) {
+                value = parts[0] + '-' + parts.slice(1).join('');
+            }
+            
+            this.value = value;
+        });
+        
+        // Prevenir pegado de caracteres no válidos
+        rutInput.addEventListener('paste', function(e) {
+            e.preventDefault();
+            let pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            
+            // Limpiar texto pegado
+            pastedText = pastedText.replace(/[^0-9Kk-]/g, '').replace(/k/g, 'K');
+            
+            // Insertar en la posición del cursor
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+            const currentValue = this.value;
+            
+            this.value = currentValue.substring(0, start) + pastedText + currentValue.substring(end);
+            this.setSelectionRange(start + pastedText.length, start + pastedText.length);
+        });
+    }
+});
+</script>
 
 <style>
     /* Estilos adicionales para mejorar la apariencia */
