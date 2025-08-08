@@ -6,7 +6,7 @@ class BuscarTutorForm(forms.Form):
         label='Ingrese el Rut del tutor(*)',
         max_length=12,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Ej: 12345678-9',
+            'placeholder': 'Ej: 15468064-0',
             'class': 'form-control',
             'autocomplete': 'off',
             'style': 'border-radius: 5px; border: 1px solid #ddd; padding: 8px 12px; font-size: 14px;'
@@ -19,16 +19,34 @@ class BuscarTutorForm(forms.Form):
         # Limpiar espacios y convertir a mayúsculas
         rut = rut.strip().upper()
         
-        # Validar formato básico
+        # Validar que no esté vacío
+        if not rut:
+            raise forms.ValidationError('El RUT es obligatorio')
+        
+        # Validar formato básico (7-8 dígitos + guión + dígito verificador)
         if not re.match(r'^\d{7,8}-[\dK]$', rut):
             raise forms.ValidationError(
-                'El RUT debe tener el formato: 12345678-9 (con dígito verificador)'
+                'El RUT debe tener el formato: 15468064-0 (7-8 dígitos, guión y dígito verificador)'
             )
+        
+        # Separar número y dígito verificador
+        try:
+            numero, dv = rut.split('-')
+        except ValueError:
+            raise forms.ValidationError('El RUT debe contener un guión (-)')
+        
+        # Validar que el número tenga entre 7 y 8 dígitos
+        if len(numero) < 7 or len(numero) > 8:
+            raise forms.ValidationError('El número del RUT debe tener 7 u 8 dígitos')
+        
+        # Validar que el número no sea todo ceros
+        if numero == '0' * len(numero):
+            raise forms.ValidationError('El número del RUT no puede ser todo ceros')
         
         # Validar dígito verificador
         if not self.validar_digito_verificador(rut):
             raise forms.ValidationError(
-                'El dígito verificador del RUT no es válido'
+                'El dígito verificador del RUT no es válido. Verifique el número ingresado.'
             )
         
         return rut
@@ -40,6 +58,10 @@ class BuscarTutorForm(forms.Form):
         try:
             # Separar número y dígito verificador
             numero, dv = rut.split('-')
+            
+            # Validar que el número sea numérico
+            if not numero.isdigit():
+                return False
             
             # Calcular dígito verificador
             suma = 0
