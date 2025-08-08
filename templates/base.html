@@ -225,9 +225,17 @@
                 </a>
             </div>
             
-            <a href="/mascotas/" class="menu-item" id="menu-mascotas">
+            <a href="#" class="menu-item has-submenu" id="menu-mascotas" onclick="toggleSubmenu('mascotas')">
                 Gestión Mascotas
             </a>
+            <div class="submenu" id="submenu-mascotas">
+                <a href="#" class="submenu-item" id="submenu-consultar-mascota">
+                    Consultar Mascota
+                </a>
+                <a href="/mascotas/registrar/" class="submenu-item" id="submenu-registrar-mascota">
+                    Registrar Nueva Mascota
+                </a>
+            </div>
             
             <a href="/atencion/" class="menu-item" id="menu-atencion">
                 Atención Clínica
