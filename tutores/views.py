@@ -37,6 +37,7 @@ def buscar_tutor_view(request):
 def registrar_tutor_view(request):
     tutor_guardado = None
     modo_edicion = False
+    mensaje_exito = None
     
     # Log para depuración
     logger.info(f"Método de request: {request.method}")
@@ -133,6 +134,7 @@ def registrar_tutor_view(request):
                     
                     logger.info(f"Tutor creado exitosamente: {tutor}")
                     tutor_guardado = tutor
+                    mensaje_exito = f"El tutor '{tutor.nombres} {tutor.apellido_paterno}' ha sido registrado exitosamente"
                     
                 except Exception as e:
                     logger.error(f"Error al crear tutor: {e}")
@@ -190,7 +192,8 @@ def registrar_tutor_view(request):
     return render(request, 'tutores/registrar_tutor.html', {
         'form': form,
         'tutor_guardado': tutor_guardado,
-        'modo_edicion': modo_edicion
+        'modo_edicion': modo_edicion,
+        'mensaje_exito': mensaje_exito
     })
 
 @csrf_exempt

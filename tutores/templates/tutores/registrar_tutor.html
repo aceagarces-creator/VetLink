@@ -1,13 +1,38 @@
 {% extends 'base.html' %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}
+
 {% block content %}
 <div style="display: flex; justify-content: center; margin-bottom: 30px;">
     <div style="width: 80%; max-width: 1200px;">
         <h1 style="text-align: center; font-weight: bold; margin-top: 0.1rem; margin-bottom: 20px; color: #333; font-size: 1.3rem; text-transform: uppercase;">Registrar Tutor</h1>
         
-        {% if tutor_guardado %}
-        <div style="background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 12px; border-radius: 5px; margin-bottom: 20px; text-align: center; font-size: 0.8rem;">
-            ✅ Tutor registrado exitosamente: <strong>{{ tutor_guardado.nombres }} {{ tutor_guardado.apellido_paterno }}</strong>
+        <!-- Modal para mostrar éxito de registro de tutor -->
+        {% if mensaje_exito %}
+        <div id="exitoModal" class="modal" style="display: flex; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center;">
+            <div class="modal-content" style="background-color: #fefefe; margin: auto; padding: 0; border-radius: 12px; width: 95%; max-width: 550px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); animation: modalFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); overflow: hidden;">
+                <div class="modal-header" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; position: relative;">
+                    <h3 style="margin: 0; color: #ffffff; font-size: 1.1rem; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-check-circle"></i> Tutor Registrado Exitosamente
+                    </h3>
+                </div>
+                <div class="modal-body" style="padding: 25px; max-height: 70vh; overflow-y: auto; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);">
+                    <div style="text-align: center; padding: 20px;">
+                        <i class="fas fa-check-circle" style="font-size: 3rem; color: #28a745; margin-bottom: 15px;"></i>
+                        <p style="color: #155724; font-size: 1.1rem; margin: 0;">{{ mensaje_exito }}</p>
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding: 20px 25px; border-top: 1px solid #e9ecef; text-align: right; background-color: #f8f9fa; position: relative;">
+                    <a href="/mascotas/registrar/?tutor_id={{ tutor_guardado.id_tutor }}" class="btn btn-primary" style="margin-right: 10px; background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+                        <i class="fas fa-paw"></i> Registrar Nueva Mascota
+                    </a>
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModalExito()" style="background-color: #6c757d; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+                        <i class="fas fa-times"></i> Cerrar Ventana
+                    </button>
+                </div>
+            </div>
         </div>
         {% endif %}
         
@@ -191,11 +216,8 @@
             
             <!-- Buttons -->
             <div style="text-align: center; margin-top: 1.5rem;">
-                <button type="submit" id="btn-registrar-tutor" class="btn btn-primary" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px; margin-right: 10px;">
+                <button type="submit" id="btn-registrar-tutor" class="btn btn-primary" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;">
                     {% if tutor_guardado %}Actualizar Tutor(a){% else %}Registrar Tutor(a){% endif %}
-                </button>
-                <button type="button" id="btn-registrar-mascota" class="btn btn-primary" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;" {% if not tutor_guardado %}disabled{% endif %}>
-                    Registrar Mascota
                 </button>
             </div>
         </form>
@@ -346,6 +368,33 @@ document.addEventListener('DOMContentLoaded', function() {
             this.setSelectionRange(start + pastedText.length, start + pastedText.length);
         });
     }
+    
+    // Función para cerrar el modal de éxito
+    window.cerrarModalExito = function() {
+        const exitoModal = document.getElementById('exitoModal');
+        if (exitoModal) {
+            exitoModal.style.display = 'none';
+        }
+    }
 });
 </script>
+
+<style>
+/* Animación para el modal */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal {
+    animation: modalFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+</style>
+
 {% endblock %} 

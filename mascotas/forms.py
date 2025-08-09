@@ -215,87 +215,32 @@ class RegistrarMascotaForm(forms.Form):
         required=False
     )
 
-    def __init__(self, *args, **kwargs):
-        self.tutor_id = kwargs.pop('tutor_id', None)
-        super().__init__(*args, **kwargs)
-        
-        # Establecer el valor inicial del campo oculto tutor_id
-        if self.tutor_id:
-            self.fields['tutor_id'].initial = self.tutor_id
-        
-        # Si se pasa un id de especie, cargar las razas correspondientes
-        if 'especie' in self.data:
-            try:
-                especie_id = int(self.data.get('especie'))
-                self.fields['raza'].queryset = Raza.objects.filter(
-                    id_especie=especie_id, activo=True
-                ).order_by('nombre')
-                self.fields['raza'].empty_label = 'Seleccione una raza'
-            except (ValueError, TypeError):
-                pass
+
+class BuscarFichaClinicaForm(forms.Form):
+    """
+    Formulario para buscar una mascota por número de chip para mostrar su ficha clínica.
+    Solo para consultas - no valida unicidad.
+    """
+    nro_chip = forms.CharField(
+        max_length=30,
+        label='Número de Chip',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ingrese el número de chip de la mascota',
+            'style': 'max-width: 300px;'
+        }),
+        help_text='Ingrese el número de chip único de identificación de la mascota'
+    )
 
     def clean_nro_chip(self):
         nro_chip = self.cleaned_data['nro_chip']
         
-        # Validar que el número de chip no esté vacío
-        if not nro_chip or nro_chip.strip() == '':
-            raise forms.ValidationError('El número de chip es obligatorio')
-        
-        # Limpiar espacios en blanco
+        # Normalizar el valor: recortar espacios en blanco pero conservar ceros a la izquierda
         nro_chip = nro_chip.strip()
         
-        # Validar que el número de chip no esté repetido
-        if Mascota.objects.filter(nro_chip=nro_chip).exists():
-            raise forms.ValidationError(
-                'Ya existe una mascota registrada en el sistema asociada al número de chip: ' + nro_chip
-            )
+        if not nro_chip:
+            raise forms.ValidationError('El número de chip es obligatorio')
         
+        # Solo normalizar, sin validar existencia (esto es para consultas, no para registro)
         return nro_chip
 
-    def clean_fecha_nacimiento(self):
-        fecha_nacimiento = self.cleaned_data.get('fecha_nacimiento')
-        
-        if fecha_nacimiento and fecha_nacimiento > date.today():
-            raise forms.ValidationError('La fecha de nacimiento no puede ser futura')
-        
-        return fecha_nacimiento
-
-    def clean_sexo(self):
-        sexo = self.cleaned_data.get('sexo')
-        
-        if not sexo or sexo == '':
-            raise forms.ValidationError('Debe seleccionar el sexo de la mascota')
-        
-        return sexo
-
-    def clean_raza(self):
-        raza = self.cleaned_data.get('raza')
-        
-        if not raza:
-            raise forms.ValidationError('Debe seleccionar una raza')
-        
-        return raza
-
-    def clean_documento_consentimiento(self):
-        documento = self.cleaned_data.get('documento_consentimiento')
-        
-        if documento:
-            # Validar tipo de archivo
-            allowed_types = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png']
-            if hasattr(documento, 'content_type') and documento.content_type not in allowed_types:
-                raise forms.ValidationError('Solo se permiten archivos PDF, JPG, JPEG y PNG')
-            
-            # Validar tamaño (máximo 5MB)
-            if documento.size > 5 * 1024 * 1024:  # 5MB
-                raise forms.ValidationError('El archivo no puede ser mayor a 5MB')
-        
-        return documento
-
-    def clean(self):
-        cleaned_data = super().clean()
-        
-        # Validar que se haya seleccionado un tutor
-        if not self.tutor_id:
-            raise forms.ValidationError('Debe buscar y seleccionar un tutor válido antes de registrar la mascota')
-        
-        return cleaned_data

@@ -9,8 +9,8 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
-from core.models import Tutor, Mascota, Especie, Raza
-from .forms import BuscarTutorMascotaForm, RegistrarMascotaForm
+from core.models import Tutor, Mascota, Especie, Raza, ClinicaVeterinaria, Servicio, ServicioDetalle, PersonalClinica, AtencionClinica
+from .forms import BuscarTutorMascotaForm, RegistrarMascotaForm, BuscarFichaClinicaForm
 import json
 import logging
 import re
@@ -380,4 +380,106 @@ def validar_chip(request):
     return JsonResponse({
         'success': False,
         'error': 'Método no permitido'
+    })
+
+
+def ficha_clinica_view(request):
+    """
+    Vista para mostrar la ficha clínica de una mascota buscada por número de chip.
+    Incluye antecedentes del tutor, datos de la mascota e historial de atenciones médicas.
+    """
+    mascota_encontrada = None
+    historial_atenciones = []
+    mensaje = None
+    
+    logger.info(f"Método de request: {request.method}")
+    
+    # Verificar si hay parámetro nro_chip en GET (viene desde Consultar Tutor)
+    nro_chip_get = request.GET.get('nro_chip')
+    
+    if request.method == 'POST':
+        form = BuscarFichaClinicaForm(request.POST)
+        
+        if form.is_valid():
+            nro_chip = form.cleaned_data['nro_chip']
+            logger.info(f"Buscando mascota con chip desde formulario: {nro_chip}")
+            
+            try:
+                # Buscar mascota por número de chip
+                mascota_encontrada = Mascota.objects.select_related(
+                    'id_tutor',
+                    'id_tutor__id_comuna',
+                    'id_tutor__id_comuna__id_provincia', 
+                    'id_tutor__id_comuna__id_provincia__id_region',
+                    'id_especie',
+                    'id_raza'
+                ).get(nro_chip=nro_chip)
+                
+                logger.info(f"Mascota encontrada: {mascota_encontrada}")
+                
+                # Obtener historial de atenciones médicas ordenado por fecha más reciente
+                historial_atenciones = AtencionClinica.objects.filter(
+                    id_mascota=mascota_encontrada
+                ).select_related(
+                    'id_clinica',
+                    'id_personal',
+                    'id_servicio_detalle',
+                    'id_servicio_detalle__id_servicio'
+                ).order_by('-fecha_atencion')
+                
+                logger.info(f"Encontradas {historial_atenciones.count()} atenciones")
+                
+            except Mascota.DoesNotExist:
+                mensaje = f"No se encontraron registros para este número de chip: {nro_chip}"
+                logger.info(f"Mascota no encontrada con chip: {nro_chip}")
+        else:
+            logger.info("Formulario no válido")
+            logger.info(f"Errores del formulario: {form.errors}")
+    elif nro_chip_get:
+        # Búsqueda automática desde Consultar Tutor
+        logger.info(f"Buscando mascota con chip desde GET: {nro_chip_get}")
+        
+        try:
+            # Buscar mascota por número de chip
+            mascota_encontrada = Mascota.objects.select_related(
+                'id_tutor',
+                'id_tutor__id_comuna',
+                'id_tutor__id_comuna__id_provincia', 
+                'id_tutor__id_comuna__id_provincia__id_region',
+                'id_especie',
+                'id_raza'
+            ).get(nro_chip=nro_chip_get)
+            
+            logger.info(f"Mascota encontrada: {mascota_encontrada}")
+            
+            # Obtener historial de atenciones médicas ordenado por fecha más reciente
+            historial_atenciones = AtencionClinica.objects.filter(
+                id_mascota=mascota_encontrada
+            ).select_related(
+                'id_clinica',
+                'id_personal',
+                'id_servicio_detalle',
+                'id_servicio_detalle__id_servicio'
+            ).order_by('-fecha_atencion')
+            
+            logger.info(f"Encontradas {historial_atenciones.count()} atenciones")
+            
+            # Crear formulario precargado con el chip
+            form = BuscarFichaClinicaForm(initial={'nro_chip': nro_chip_get})
+            
+        except Mascota.DoesNotExist:
+            mensaje = f"No se encontraron registros para este número de chip: {nro_chip_get}"
+            logger.info(f"Mascota no encontrada con chip: {nro_chip_get}")
+            form = BuscarFichaClinicaForm()
+    else:
+        form = BuscarFichaClinicaForm()
+    
+    logger.info(f"Mascota encontrada: {mascota_encontrada}")
+    logger.info(f"Historial atenciones: {len(historial_atenciones) if historial_atenciones else 0}")
+    
+    return render(request, 'mascotas/ficha_clinica.html', {
+        'form': form,
+        'mascota_encontrada': mascota_encontrada,
+        'historial_atenciones': historial_atenciones,
+        'mensaje': mensaje,
     })
