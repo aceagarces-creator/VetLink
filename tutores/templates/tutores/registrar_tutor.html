@@ -36,6 +36,31 @@
         </div>
         {% endif %}
         
+        <!-- Modal para validación de RUT duplicado -->
+        <div id="rutDuplicadoModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center;">
+            <div class="modal-content" style="background-color: #fefefe; margin: auto; padding: 0; border-radius: 12px; width: 95%; max-width: 550px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); animation: modalFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); overflow: hidden;">
+                <div class="modal-header" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; position: relative;">
+                    <h3 style="margin: 0; color: #ffffff; font-size: 1.1rem; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-exclamation-triangle"></i> Tutor ya registrado
+                    </h3>
+                </div>
+                <div class="modal-body" style="padding: 25px; max-height: 70vh; overflow-y: auto; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);">
+                    <div style="text-align: center; padding: 20px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #dc3545; margin-bottom: 15px;"></i>
+                        <p id="modalMensaje" style="color: #721c24; font-size: 1.1rem; margin: 0;"></p>
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding: 20px 25px; border-top: 1px solid #e9ecef; text-align: right; background-color: #f8f9fa; position: relative;">
+                    <a id="btnVerTutor" href="#" class="btn btn-primary" style="margin-right: 10px; background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+                        <i class="fas fa-search"></i> Ver datos del tutor
+                    </a>
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModalRutDuplicado()" style="background-color: #6c757d; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+                        <i class="fas fa-times"></i> Cerrar ventana
+                    </button>
+                </div>
+            </div>
+        </div>
+        
         <form method="post" class="mb-4" style="width: 100%;">
             {% csrf_token %}
             
@@ -57,6 +82,8 @@
                                     {% for error in form.nro_documento.errors %}{{ error }}{% endfor %}
                                 </div>
                             {% endif %}
+                            <!-- Mensaje de validación de RUT -->
+                            <div id="rutValidationMessage" class="rut-validation-message"></div>
                         </div>
                         <div>
                             <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.nombres.label }}</label>
@@ -252,6 +279,46 @@
         font-size: 0.6rem;
         margin-top: 3px;
     }
+    
+    /* Estilos para validación de RUT (consistentes con chip en mascotas) */
+    .rut-validation-message {
+        margin-top: 5px;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 0.65rem;
+        font-weight: 500;
+        display: none;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+    
+    .rut-validation-message.error {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+    
+    /* Animación para el mensaje de error del RUT */
+    .rut-validation-message.error {
+        animation: shake 0.5s ease-in-out;
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    
+    /* Estilo para el input cuando hay error de RUT */
+    input[name="nro_documento"].rut-error {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+    }
+    
+    /* Estilo para el input cuando el RUT es válido */
+    input[name="nro_documento"].rut-success {
+        border-color: #28a745 !important;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
+    }
 </style>
 
 <script>
@@ -332,6 +399,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Validación específica para el campo RUT del tutor
     const rutInput = document.querySelector('input[name="nro_documento"]');
+    let timeoutId = null;
+    
     if (rutInput) {
         rutInput.addEventListener('input', function(e) {
             let value = this.value;
@@ -349,6 +418,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             this.value = value;
+            
+            // Si el valor cambió y había un error, limpiarlo
+            if (value !== rutActual && rutDuplicado) {
+                limpiarErrorRut();
+            }
+            
+            rutActual = value;
+            
+            // Validar RUT cuando el usuario termine de escribir (debounce)
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                validarRutEnTiempoReal(value);
+            }, 1000); // Esperar 1 segundo después de que el usuario deje de escribir
         });
         
         // Prevenir pegado de caracteres no válidos
@@ -367,6 +449,110 @@ document.addEventListener('DOMContentLoaded', function() {
             this.value = currentValue.substring(0, start) + pastedText + currentValue.substring(end);
             this.setSelectionRange(start + pastedText.length, start + pastedText.length);
         });
+    }
+    
+    // Función para validar RUT en tiempo real
+    function validarRutEnTiempoReal(rut) {
+        if (!rut || rut.length < 8) {
+            // Si el RUT es muy corto, limpiar cualquier error previo
+            if (rutDuplicado) {
+                limpiarErrorRut();
+            }
+            return;
+        }
+        
+        fetch('/tutores/validar-rut/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({ rut: rut })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success && data.rut_existe) {
+                // Mostrar modal de RUT duplicado
+                mostrarModalRutDuplicado(data.mensaje, rut);
+            } else if (data.success) {
+                // RUT válido, limpiar cualquier error previo
+                if (rutDuplicado) {
+                    limpiarErrorRut();
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error al validar RUT:', error);
+        });
+    }
+    
+    // Función para mostrar el modal de RUT duplicado
+    function mostrarModalRutDuplicado(mensaje, rut) {
+        const modal = document.getElementById('rutDuplicadoModal');
+        const modalMensaje = document.getElementById('modalMensaje');
+        const btnVerTutor = document.getElementById('btnVerTutor');
+        
+        modalMensaje.textContent = mensaje;
+        btnVerTutor.href = `/tutores/buscar/?nro_documento=${rut}`;
+        
+        modal.style.display = 'flex';
+    }
+    
+    // Variables globales para el estado del RUT
+    let rutDuplicado = false;
+    let rutActual = '';
+    
+    // Función para habilitar/deshabilitar el botón de registro
+    function habilitarBotonRegistro(habilitar) {
+        const btnRegistrar = document.getElementById('btn-registrar-tutor');
+        if (btnRegistrar) {
+            btnRegistrar.disabled = !habilitar;
+        }
+    }
+    
+    // Función para mostrar mensaje de error del RUT
+    function mostrarErrorRut(mensaje) {
+        const inputElement = document.querySelector('input[name="nro_documento"]');
+        const messageDiv = document.getElementById('rutValidationMessage');
+        
+        if (inputElement && messageDiv) {
+            messageDiv.className = 'rut-validation-message error';
+            messageDiv.innerHTML = '❌ ' + mensaje;
+            messageDiv.style.display = 'block';
+            
+            inputElement.classList.remove('rut-success');
+            inputElement.classList.add('rut-error');
+            
+            rutDuplicado = true;
+            habilitarBotonRegistro(false);
+        }
+    }
+    
+    // Función para limpiar el estado de error del RUT
+    function limpiarErrorRut() {
+        const inputElement = document.querySelector('input[name="nro_documento"]');
+        const messageDiv = document.getElementById('rutValidationMessage');
+        
+        if (inputElement && messageDiv) {
+            messageDiv.style.display = 'none';
+            messageDiv.className = 'rut-validation-message';
+            messageDiv.innerHTML = '';
+            
+            inputElement.classList.remove('rut-error', 'rut-success');
+            
+            rutDuplicado = false;
+            habilitarBotonRegistro(true);
+        }
+    }
+    
+    // Función para cerrar el modal de RUT duplicado
+    window.cerrarModalRutDuplicado = function() {
+        const modal = document.getElementById('rutDuplicadoModal');
+        if (modal) {
+            modal.style.display = 'none';
+            // Mostrar error en el campo RUT
+            mostrarErrorRut('Este RUT ya está registrado. Revise o ingrese otro.');
+        }
     }
     
     // Función para cerrar el modal de éxito

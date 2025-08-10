@@ -9,7 +9,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
-from core.models import Tutor, Mascota, Especie, Raza, ClinicaVeterinaria, Servicio, ServicioDetalle, PersonalClinica, AtencionClinica
+from core.models import Tutor, Mascota, Especie, Raza, ClinicaVeterinaria, Servicio, ServicioDetalle, PersonalClinica, AtencionClinica, DocumentoAdjunto
 from .forms import BuscarTutorMascotaForm, RegistrarMascotaForm, BuscarFichaClinicaForm
 import json
 import logging
@@ -483,3 +483,47 @@ def ficha_clinica_view(request):
         'historial_atenciones': historial_atenciones,
         'mensaje': mensaje,
     })
+
+
+def atencion_detalle_view(request, atencion_id):
+    """
+    Vista para mostrar el detalle completo de una atención médica específica.
+    Incluye información del tutor, mascota, atención y documentos adjuntos.
+    """
+    try:
+        # Obtener la atención clínica con todas las relaciones necesarias
+        atencion = AtencionClinica.objects.select_related(
+            'id_mascota',
+            'id_mascota__id_tutor',
+            'id_mascota__id_tutor__id_comuna',
+            'id_mascota__id_tutor__id_comuna__id_provincia',
+            'id_mascota__id_tutor__id_comuna__id_provincia__id_region',
+            'id_mascota__id_especie',
+            'id_mascota__id_raza',
+            'id_clinica',
+            'id_personal',
+            'id_servicio_detalle',
+            'id_servicio_detalle__id_servicio'
+        ).get(id_atencion=atencion_id)
+        
+        # Obtener documentos adjuntos asociados a esta atención
+        documentos_adjuntos = atencion.documentoadjunto_set.all().order_by('fecha_subida')
+        
+        logger.info(f"Detalle de atención cargado: {atencion}")
+        logger.info(f"Documentos adjuntos encontrados: {documentos_adjuntos.count()}")
+        
+        return render(request, 'mascotas/atencion_detalle.html', {
+            'atencion': atencion,
+            'documentos_adjuntos': documentos_adjuntos,
+        })
+        
+    except AtencionClinica.DoesNotExist:
+        logger.error(f"Atención con ID {atencion_id} no encontrada")
+        return render(request, 'mascotas/atencion_detalle.html', {
+            'error': 'La atención médica especificada no fue encontrada.',
+        })
+    except Exception as e:
+        logger.error(f"Error al cargar detalle de atención {atencion_id}: {e}")
+        return render(request, 'mascotas/atencion_detalle.html', {
+            'error': 'Ocurrió un error al cargar los detalles de la atención médica.',
+        })

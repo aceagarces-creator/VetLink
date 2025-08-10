@@ -12,4 +12,5 @@ urlpatterns = [
     path('cargar-razas/', views.cargar_razas, name='cargar_razas'),
     path('validar-chip/', views.validar_chip, name='validar_chip'),
     path('ficha-clinica/', views.ficha_clinica_view, name='ficha_clinica'),
+    path('atencion-detalle/<int:atencion_id>/', views.atencion_detalle_view, name='atencion_detalle'),
 ]

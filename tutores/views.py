@@ -14,6 +14,11 @@ def buscar_tutor_view(request):
     tutor = None
     mascotas = []
     mensaje = None
+    form = BuscarTutorForm()
+    
+    # Verificar si hay parámetro nro_documento en GET (viene desde el modal)
+    nro_documento_get = request.GET.get('nro_documento')
+    
     if request.method == 'POST':
         form = BuscarTutorForm(request.POST)
         if form.is_valid():
@@ -25,8 +30,17 @@ def buscar_tutor_view(request):
                 mensaje = "Tutor no registrado en el sistema"
         else:
             pass
-    else:
-        form = BuscarTutorForm()
+    elif nro_documento_get:
+        # Búsqueda automática desde el modal de RUT duplicado
+        try:
+            tutor = Tutor.objects.get(nro_documento=nro_documento_get)
+            mascotas = Mascota.objects.filter(id_tutor=tutor)
+            # Crear formulario precargado con el RUT
+            form = BuscarTutorForm(initial={'nro_documento': nro_documento_get})
+        except Tutor.DoesNotExist:
+            mensaje = "Tutor no registrado en el sistema"
+            form = BuscarTutorForm(initial={'nro_documento': nro_documento_get})
+    
     return render(request, 'tutores/buscar_tutor.html', {
         'form': form,
         'tutor': tutor,
@@ -209,6 +223,61 @@ def cargar_provincias(request):
             return JsonResponse({'provincias': list(provincias)})
     
     return JsonResponse({'provincias': []})
+
+@csrf_exempt
+def validar_rut_tutor(request):
+    """
+    Vista AJAX para validar si un RUT ya existe en el sistema.
+    """
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            rut = data.get('rut', '').strip()
+            
+            if not rut:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'El RUT es obligatorio'
+                })
+            
+            # Verificar si el RUT ya existe
+            tutor_existe = Tutor.objects.filter(nro_documento=rut).exists()
+            
+            if tutor_existe:
+                # Obtener información del tutor existente
+                tutor_existente = Tutor.objects.get(nro_documento=rut)
+                return JsonResponse({
+                    'success': False,
+                    'rut_existe': True,
+                    'rut': rut,
+                    'mensaje': f'El RUT {rut} ya está registrado para {tutor_existente.nombres} {tutor_existente.apellido_paterno}.',
+                    'tutor_info': {
+                        'nombres': tutor_existente.nombres,
+                        'apellido_paterno': tutor_existente.apellido_paterno,
+                        'apellido_materno': tutor_existente.apellido_materno or '',
+                        'email': tutor_existente.email or '',
+                        'celular': tutor_existente.celular or ''
+                    }
+                })
+            else:
+                return JsonResponse({
+                    'success': True,
+                    'rut_existe': False,
+                    'mensaje': 'El RUT está disponible para registro'
+                })
+                
+        except Exception as e:
+            logger.error(f"Error al validar RUT: {e}")
+            return JsonResponse({
+                'success': False,
+                'error': 'Error al validar el RUT'
+            })
+    
+    return JsonResponse({
+        'success': False,
+        'error': 'Método no permitido'
+    })
+
 
 @csrf_exempt
 def cargar_comunas(request):

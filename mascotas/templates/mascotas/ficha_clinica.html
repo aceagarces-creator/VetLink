@@ -143,11 +143,11 @@
                 <thead style="background-color: #f8f9fa;">
                     <tr>
                         <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: center;">Fecha</th>
-                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem;">Clínica</th>
-                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem;">Servicio</th>
-                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem;">Detalle del Servicio</th>
-                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem;">Veterinario</th>
-                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem;">Acciones</th>
+                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: left;">Clínica</th>
+                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: left;">Servicio</th>
+                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: left;">Detalle del Servicio</th>
+                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: left;">Veterinario</th>
+                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: center;">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -159,9 +159,9 @@
                         <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem;">{{ atencion.id_servicio_detalle.nombre|default:"" }}</td>
                         <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem;">{{ atencion.id_personal.nombres|default:"" }} {{ atencion.id_personal.apellido_paterno|default:"" }}</td>
                         <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center; vertical-align: middle;">
-                            <button class="btn btn-sm" disabled style="background-color: #6c757d; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; white-space: nowrap;">
+                            <a href="/mascotas/atencion-detalle/{{ atencion.id_atencion }}/" class="btn btn-sm" style="background-color: #e6a700; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; white-space: nowrap; text-decoration: none; display: inline-block;">
                                 Ver Detalle
-                            </button>
+                            </a>
                         </td>
                     </tr>
                     {% endfor %}
