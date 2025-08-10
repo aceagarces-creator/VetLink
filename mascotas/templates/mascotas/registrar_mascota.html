@@ -47,9 +47,14 @@
             {{ buscar_tutor_form.rut_tutor.label }}
         </label>
         {{ buscar_tutor_form.rut_tutor }}
-        <button type="submit" name="buscar_tutor" class="btn btn-primary" style="padding: 8px 16px; border-radius: 4px; background-color: #007bff; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+        <button type="submit" name="buscar_tutor" class="btn btn-primary" id="btn-buscar-tutor" style="padding: 8px 16px; border-radius: 4px; background-color: #007bff; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px;">
             Buscar
         </button>
+        {% if tutor_encontrado %}
+        <button type="button" class="btn btn-success" id="btn-nueva-busqueda-tutor" style="padding: 8px 16px; border-radius: 4px; background-color: #28a745; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px; text-transform: none;">
+            Realzar nueva búsqueda
+        </button>
+        {% endif %}
     </form>
 </div>
 
@@ -342,6 +347,20 @@
         padding: 5px 12px !important;
         height: 42px !important;
         border: 1px solid #ddd !important;
+    }
+    
+    /* Estilo para botón deshabilitado (mantiene color azul pero inactivo) */
+    .btn-primary:disabled {
+        background-color: #007bff !important;
+        opacity: 0.6 !important;
+        cursor: not-allowed !important;
+    }
+    
+    /* Estilo para input deshabilitado (mismo estilo que otros campos readonly) */
+    input:disabled {
+        background-color: #f8f9fa !important;
+        color: #333 !important;
+        cursor: not-allowed !important;
     }
     
     input[type="text"]:focus, input[type="email"]:focus, select:focus, textarea:focus {
@@ -1065,6 +1084,27 @@ document.addEventListener('DOMContentLoaded', function() {
         if (exitoModal) {
             exitoModal.style.display = 'none';
         }
+    }
+    
+    // Funcionalidad para deshabilitar formulario de búsqueda de tutor
+    const inputRutTutor = document.getElementById('{{ buscar_tutor_form.rut_tutor.id_for_label }}');
+    const btnBuscarTutor = document.getElementById('btn-buscar-tutor');
+    const btnNuevaBusquedaTutor = document.getElementById('btn-nueva-busqueda-tutor');
+    
+    // Si hay un tutor encontrado, deshabilitar solo el input y el botón Buscar
+    {% if tutor_encontrado %}
+    if (inputRutTutor && btnBuscarTutor) {
+        inputRutTutor.disabled = true;
+        btnBuscarTutor.disabled = true;
+    }
+    {% endif %}
+    
+    // Evento para el botón "Realizar una nueva búsqueda"
+    if (btnNuevaBusquedaTutor) {
+        btnNuevaBusquedaTutor.addEventListener('click', function() {
+            // Redirigir a la página inicial del formulario
+            window.location.href = '/mascotas/registrar/';
+        });
     }
 });
 </script>

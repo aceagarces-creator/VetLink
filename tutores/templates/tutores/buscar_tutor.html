@@ -12,9 +12,14 @@
             Ingrese el Rut del tutor(*)
         </label>
         {{ form.nro_documento }}
-        <button type="submit" class="btn btn-primary" style="padding: 8px 16px; border-radius: 4px; background-color: #007bff; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+        <button type="submit" class="btn btn-primary" id="btn-buscar" style="padding: 8px 16px; border-radius: 4px; background-color: #007bff; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px;">
             Buscar
         </button>
+        {% if tutor %}
+        <button type="button" class="btn btn-success" id="btn-nueva-busqueda" style="padding: 8px 16px; border-radius: 4px; background-color: #28a745; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+            Realizar nueva búsqueda
+        </button>
+        {% endif %}
     </form>
 </div>
 
@@ -128,9 +133,28 @@
 {% endif %}
 
 <script>
-// Validación específica para el campo RUT del tutor
+// Validación específica para el campo RUT del tutor y funcionalidad de deshabilitar/resetear
 document.addEventListener('DOMContentLoaded', function() {
     const rutInput = document.querySelector('input[name="nro_documento"]');
+    const btnBuscar = document.getElementById('btn-buscar');
+    const btnNuevaBusqueda = document.getElementById('btn-nueva-busqueda');
+    
+    // Si hay un tutor encontrado, deshabilitar solo el input y el botón Buscar
+    {% if tutor %}
+    if (rutInput && btnBuscar) {
+        rutInput.disabled = true;
+        btnBuscar.disabled = true;
+    }
+    {% endif %}
+    
+    // Evento para el botón "Realizar nueva búsqueda"
+    if (btnNuevaBusqueda) {
+        btnNuevaBusqueda.addEventListener('click', function() {
+            // Redirigir a la página inicial del formulario
+            window.location.href = '/tutores/buscar/';
+        });
+    }
+    
     if (rutInput) {
         rutInput.addEventListener('input', function(e) {
             let value = this.value;
@@ -239,6 +263,20 @@ document.addEventListener('DOMContentLoaded', function() {
     /* Estilo específico para el input de búsqueda de RUT */
     form input[type="text"]:not([readonly]) {
         max-width: 115px !important;
+    }
+    
+    /* Estilo para botón deshabilitado (mantiene color azul pero inactivo) */
+    .btn-primary:disabled {
+        background-color: #007bff !important;
+        opacity: 0.6 !important;
+        cursor: not-allowed !important;
+    }
+    
+    /* Estilo para input deshabilitado (mismo estilo que otros campos readonly) */
+    input:disabled {
+        background-color: #f8f9fa !important;
+        color: #333 !important;
+        cursor: not-allowed !important;
     }
 </style>
 {% endblock %}
