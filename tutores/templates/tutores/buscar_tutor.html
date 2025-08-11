@@ -41,37 +41,36 @@
     <!-- Bloque "Antecedentes del Tutor/a" con ancho ajustado al 80% -->
     <div class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 auto; width: 80%;">
         <div class="card-body" style="padding: 12px 25px 12px 25px;">
-            <!-- Primera fila de campos -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Rut</label>
-                    <input type="text" value="{{ tutor.nro_documento }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Nombres</label>
-                    <input type="text" value="{{ tutor.nombres }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Apellido Paterno</label>
-                    <input type="text" value="{{ tutor.apellido_paterno }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-            </div>
-            
-            <!-- Segunda fila de campos -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Apellido Materno</label>
-                    <input type="text" value="{{ tutor.apellido_materno|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Correo</label>
-                    <input type="email" value="{{ tutor.email|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Celular</label>
-                    <input type="text" value="{{ tutor.celular|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-            </div>
+                         <!-- Primera fila de campos -->
+             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Nombres</label>
+                     <input type="text" value="{{ tutor.nombres }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Apellido Paterno</label>
+                     <input type="text" value="{{ tutor.apellido_paterno }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Apellido Materno</label>
+                     <input type="text" value="{{ tutor.apellido_materno|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+             </div>
+             
+                           <!-- Segunda fila de campos -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                  <div>
+                      <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Correo</label>
+                      <input type="email" value="{{ tutor.email|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                  </div>
+                  <div>
+                      <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Celular</label>
+                      <input type="text" value="{{ tutor.celular|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                  </div>
+                  <div>
+                      <!-- Campo vacío para mantener alineación -->
+                  </div>
+              </div>
         </div>
     </div>
     
@@ -82,20 +81,20 @@
             <table class="table table-striped" style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden; width: 100%;">
                 <thead style="background-color: #f8f9fa;">
                     <tr>
-                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem;">Nombre</th>
-                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem;">Especie</th>
-                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem;">Raza</th>
-                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem;">Número de Chip</th>
-                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem;">Acciones</th>
+                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: left;">Microchip</th>
+                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: left;">Nombre</th>
+                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: left;">Especie</th>
+                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: left;">Raza</th>
+                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: center;">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for mascota in mascotas %}
                     <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem;">{{ mascota.nro_chip }}</td>
                         <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem;">{{ mascota.nombre }}</td>
                         <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem;">{{ mascota.id_especie.nombre }}</td>
                         <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem;">{{ mascota.id_raza.nombre }}</td>
-                        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem;">{{ mascota.nro_chip }}</td>
                         <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center; vertical-align: middle;">
                             <div style="display: flex; gap: 5px; flex-wrap: nowrap; justify-content: center; align-items: center;">
                                 <a href="/mascotas/ficha-clinica/?nro_chip={{ mascota.nro_chip }}" class="btn btn-sm" style="background-color: #e6a700; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; white-space: nowrap; text-decoration: none; display: inline-block;">
