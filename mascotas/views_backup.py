@@ -725,8 +725,10 @@ def ver_consentimiento_pdf(request, documento_id):
         mascota = Mascota.objects.get(id_mascota=documento_id)
         
         if not mascota.consentimiento or not mascota.url_doc_consentimiento:
-            from django.http import HttpResponse
-            return HttpResponse("No existe documento de consentimiento para esta mascota", status=404)
+            return JsonResponse({
+                'success': False,
+                'error': 'No existe documento de consentimiento para esta mascota'
+            })
         
         # Construir ruta completa del archivo
         import os
@@ -754,13 +756,19 @@ def ver_consentimiento_pdf(request, documento_id):
             response['Content-Disposition'] = 'inline'  # Mostrar en el navegador, no descargar
             return response
         else:
-            from django.http import HttpResponse
-            return HttpResponse("Archivo no encontrado", status=404)
+            return JsonResponse({
+                'success': False,
+                'error': 'Archivo no encontrado'
+            })
             
     except Mascota.DoesNotExist:
-        from django.http import HttpResponse
-        return HttpResponse("Mascota no encontrada", status=404)
+        return JsonResponse({
+            'success': False,
+            'error': 'Mascota no encontrada'
+        })
     except Exception as e:
         logger.error(f"Error al ver consentimiento PDF: {e}")
-        from django.http import HttpResponse
-        return HttpResponse("Error al mostrar el documento", status=500)
+        return JsonResponse({
+            'success': False,
+            'error': 'Error al mostrar el documento'
+        })
