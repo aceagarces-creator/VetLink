@@ -865,14 +865,53 @@ def atencion_detalle_view(request, atencion_id):
         # Obtener documentos adjuntos
         documentos = DocumentoAdjunto.objects.filter(id_atencion=atencion).order_by('fecha_subida')
         
-        # Obtener insumos utilizados
-        insumos = AtencionInsumo.objects.select_related(
-            'id_insumo'
-        ).filter(id_atencion=atencion).order_by('fecha_registro')
+        # Obtener insumos utilizados usando consulta SQL directa
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT 
+                    ai.id_atencion,
+                    ai.id_insumo,
+                    ai.cantidad_utilizada,
+                    ai.costo_asociado,
+                    ai.dosis,
+                    ai.via_administracion,
+                    ai.observaciones,
+                    ai.fecha_registro,
+                    ic.nombre as insumo_nombre,
+                    ic.tipo_insumo,
+                    ic.principio_activo,
+                    ic.laboratorio,
+                    ic.unidad_base,
+                    ic.precio_unitario
+                FROM atencion_insumo ai
+                INNER JOIN insumo_clinico ic ON ai.id_insumo = ic.id_insumo
+                WHERE ai.id_atencion = %s
+                ORDER BY ai.fecha_registro
+            """, [atencion.id_atencion])
+            
+            insumos_data = []
+            for row in cursor.fetchall():
+                insumos_data.append({
+                    'id_atencion': row[0],
+                    'id_insumo': row[1],
+                    'cantidad_utilizada': row[2],
+                    'costo_asociado': row[3],
+                    'dosis': row[4],
+                    'via_administracion': row[5],
+                    'observaciones': row[6],
+                    'fecha_registro': row[7],
+                    'insumo_nombre': row[8],
+                    'tipo_insumo': row[9],
+                    'principio_activo': row[10],
+                    'laboratorio': row[11],
+                    'unidad_base': row[12],
+                    'precio_unitario': row[13]
+                })
+            insumos = insumos_data
         
         logger.info(f"Detalle de atención cargado: {atencion.id_atencion}")
         logger.info(f"Documentos encontrados: {documentos.count()}")
-        logger.info(f"Insumos encontrados: {insumos.count()}")
+        logger.info(f"Insumos encontrados: {len(insumos)}")
         
         return render(request, 'mascotas/atencion_detalle.html', {
             'atencion': atencion,
