@@ -188,7 +188,7 @@
                 <tbody>
                     {% for insumo in insumos %}
                     <tr>
-                        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem;">{{ insumo.id_insumo.nombre }}</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem;">{{ insumo.insumo_nombre }}</td>
                         <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem; text-align: center;">{{ insumo.cantidad_utilizada|default:'N/A' }}</td>
                         <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem; text-align: center;">{{ insumo.dosis|default:'N/A' }}</td>
                         <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem;">{{ insumo.via_administracion|default:'N/A' }}</td>
