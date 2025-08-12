@@ -25,6 +25,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('tutores/', include('tutores.urls')),
     path('mascotas/', include('mascotas.urls')),
+    path('atencion-medica/', include('atencion_medica.urls')),
 ]
 
 # Configuración para servir archivos media en desarrollo

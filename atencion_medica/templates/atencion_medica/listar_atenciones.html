@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Listar Atenciones Médicas{% endblock %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+    <!-- Título principal -->
+    <div style="text-align: center; margin-bottom: 30px;">
+        <h2 style="color: #333; font-size: 1.8rem; margin-bottom: 10px;">Atenciones Médicas</h2>
+        <p style="color: #666; font-size: 1rem;">Listado de todas las atenciones médicas registradas</p>
+    </div>
+
+    <!-- Contenedor principal -->
+    <div style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 25px; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: #333; font-size: 1.2rem; margin: 0;">Historial de Atenciones</h3>
+            <a href="{% url 'atencion_medica:buscar_mascota_atencion' %}" style="background-color: #007bff; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-size: 0.9rem;">
+                <i class="fas fa-plus" style="margin-right: 8px;"></i>
+                Nueva Atención
+            </a>
+        </div>
+
+        {% if atenciones %}
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem;">
+                <thead>
+                    <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                        <th style="padding: 12px; text-align: left; font-weight: bold; color: #333;">ID</th>
+                        <th style="padding: 12px; text-align: left; font-weight: bold; color: #333;">Mascota</th>
+                        <th style="padding: 12px; text-align: left; font-weight: bold; color: #333;">Tutor</th>
+                        <th style="padding: 12px; text-align: left; font-weight: bold; color: #333;">Fecha</th>
+                        <th style="padding: 12px; text-align: left; font-weight: bold; color: #333;">Doctor</th>
+                        <th style="padding: 12px; text-align: left; font-weight: bold; color: #333;">Servicio</th>
+                        <th style="padding: 12px; text-align: left; font-weight: bold; color: #333;">Estado</th>
+                        <th style="padding: 12px; text-align: center; font-weight: bold; color: #333;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for atencion in atenciones %}
+                    <tr style="border-bottom: 1px solid #dee2e6; transition: background-color 0.2s;">
+                        <td style="padding: 12px; color: #666;">{{ atencion.id_atencion }}</td>
+                        <td style="padding: 12px;">
+                            <div style="font-weight: 500; color: #333;">{{ atencion.id_mascota.nombre }}</div>
+                            <div style="font-size: 0.75rem; color: #666;">{{ atencion.id_mascota.nro_chip }}</div>
+                        </td>
+                        <td style="padding: 12px;">
+                            <div style="font-weight: 500; color: #333;">{{ atencion.id_mascota.id_tutor.nombres }} {{ atencion.id_mascota.id_tutor.apellido_paterno }}</div>
+                            <div style="font-size: 0.75rem; color: #666;">{{ atencion.id_mascota.id_tutor.nro_documento }}</div>
+                        </td>
+                        <td style="padding: 12px; color: #666;">{{ atencion.fecha_atencion|date:"d/m/Y" }}</td>
+                        <td style="padding: 12px; color: #666;">{{ atencion.id_personal.nombres }} {{ atencion.id_personal.apellido_paterno }}</td>
+                        <td style="padding: 12px; color: #666;">{{ atencion.id_servicio_detalle.nombre }}</td>
+                        <td style="padding: 12px;">
+                            {% if atencion.estado == 'PENDIENTE' %}
+                                <span style="background-color: #ffc107; color: #212529; padding: 4px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 500;">Pendiente</span>
+                            {% elif atencion.estado == 'EN_PROCESO' %}
+                                <span style="background-color: #17a2b8; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 500;">En Proceso</span>
+                            {% elif atencion.estado == 'COMPLETADA' %}
+                                <span style="background-color: #28a745; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 500;">Completada</span>
+                            {% elif atencion.estado == 'CANCELADA' %}
+                                <span style="background-color: #dc3545; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 500;">Cancelada</span>
+                            {% endif %}
+                        </td>
+                        <td style="padding: 12px; text-align: center;">
+                            <a href="{% url 'atencion_medica:detalle_atencion' atencion.id_atencion %}" style="background-color: #007bff; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; margin-right: 5px;">
+                                <i class="fas fa-eye" style="margin-right: 4px;"></i>
+                                Ver
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 40px; color: #666;">
+            <i class="fas fa-clipboard-list" style="font-size: 3rem; margin-bottom: 15px; color: #ddd;"></i>
+            <h4 style="margin-bottom: 10px; color: #333;">No hay atenciones registradas</h4>
+            <p style="margin-bottom: 20px;">Aún no se han registrado atenciones médicas en el sistema.</p>
+            <a href="{% url 'atencion_medica:buscar_mascota_atencion' %}" style="background-color: #007bff; color: white; text-decoration: none; padding: 12px 25px; border-radius: 4px; font-weight: 500;">
+                <i class="fas fa-plus" style="margin-right: 8px;"></i>
+                Registrar Primera Atención
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Estadísticas -->
+    {% if atenciones %}
+    <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; text-align: center;">
+        <h4 style="color: #333; font-size: 1rem; margin-bottom: 15px;">Resumen de Atenciones</h4>
+        <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
+            <div style="text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: bold; color: #007bff;">{{ atenciones.count }}</div>
+                <div style="font-size: 0.8rem; color: #666;">Total Atenciones</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: bold; color: #28a745;">
+                    {{ atenciones|length|add:"0" }}
+                </div>
+                <div style="font-size: 0.8rem; color: #666;">Este Mes</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: bold; color: #ffc107;">
+                    {{ atenciones|length|add:"0" }}
+                </div>
+                <div style="font-size: 0.8rem; color: #666;">Pendientes</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    a:hover {
+        background-color: #0056b3 !important;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+    }
+</style>
+{% endblock %}

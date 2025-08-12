@@ -157,7 +157,7 @@ def registrar_mascota_view(request):
             buscar_tutor_form = BuscarTutorMascotaForm(initial={'rut_tutor': tutor_encontrado.nro_documento})
             
             # Precargar el formulario de registro de mascota
-            registrar_mascota_form = RegistrarMascotaForm(tutor_id=tutor_encontrado.id_tutor, initial={'tutor_id': tutor_encontrado.id_tutor})
+            registrar_mascota_form = RegistrarMascotaForm(initial={'tutor_id': tutor_encontrado.id_tutor})
             
         except Tutor.DoesNotExist:
             logger.error(f"Tutor con ID {tutor_id} no encontrado en GET")
@@ -212,6 +212,12 @@ def registrar_mascota_view(request):
                         registrar_mascota_form.fields['raza'].queryset = Raza.objects.filter(
                             id_especie=especie_id, activo=True
                         ).order_by('nombre')
+                    
+                    logger.info("=== VALIDACIÓN DE FORMULARIO ===")
+                    logger.info(f"Formulario válido: {registrar_mascota_form.is_valid()}")
+                    logger.info(f"Errores del formulario: {registrar_mascota_form.errors}")
+                    logger.info(f"Datos POST recibidos: {dict(request.POST)}")
+                    logger.info(f"Archivos recibidos: {dict(request.FILES)}")
                     
                     if registrar_mascota_form.is_valid():
                         logger.info("=== INICIO DE REGISTRO DE MASCOTA ===")

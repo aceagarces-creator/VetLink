@@ -1,6 +1,128 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>¡Bienvenido a VetLink!</h1>
-    <p>Gestiona tutores, mascotas y atenciones clínicas de forma fácil y centralizada.</p>
+<div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+    <!-- Título principal -->
+    <div style="text-align: center; margin-bottom: 40px;">
+        <h1 style="color: #333; font-size: 2.5rem; margin-bottom: 15px;">¡Bienvenido a VetLink!</h1>
+        <p style="color: #666; font-size: 1.2rem;">Gestiona tutores, mascotas y atenciones clínicas de forma fácil y centralizada.</p>
+    </div>
+
+    <!-- Módulos disponibles -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 40px;">
+        
+        <!-- Módulo Tutores -->
+        <div style="background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 30px; text-align: center; transition: transform 0.3s ease;">
+            <div style="background: linear-gradient(135deg, #007bff, #0056b3); color: white; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 2rem;">
+                <i class="fas fa-users"></i>
+            </div>
+            <h3 style="color: #333; font-size: 1.4rem; margin-bottom: 15px;">Gestión de Tutores</h3>
+            <p style="color: #666; font-size: 0.95rem; margin-bottom: 25px; line-height: 1.5;">
+                Registra y consulta información de tutores de mascotas. Busca por RUT y gestiona datos personales.
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <a href="{% url 'tutores:registrar_tutor' %}" style="background: #007bff; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: 500; transition: background-color 0.3s;">
+                    <i class="fas fa-plus" style="margin-right: 8px;"></i>
+                    Registrar Tutor
+                </a>
+                <a href="{% url 'tutores:buscar_tutor' %}" style="background: #28a745; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: 500; transition: background-color 0.3s;">
+                    <i class="fas fa-search" style="margin-right: 8px;"></i>
+                    Consultar Tutor
+                </a>
+            </div>
+        </div>
+
+        <!-- Módulo Mascotas -->
+        <div style="background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 30px; text-align: center; transition: transform 0.3s ease;">
+            <div style="background: linear-gradient(135deg, #28a745, #1e7e34); color: white; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 2rem;">
+                <i class="fas fa-paw"></i>
+            </div>
+            <h3 style="color: #333; font-size: 1.4rem; margin-bottom: 15px;">Gestión de Mascotas</h3>
+            <p style="color: #666; font-size: 0.95rem; margin-bottom: 25px; line-height: 1.5;">
+                Registra nuevas mascotas y consulta fichas clínicas completas con historial de atenciones médicas.
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <a href="{% url 'mascotas:registrar_mascota' %}" style="background: #28a745; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: 500; transition: background-color 0.3s;">
+                    <i class="fas fa-plus" style="margin-right: 8px;"></i>
+                    Registrar Mascota
+                </a>
+                <a href="{% url 'mascotas:ficha_clinica' %}" style="background: #17a2b8; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: 500; transition: background-color 0.3s;">
+                    <i class="fas fa-file-medical" style="margin-right: 8px;"></i>
+                    Consultar Ficha Clínica
+                </a>
+            </div>
+        </div>
+
+        <!-- Módulo Atención Médica -->
+        <div style="background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 30px; text-align: center; transition: transform 0.3s ease;">
+            <div style="background: linear-gradient(135deg, #dc3545, #c82333); color: white; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 2rem;">
+                <i class="fas fa-stethoscope"></i>
+            </div>
+            <h3 style="color: #333; font-size: 1.4rem; margin-bottom: 15px;">Atención Médica</h3>
+            <p style="color: #666; font-size: 0.95rem; margin-bottom: 25px; line-height: 1.5;">
+                Registra nuevas atenciones médicas para mascotas. Incluye datos clínicos, diagnóstico y documentos adjuntos.
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <a href="{% url 'atencion_medica:buscar_mascota_atencion' %}" style="background: #dc3545; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: 500; transition: background-color 0.3s;">
+                    <i class="fas fa-plus" style="margin-right: 8px;"></i>
+                    Registrar Atención Médica
+                </a>
+                <a href="{% url 'atencion_medica:listar_atenciones' %}" style="background: #6f42c1; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: 500; transition: background-color 0.3s;">
+                    <i class="fas fa-list" style="margin-right: 8px;"></i>
+                    Listar Atenciones
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información adicional -->
+    <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 12px; padding: 30px; text-align: center;">
+        <h3 style="color: #333; font-size: 1.3rem; margin-bottom: 15px;">Sistema Integrado de Gestión Veterinaria</h3>
+        <p style="color: #666; font-size: 1rem; line-height: 1.6; margin-bottom: 20px;">
+            VetLink es una plataforma completa que permite gestionar de manera eficiente toda la información 
+            relacionada con mascotas, sus tutores y atenciones médicas. El sistema mantiene un registro 
+            centralizado y seguro de todos los datos clínicos.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 8px; color: #666;">
+                <i class="fas fa-shield-alt" style="color: #28a745;"></i>
+                <span>Datos Seguros</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; color: #666;">
+                <i class="fas fa-sync" style="color: #007bff;"></i>
+                <span>Sincronización en Tiempo Real</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; color: #666;">
+                <i class="fas fa-mobile-alt" style="color: #dc3545;"></i>
+                <span>Acceso Móvil</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    
+    a:hover {
+        background-color: #0056b3 !important;
+    }
+    
+    a[href*="mascotas"]:hover {
+        background-color: #1e7e34 !important;
+    }
+    
+    a[href*="atencion_medica"]:hover {
+        background-color: #c82333 !important;
+    }
+    
+    a[href*="listar"]:hover {
+        background-color: #5a32a3 !important;
+    }
+    
+    a[href*="ficha_clinica"]:hover {
+        background-color: #138496 !important;
+    }
+</style>
 {% endblock %}

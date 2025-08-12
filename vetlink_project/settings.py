@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'core',
     'tutores',
     'mascotas',
+    'atencion_medica',
 ]
 
 MIDDLEWARE = [
