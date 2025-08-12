@@ -109,8 +109,9 @@ class RegistrarMascotaForm(forms.Form):
         label='Raza (*)',
         empty_label='Primero seleccione una especie',
         widget=forms.Select(attrs={
-            'class': 'form-control',
-            'id': 'id_raza'
+            'class': 'form-control select2-enabled',
+            'id': 'id_raza',
+            'data-placeholder': 'Seleccione una raza'
         }),
         error_messages={
             'required': 'Debe seleccionar una raza.',
@@ -118,13 +119,117 @@ class RegistrarMascotaForm(forms.Form):
         }
     )
     
-    color = forms.CharField(
-        max_length=50,
+    COLOR_CHOICES = [
+        ('', 'Seleccione un color'),
+        ('AMARILLO', 'AMARILLO'),
+        ('AMARILLO-BLANCO', 'AMARILLO-BLANCO'),
+        ('AMARILLO-CAFÉ', 'AMARILLO-CAFÉ'),
+        ('AMARILLO-CAFÉ-ROJO', 'AMARILLO-CAFÉ-ROJO'),
+        ('AMARILLO-NEGRO', 'AMARILLO-NEGRO'),
+        ('AMARILLO-NEGRO-CAFÉ', 'AMARILLO-NEGRO-CAFÉ'),
+        ('AMARILLO-ROJO', 'AMARILLO-ROJO'),
+        ('AZUL', 'AZUL'),
+        ('BLANCO', 'BLANCO'),
+        ('BLANCO-AMARILLO', 'BLANCO-AMARILLO'),
+        ('BLANCO-AMARILLO-CAFÉ', 'BLANCO-AMARILLO-CAFÉ'),
+        ('BLANCO-AMARILLO-NEGRO', 'BLANCO-AMARILLO-NEGRO'),
+        ('BLANCO-AMARILLO-ROJO', 'BLANCO-AMARILLO-ROJO'),
+        ('BLANCO-CAFÉ', 'BLANCO-CAFÉ'),
+        ('BLANCO-CAFÉ-NEGRO', 'BLANCO-CAFÉ-NEGRO'),
+        ('BLANCO-CAFÉ-ROJO', 'BLANCO-CAFÉ-ROJO'),
+        ('BLANCO-CREMA', 'BLANCO-CREMA'),
+        ('BLANCO-CREMA-AMARILLO', 'BLANCO-CREMA-AMARILLO'),
+        ('BLANCO-CREMA-CAFÉ', 'BLANCO-CREMA-CAFÉ'),
+        ('BLANCO-CREMA-ROJO', 'BLANCO-CREMA-ROJO'),
+        ('BLANCO-GRIS', 'BLANCO-GRIS'),
+        ('BLANCO-GRIS-AMARILLO', 'BLANCO-GRIS-AMARILLO'),
+        ('BLANCO-GRIS-CAFÉ', 'BLANCO-GRIS-CAFÉ'),
+        ('BLANCO-GRIS-CREMA', 'BLANCO-GRIS-CREMA'),
+        ('BLANCO-GRIS-ROJO', 'BLANCO-GRIS-ROJO'),
+        ('BLANCO-NARANJA', 'BLANCO-NARANJA'),
+        ('BLANCO-NEGRO', 'BLANCO-NEGRO'),
+        ('BLANCO-NEGRO-AMARILLO', 'BLANCO-NEGRO-AMARILLO'),
+        ('BLANCO-NEGRO-CAFE', 'BLANCO-NEGRO-CAFE'),
+        ('BLANCO-NEGRO-CREMA', 'BLANCO-NEGRO-CREMA'),
+        ('BLANCO-NEGRO-GRIS', 'BLANCO-NEGRO-GRIS'),
+        ('BLANCO-NEGRO-ROJO', 'BLANCO-NEGRO-ROJO'),
+        ('BLANCO-ROJO', 'BLANCO-ROJO'),
+        ('CAFÉ', 'CAFÉ'),
+        ('CAFÉ-BLANCO', 'CAFÉ-BLANCO'),
+        ('CAFÉ-GRIS-BLANCO', 'CAFÉ-GRIS-BLANCO'),
+        ('CAFÉ-NEGRO-GRIS', 'CAFÉ-NEGRO-GRIS'),
+        ('CAFÉ-ROJO', 'CAFÉ-ROJO'),
+        ('CREMA', 'CREMA'),
+        ('CREMA-AMARILLO', 'CREMA-AMARILLO'),
+        ('CREMA-AMARILLO-CAFÉ', 'CREMA-AMARILLO-CAFÉ'),
+        ('CREMA-AMARILLO-ROJO', 'CREMA-AMARILLO-ROJO'),
+        ('CREMA-CAFÉ', 'CREMA-CAFÉ'),
+        ('CREMA-CAFÉ-ROJO', 'CREMA-CAFÉ-ROJO'),
+        ('CREMA-ROJO', 'CREMA-ROJO'),
+        ('GRIS', 'GRIS'),
+        ('GRIS-AMARILLO', 'GRIS-AMARILLO'),
+        ('GRIS-AMARILLO-CAFÉ', 'GRIS-AMARILLO-CAFÉ'),
+        ('GRIS-AMARILLO-ROJO', 'GRIS-AMARILLO-ROJO'),
+        ('GRIS-BLANCO', 'GRIS-BLANCO'),
+        ('GRIS-CAFÉ', 'GRIS-CAFÉ'),
+        ('GRIS-CAFÉ-ROJO', 'GRIS-CAFÉ-ROJO'),
+        ('GRIS-CREMA', 'GRIS-CREMA'),
+        ('GRIS-CREMA-AMARILLO', 'GRIS-CREMA-AMARILLO'),
+        ('GRIS-CREMA-CAFÉ', 'GRIS-CREMA-CAFÉ'),
+        ('GRIS-CREMA-ROJO', 'GRIS-CREMA-ROJO'),
+        ('GRIS-ROJO', 'GRIS-ROJO'),
+        ('NARANJA', 'NARANJA'),
+        ('NEGRO', 'NEGRO'),
+        ('NEGRO-AMARILLO', 'NEGRO-AMARILLO'),
+        ('NEGRO-AMARILLO-CAFÉ', 'NEGRO-AMARILLO-CAFÉ'),
+        ('NEGRO-AMARILLO-ROJO', 'NEGRO-AMARILLO-ROJO'),
+        ('NEGRO-BLANCO', 'NEGRO-BLANCO'),
+        ('NEGRO-CAFÉ', 'NEGRO-CAFÉ'),
+        ('NEGRO-CREMA', 'NEGRO-CREMA'),
+        ('NEGRO-CREMA-AMARILLO', 'NEGRO-CREMA-AMARILLO'),
+        ('NEGRO-CREMA-CAFÉ', 'NEGRO-CREMA-CAFÉ'),
+        ('NEGRO-CREMA-ROJO', 'NEGRO-CREMA-ROJO'),
+        ('NEGRO-GRIS', 'NEGRO-GRIS'),
+        ('NEGRO-GRIS-AMARILLO', 'NEGRO-GRIS-AMARILLO'),
+        ('NEGRO-GRIS-CAFÉ', 'NEGRO-GRIS-CAFÉ'),
+        ('NEGRO-GRIS-CREMA', 'NEGRO-GRIS-CREMA'),
+        ('NEGRO-GRIS-NARANJA', 'NEGRO-GRIS-NARANJA'),
+        ('NEGRO-GRIS-ROJO', 'NEGRO-GRIS-ROJO'),
+        ('NEGRO-ROJO', 'NEGRO-ROJO'),
+        ('ROJO', 'ROJO'),
+    ]
+    
+    color = forms.ChoiceField(
+        choices=COLOR_CHOICES,
         label='Color',
         required=False,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Color de la mascota'
+        widget=forms.Select(attrs={
+            'class': 'form-control select2-enabled',
+            'id': 'id_color',
+            'data-placeholder': 'Seleccione un color'
+        })
+    )
+    
+    PATRON_CHOICES = [
+        ('', 'Seleccione un patrón'),
+        ('BANDAS O FRANJAS', 'BANDAS O FRANJAS'),
+        ('JASPEADO', 'JASPEADO'),
+        ('MANCHAS/PARCHES', 'MANCHAS/PARCHES'),
+        ('NINGUNO', 'NINGUNO'),
+        ('NO SE SEÑALA', 'NO SE SEÑALA'),
+        ('PUNTAS DE OTRO COLOR', 'PUNTAS DE OTRO COLOR'),
+        ('RAYAS/ATIGRADO', 'RAYAS/ATIGRADO'),
+        ('SOMBREADO/LEONADO', 'SOMBREADO/LEONADO'),
+    ]
+    
+    patron = forms.ChoiceField(
+        choices=PATRON_CHOICES,
+        label='Patrón',
+        required=False,
+        widget=forms.Select(attrs={
+            'class': 'form-control select2-enabled',
+            'id': 'id_patron',
+            'data-placeholder': 'Seleccione un patrón'
         })
     )
     
@@ -171,19 +276,61 @@ class RegistrarMascotaForm(forms.Form):
         }
     )
     
-    ESTADO_REPRODUCTIVO_CHOICES = [
-        ('', 'Seleccione un estado'),
-        ('Entero', 'Entero'),
-        ('Esterilizado', 'Esterilizado'),
-        ('Castrado', 'Castrado'),
+    ESTERILIZADO_CHOICES = [
+        ('True', 'Si'),
+        ('False', 'No'),
     ]
     
     estado_reproductivo = forms.ChoiceField(
-        choices=ESTADO_REPRODUCTIVO_CHOICES,
-        label='Estado Reproductivo',
+        choices=ESTERILIZADO_CHOICES,
+        label='Esterilizado',
+        required=False,
+        widget=forms.RadioSelect(attrs={
+            'class': 'form-check-input'
+        }),
+        help_text='Seleccione si la mascota está esterilizada'
+    )
+    
+    MODO_OBTENCION_CHOICES = [
+        ('', 'Seleccione...'),
+        ('compra', 'Compra'),
+        ('regalo', 'Regalo'),
+        ('nacido_en_casa', 'Nacido en casa'),
+        ('adopcion_reubicacion', 'Adopción o Reubicación'),
+        ('recogido', 'Recogido'),
+    ]
+    
+    modo_obtencion = forms.ChoiceField(
+        choices=MODO_OBTENCION_CHOICES,
+        label='Modo de Obtención',
         required=False,
         widget=forms.Select(attrs={
-            'class': 'form-control'
+            'class': 'form-control',
+            'style': 'width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: white; color: #333; box-sizing: border-box; font-size: 0.7rem;'
+        })
+    )
+    
+    RAZON_TENENCIA_CHOICES = [
+        ('', 'Seleccione...'),
+        ('asistencia', 'Asistencia'),
+        ('caza', 'Caza'),
+        ('compania', 'Compañía'),
+        ('deporte', 'Deporte'),
+        ('exposicion', 'Exposición'),
+        ('otro', 'Otro'),
+        ('reproduccion', 'Reproducción'),
+        ('seguridad', 'Seguridad'),
+        ('terapia', 'Terapia'),
+        ('trabajo', 'Trabajo'),
+    ]
+    
+    razon_tenencia = forms.ChoiceField(
+        choices=RAZON_TENENCIA_CHOICES,
+        label='Razón de Tenencia',
+        required=False,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+            'style': 'width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: white; color: #333; box-sizing: border-box; font-size: 0.7rem;'
         })
     )
     

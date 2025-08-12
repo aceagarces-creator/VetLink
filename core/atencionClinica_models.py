@@ -81,7 +81,6 @@ class AtencionInsumo(models.Model):
     Utiliza una clave primaria compuesta formada por id_atencion e id_insumo.
     
     Atributos:
-        pk: Clave primaria compuesta (id_atencion, id_insumo)
         id_atencion: Referencia a la atención clínica
         id_insumo: Referencia al insumo clínico utilizado
         cantidad_utilizada: Cantidad del insumo utilizada (opcional)
@@ -92,10 +91,7 @@ class AtencionInsumo(models.Model):
         fecha_registro: Fecha de registro del uso (opcional)
     """
     
-    # Clave primaria compuesta
-    pk = models.CompositePrimaryKey('id_atencion', 'id_insumo')
-    
-    # Relaciones
+    # Relaciones (clave primaria compuesta se maneja en Meta)
     id_atencion = models.ForeignKey(AtencionClinica, models.DO_NOTHING, db_column='id_atencion')
     id_insumo = models.ForeignKey('InsumoClinico', models.DO_NOTHING, db_column='id_insumo')
     
@@ -115,6 +111,7 @@ class AtencionInsumo(models.Model):
         """Configuración del modelo."""
         managed = False
         db_table = 'atencion_insumo'
+        unique_together = [['id_atencion', 'id_insumo']]
     
     def __str__(self):
         """Representación en string de la asociación atención-insumo."""

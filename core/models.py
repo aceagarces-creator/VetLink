@@ -31,12 +31,10 @@ from .especialidad_models import Especialidad
 from .usuario_models import Usuario
 
 # Modelos de atención clínica
-from .atencionClinica_models import AtencionClinica, DocumentoAdjunto
+from .atencionClinica_models import AtencionClinica, DocumentoAdjunto, AtencionInsumo
 
 # Modelos de receta
 from .receta_models import Receta
 
 # Modelos de insumo clínico
-from .insumoClinico_models import InsumoClinico
-
-
+from .insumoClinico_models import InsumoClinico 

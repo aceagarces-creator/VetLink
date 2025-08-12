@@ -53,6 +53,11 @@
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">RUT</label>
                     <input type="text" value="{{ mascota_encontrada.id_tutor.nro_documento }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
                 </div>
+                <div></div>
+                <div></div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 10px;">
                 <div>
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Nombres</label>
                     <input type="text" value="{{ mascota_encontrada.id_tutor.nombres }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
@@ -61,21 +66,22 @@
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Apellido Paterno</label>
                     <input type="text" value="{{ mascota_encontrada.id_tutor.apellido_paterno }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
                 </div>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 10px;">
                 <div>
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Apellido Materno</label>
                     <input type="text" value="{{ mascota_encontrada.id_tutor.apellido_materno|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
                 </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 10px;">
                 <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Correo Electrónico</label>
+                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Correo</label>
                     <input type="email" value="{{ mascota_encontrada.id_tutor.email|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
                 </div>
                 <div>
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Celular</label>
                     <input type="text" value="{{ mascota_encontrada.id_tutor.celular|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
                 </div>
+                <div></div>
             </div>
         </div>
     </div>
@@ -86,7 +92,12 @@
     <!-- Bloque "Datos de la Mascota" -->
     <div class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 auto; width: 80%;">
         <div class="card-body" style="padding: 12px 25px;">
+            <!-- Primera fila: Microchip, Nombre, Especie -->
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                <div>
+                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Microchip</label>
+                    <input type="text" value="{{ mascota_encontrada.nro_chip }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                </div>
                 <div>
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Nombre</label>
                     <input type="text" value="{{ mascota_encontrada.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
@@ -95,35 +106,58 @@
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Especie</label>
                     <input type="text" value="{{ mascota_encontrada.id_especie.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
                 </div>
+            </div>
+            
+            <!-- Segunda fila: Raza, Color, Patrón -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 10px;">
                 <div>
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Raza</label>
                     <input type="text" value="{{ mascota_encontrada.id_raza.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 10px;">
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Número de Chip</label>
-                    <input type="text" value="{{ mascota_encontrada.nro_chip }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Sexo</label>
-                    <input type="text" value="{{ mascota_encontrada.sexo|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
                 </div>
                 <div>
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Color</label>
                     <input type="text" value="{{ mascota_encontrada.color|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
                 </div>
+                <div>
+                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Patrón</label>
+                    <input type="text" value="{{ mascota_encontrada.patron|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                </div>
             </div>
             
+            <!-- Tercera fila: Fecha de Nacimiento, Sexo, Esterilizado -->
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 10px;">
                 <div>
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Fecha de Nacimiento</label>
                     <input type="text" value="{{ mascota_encontrada.fecha_nacimiento|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
                 </div>
                 <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Estado Reproductivo</label>
-                    <input type="text" value="{{ mascota_encontrada.estado_reproductivo|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Sexo</label>
+                    <input type="text" value="{{ mascota_encontrada.sexo|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Esterilizado</label>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <input type="radio" name="esterilizado_{{ mascota_encontrada.id_mascota }}" value="si" {% if mascota_encontrada.estado_reproductivo == True %}checked{% endif %} disabled style="margin: 0;">
+                            <span style="font-size: 0.65rem; color: #333;">Sí</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <input type="radio" name="esterilizado_{{ mascota_encontrada.id_mascota }}" value="no" {% if mascota_encontrada.estado_reproductivo == False %}checked{% endif %} disabled style="margin: 0;">
+                            <span style="font-size: 0.65rem; color: #333;">No</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Cuarta fila: Modo de Obtención, Razón de Tenencia, Estado Vital -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 10px;">
+                <div>
+                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Modo de Obtención</label>
+                    <input type="text" value="{{ mascota_encontrada.modo_obtencion|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Razón de Tenencia</label>
+                    <input type="text" value="{{ mascota_encontrada.razon_tenencia|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
                 </div>
                 <div>
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Estado Vital</label>
@@ -131,6 +165,13 @@
                 </div>
             </div>
             
+            <!-- Quinta fila: Notas Adicionales -->
+            <div style="margin-top: 10px;">
+                <div>
+                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Notas Adicionales</label>
+                    <textarea readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem; min-height: 60px; resize: vertical;">{{ mascota_encontrada.notas_adicionales|default:'' }}</textarea>
+                </div>
+            </div>
 
         </div>
     </div>
@@ -618,21 +659,24 @@
              body: formData
          })
          .then(response => response.json())
-         .then(data => {
-             progresoDiv.style.display = 'none';
-             
-             if (data.success) {
-                 // Cerrar modal y actualizar interfaz
-                 cerrarModalSubirConsentimiento();
-                 verificarConsentimiento(mascotaActual);
-                 
-                 // Mostrar mensaje de éxito
-                 alert('Documento de consentimiento subido exitosamente');
-             } else {
-                 errorDiv.textContent = data.error || 'Error al subir el documento';
-                 errorDiv.style.display = 'block';
-             }
-         })
+                   .then(data => {
+              progresoDiv.style.display = 'none';
+              
+              if (data.success) {
+                  // Cerrar modal y actualizar interfaz
+                  cerrarModalSubirConsentimiento();
+                  verificarConsentimiento(mascotaActual);
+                  
+                  // Actualizar campos del consentimiento
+                  actualizarCamposConsentimiento(data);
+                  
+                  // Mostrar mensaje de éxito
+                  alert('Documento de consentimiento subido exitosamente');
+              } else {
+                  errorDiv.textContent = data.error || 'Error al subir el documento';
+                  errorDiv.style.display = 'block';
+              }
+          })
          .catch(error => {
              progresoDiv.style.display = 'none';
              errorDiv.textContent = 'Error de conexión al subir el documento';
@@ -641,14 +685,79 @@
          });
      }
      
-     // Funciones para cerrar modales
-     function cerrarModalVerConsentimiento() {
-         document.getElementById('modalVerConsentimiento').style.display = 'none';
-     }
-     
-     function cerrarModalSubirConsentimiento() {
-         document.getElementById('modalSubirConsentimiento').style.display = 'none';
-     }
+           // Función para actualizar campos del consentimiento
+      function actualizarCamposConsentimiento(data) {
+          // Actualizar radio button "Sí"
+          const radioSi = document.querySelector(`input[name="consentimiento_{{ mascota_encontrada.id_mascota }}"][value="si"]`);
+          const radioNo = document.querySelector(`input[name="consentimiento_{{ mascota_encontrada.id_mascota }}"][value="no"]`);
+          
+          if (radioSi && radioNo) {
+              radioSi.checked = true;
+              radioNo.checked = false;
+          }
+          
+          // Buscar todos los labels y encontrar los específicos
+          const labels = document.querySelectorAll('label');
+          let clinicaInput = null;
+          let fechaInput = null;
+          
+          for (let label of labels) {
+              if (label.textContent.includes('Clínica donde firma el consentimiento')) {
+                  // Buscar el input siguiente al label
+                  const parentDiv = label.closest('div');
+                  if (parentDiv) {
+                      clinicaInput = parentDiv.querySelector('input[readonly]');
+                  }
+              }
+              if (label.textContent.includes('Fecha de consentimiento')) {
+                  // Buscar el input siguiente al label
+                  const parentDiv = label.closest('div');
+                  if (parentDiv) {
+                      fechaInput = parentDiv.querySelector('input[readonly]');
+                  }
+              }
+          }
+          
+          // Actualizar clínica de consentimiento
+          if (clinicaInput && data.clinica_consentimiento) {
+              clinicaInput.value = data.clinica_consentimiento;
+          }
+          
+          // Actualizar fecha de consentimiento
+          if (fechaInput && data.fecha_consentimiento) {
+              fechaInput.value = data.fecha_consentimiento;
+          }
+          
+          // Método alternativo: buscar por el valor actual si no se encontraron por label
+          if (!clinicaInput) {
+              const clinicaInputs = document.querySelectorAll('input[readonly]');
+              for (let input of clinicaInputs) {
+                  if (input.value.includes('No especificada')) {
+                      input.value = data.clinica_consentimiento || 'Clínica por defecto';
+                      break;
+                  }
+              }
+          }
+          
+          if (!fechaInput) {
+              const fechaInputs = document.querySelectorAll('input[readonly]');
+              for (let input of fechaInputs) {
+                  if (input.value.includes('No registrada')) {
+                      input.value = data.fecha_consentimiento || new Date().toLocaleDateString('es-ES');
+                      break;
+                  }
+              }
+          }
+      }
+      
+      // Funciones para cerrar modales
+      function cerrarModalVerConsentimiento() {
+          document.getElementById('modalVerConsentimiento').style.display = 'none';
+      }
+      
+      function cerrarModalSubirConsentimiento() {
+          document.getElementById('modalSubirConsentimiento').style.display = 'none';
+      }
      
      // Cerrar modales al hacer clic fuera de ellos
      window.onclick = function(event) {

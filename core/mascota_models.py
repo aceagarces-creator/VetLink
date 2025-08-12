@@ -58,9 +58,15 @@ class Mascota(models.Model):
     fecha_nacimiento = models.DateField(blank=True, null=True)
     sexo = models.CharField(max_length=10, blank=True, null=True)
     color = models.CharField(max_length=50, blank=True, null=True)
+    patron = models.CharField(max_length=50, blank=True, null=True)
     
     # Estado de la mascota
     estado_reproductivo = models.CharField(max_length=50, blank=True, null=True)
+    
+    # Información de obtención y tenencia
+    modo_obtencion = models.CharField(max_length=50, blank=True, null=True)
+    razon_tenencia = models.CharField(max_length=50, blank=True, null=True)
+    
     estado_vital = models.CharField(max_length=50, blank=True, null=True)
     
     # Multimedia

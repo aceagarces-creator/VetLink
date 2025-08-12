@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 {% endblock %}
 
-<!-- CAMBIO FORZADO v4.0: Bordes normales y padding ajustado - VERSION: 2025-08-08-12:00 -->
+
 
 {% block content %}
 <!-- Título principal con espacio superior reducido y en mayúsculas -->
@@ -46,7 +46,11 @@
         <label for="{{ buscar_tutor_form.rut_tutor.id_for_label }}" style="display: block; font-weight: bold; color: #333; white-space: nowrap; font-size: 0.8rem;">
             {{ buscar_tutor_form.rut_tutor.label }}
         </label>
-        {{ buscar_tutor_form.rut_tutor }}
+        <div style="position: relative;">
+            {{ buscar_tutor_form.rut_tutor }}
+            <!-- Contenedor para mensaje de validación del RUT -->
+            <div id="rut-validation-message" style="display: none; margin-top: 5px; padding: 8px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: 500; align-items: center; gap: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"></div>
+        </div>
         <button type="submit" name="buscar_tutor" class="btn btn-primary" id="btn-buscar-tutor" style="padding: 8px 16px; border-radius: 4px; background-color: #007bff; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px;">
             Buscar
         </button>
@@ -88,10 +92,6 @@
             <!-- Primera fila de campos -->
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
                 <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Rut</label>
-                    <input type="text" value="{{ tutor_encontrado.nro_documento }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-                <div>
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Nombres</label>
                     <input type="text" value="{{ tutor_encontrado.nombres }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
                 </div>
@@ -99,14 +99,14 @@
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Apellido Paterno</label>
                     <input type="text" value="{{ tutor_encontrado.apellido_paterno }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
                 </div>
-            </div>
-            
-            <!-- Segunda fila de campos -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
                 <div>
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Apellido Materno</label>
                     <input type="text" value="{{ tutor_encontrado.apellido_materno|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
                 </div>
+            </div>
+            
+            <!-- Segunda fila de campos -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
                 <div>
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Correo</label>
                     <input type="email" value="{{ tutor_encontrado.email|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
@@ -114,6 +114,9 @@
                 <div>
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Celular</label>
                     <input type="text" value="{{ tutor_encontrado.celular|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                </div>
+                <div>
+                    <!-- Campo vacío para mantener alineación -->
                 </div>
             </div>
         </div>
@@ -128,13 +131,21 @@
     <div class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 auto; width: 80%;">
         <div class="card-body" style="padding: 12px 25px 12px 25px;">
             
-            <form method="post" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data" id="registrar_mascota_form">
                 {% csrf_token %}
                 <input type="hidden" name="tutor_id" value="{{ tutor_encontrado.id_tutor }}">
-                {{ registrar_mascota_form.tutor_id }}
                 
-                <!-- Primera fila - Nombre, Especie, Raza -->
+                <!-- Primera fila - Microchip, Nombre, Especie -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
+                    <div>
+                        <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Microchip</label>
+                        {{ registrar_mascota_form.nro_chip }}
+                        {% if registrar_mascota_form.nro_chip.errors %}
+                            <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
+                                {% for error in registrar_mascota_form.nro_chip.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
                     <div>
                         <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ registrar_mascota_form.nombre.label }}</label>
                         {{ registrar_mascota_form.nombre }}
@@ -153,6 +164,10 @@
                             </div>
                         {% endif %}
                     </div>
+                </div>
+                
+                <!-- Segunda fila - Raza, Color, Patrón -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
                     <div>
                         <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ registrar_mascota_form.raza.label }}</label>
                         {{ registrar_mascota_form.raza }}
@@ -162,10 +177,6 @@
                             </div>
                         {% endif %}
                     </div>
-                </div>
-                
-                <!-- Segunda fila - Color, Número de Chip, Sexo -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
                     <div>
                         <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ registrar_mascota_form.color.label }}</label>
                         {{ registrar_mascota_form.color }}
@@ -175,12 +186,25 @@
                             </div>
                         {% endif %}
                     </div>
+                                           <div>
+                           <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ registrar_mascota_form.patron.label }}</label>
+                           {{ registrar_mascota_form.patron }}
+                           {% if registrar_mascota_form.patron.errors %}
+                               <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
+                                   {% for error in registrar_mascota_form.patron.errors %}{{ error }}{% endfor %}
+                               </div>
+                           {% endif %}
+                       </div>
+                </div>
+                
+                <!-- Tercera fila - Fecha de Nacimiento, Sexo, Estado Reproductivo -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
                     <div>
-                        <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ registrar_mascota_form.nro_chip.label }}</label>
-                        {{ registrar_mascota_form.nro_chip }}
-                        {% if registrar_mascota_form.nro_chip.errors %}
+                        <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ registrar_mascota_form.fecha_nacimiento.label }}</label>
+                        {{ registrar_mascota_form.fecha_nacimiento }}
+                        {% if registrar_mascota_form.fecha_nacimiento.errors %}
                             <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
-                                {% for error in registrar_mascota_form.nro_chip.errors %}{{ error }}{% endfor %}
+                                {% for error in registrar_mascota_form.fecha_nacimiento.errors %}{{ error }}{% endfor %}
                             </div>
                         {% endif %}
                     </div>
@@ -193,34 +217,52 @@
                             </div>
                         {% endif %}
                     </div>
-                </div>
-                
-                <!-- Tercera fila - Fecha de Nacimiento, Estado Reproductivo -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
-                    <div>
-                        <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ registrar_mascota_form.fecha_nacimiento.label }}</label>
-                        {{ registrar_mascota_form.fecha_nacimiento }}
-                        {% if registrar_mascota_form.fecha_nacimiento.errors %}
-                            <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
-                                {% for error in registrar_mascota_form.fecha_nacimiento.errors %}{{ error }}{% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
                     <div>
                         <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ registrar_mascota_form.estado_reproductivo.label }}</label>
-                        {{ registrar_mascota_form.estado_reproductivo }}
+                        <div style="display: flex; align-items: center; gap: 20px; height: 42px;">
+                            <div style="display: flex; align-items: center; gap: 5px;">
+                                <input type="radio" name="estado_reproductivo" value="True" id="estado_reproductivo_0" style="margin: 0; accent-color: #007bff; width: 16px; height: 16px;">
+                                <span style="font-size: 0.65rem; color: #333;">Sí</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 5px;">
+                                <input type="radio" name="estado_reproductivo" value="False" id="estado_reproductivo_1" style="margin: 0; accent-color: #007bff; width: 16px; height: 16px;">
+                                <span style="font-size: 0.65rem; color: #333;">No</span>
+                            </div>
+                        </div>
                         {% if registrar_mascota_form.estado_reproductivo.errors %}
                             <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
                                 {% for error in registrar_mascota_form.estado_reproductivo.errors %}{{ error }}{% endfor %}
                             </div>
                         {% endif %}
                     </div>
+                </div>
+                
+                <!-- Cuarta fila - Modo de Obtención, Razón de Tenencia, Vacío -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
                     <div>
-                        <!-- Columna vacía para mantener la grilla -->
+                        <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ registrar_mascota_form.modo_obtencion.label }}</label>
+                        {{ registrar_mascota_form.modo_obtencion }}
+                        {% if registrar_mascota_form.modo_obtencion.errors %}
+                            <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
+                                {% for error in registrar_mascota_form.modo_obtencion.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ registrar_mascota_form.razon_tenencia.label }}</label>
+                        {{ registrar_mascota_form.razon_tenencia }}
+                        {% if registrar_mascota_form.razon_tenencia.errors %}
+                            <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
+                                {% for error in registrar_mascota_form.razon_tenencia.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <!-- Columna vacía para mantener alineación -->
                     </div>
                 </div>
                 
-                <!-- Cuarta fila - Notas Adicionales (ancho completo) -->
+                <!-- Quinta fila - Notas Adicionales (ancho completo) -->
                 <div style="margin-bottom: 10px;">
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ registrar_mascota_form.notas_adicionales.label }}</label>
                     {{ registrar_mascota_form.notas_adicionales }}
@@ -231,34 +273,68 @@
                     {% endif %}
                 </div>
                 
-                <!-- Quinta fila - Documento de Consentimiento -->
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ registrar_mascota_form.documento_consentimiento.label }}</label>
-                    {{ registrar_mascota_form.documento_consentimiento }}
-                    {% if registrar_mascota_form.documento_consentimiento.errors %}
-                        <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
-                            {% for error in registrar_mascota_form.documento_consentimiento.errors %}{{ error }}{% endfor %}
-                        </div>
-                    {% endif %}
-                    <div style="color: #6c757d; font-size: 0.6rem; margin-top: 3px;">
-                        Formatos aceptados: PDF, JPG, JPEG, PNG
-                    </div>
-                </div>
-                
                 <!-- Errores generales del formulario -->
                 {% if registrar_mascota_form.non_field_errors %}
                     <div style="color: #dc3545; font-size: 0.6rem; margin-bottom: 15px; text-align: center;">
                         {% for error in registrar_mascota_form.non_field_errors %}{{ error }}{% endfor %}
                     </div>
                 {% endif %}
-                
-                <!-- Botón de registro -->
-                <div style="text-align: center; margin-top: 1.5rem;">
-                    <button type="submit" name="registrar_mascota" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; color: white; font-weight: bold; font-size: 12px;">
-                        Registrar Mascota
+            </form>
+        </div>
+    </div>
+    
+    <!-- Título "AUTORIZACIÓN PARA COMPARTIR ANTECEDENTES MÉDICOS" -->
+    <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 80%; margin-left: auto; margin-right: auto; margin-top: 20px;">AUTORIZACIÓN PARA COMPARTIR ANTECEDENTES MÉDICOS</h5>
+    
+    <!-- Card de Autorización -->
+    <div class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 auto; width: 80%;">
+        <div class="card-body" style="padding: 12px 25px 12px 25px;">
+            <!-- Primera fila: Consentimiento, Adjuntar documento, Eliminar documento -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
+                <div>
+                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Registra consentimiento?</label>
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <input type="radio" name="consentimiento_interoperabilidad" value="si" id="consentimiento_si" disabled style="margin: 0; accent-color: #007bff;">
+                            <span style="font-size: 0.65rem; color: #333;">Sí</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <input type="radio" name="consentimiento_interoperabilidad" value="no" id="consentimiento_no" checked disabled style="margin: 0; accent-color: #007bff;">
+                            <span style="font-size: 0.65rem; color: #333;">No</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Adjuntar documento</label>
+                    <input type="file" name="documento_consentimiento" id="documento_consentimiento" accept=".pdf,.jpg,.jpeg,.png" style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: white; color: #333; box-sizing: border-box; font-size: 0.7rem;">
+                    <div style="color: #6c757d; font-size: 0.6rem; margin-top: 3px;">
+                        Formatos aceptados: PDF, JPG, JPEG, PNG
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; height: 100%;">
+                    <button type="button" id="eliminar_documento" style="display: none; background-color: #e6a700; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; white-space: nowrap; text-decoration: none; cursor: pointer;">
+                        <i class="fas fa-trash"></i> Eliminar documento
                     </button>
                 </div>
+            </div>
+            
+            <!-- Banda informativa -->
+            <div style="margin-top: 15px; padding: 10px 15px; background-color: #e7f3ff; border-left: 4px solid #007bff; border-radius: 4px;">
+                <p style="margin: 0; color: #0056b3; font-size: 0.65rem; font-style: italic; line-height: 1.4;">
+                    <strong>Recuerde: </strong> Informar al tutor que este consentimiento autoriza compartir todos los antecedentes médicos de su mascota para cualquier atención que reciba, tanto en esta clínica como en cualquier otra que forme parte de la plataforma VetLink.
+                </p>
+            </div>
+        </div>
+    </div>
+    
             </form>
+            
+            <!-- Botón de registro -->
+            <div style="text-align: center; margin-top: 2rem; margin-bottom: 2rem;">
+                <button type="submit" name="registrar_mascota" form="registrar_mascota_form" style="background-color: #007bff; border: none; padding: 12px 24px; border-radius: 4px; color: white; font-weight: bold; font-size: 14px; cursor: pointer; transition: background-color 0.3s ease;">
+                    Registrar Mascota
+                </button>
+            </div>
         </div>
     </div>
     {% endif %}
@@ -368,6 +444,15 @@
         border-color: #007bff;
         box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
     }
+    
+         /* Estilos globales para radio buttons */
+     input[type="radio"] {
+         accent-color: #007bff !important;
+         width: 16px !important;
+         height: 16px !important;
+         margin: 0 !important;
+         cursor: pointer !important;
+     }
     
     /* Estilo para campos de solo lectura */
     input[readonly] {
@@ -739,6 +824,50 @@ input[name="nro_chip"].chip-success {
     border-color: #28a745 !important;
     box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
 }
+
+/* Estilos para validación del RUT */
+.rut-validation-message {
+    margin-top: 5px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.rut-validation-message.success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.rut-validation-message.error {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    animation: shake 0.5s ease-in-out;
+}
+
+.rut-validation-message.warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+/* Estilo para el input cuando hay error de RUT */
+input[name="rut_tutor"].rut-error {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+/* Estilo para el input cuando el RUT es válido */
+input[name="rut_tutor"].rut-success {
+    border-color: #28a745 !important;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
+}
 </style>
 
 <script>
@@ -780,6 +909,18 @@ document.addEventListener('DOMContentLoaded', function() {
                             razaSelect.appendChild(option);
                         });
                         razaSelect.disabled = false;
+                        
+                        // Reinicializar Select2 para el campo raza
+                        if ($('#id_raza').data('select2')) {
+                            $('#id_raza').select2('destroy');
+                        }
+                        $('#id_raza').select2({
+                            theme: 'bootstrap-5',
+                            placeholder: 'Seleccione una raza',
+                            allowClear: true,
+                            language: 'es',
+                            width: '100%'
+                        });
                     } else {
                         razaSelect.innerHTML = '<option value="">Error al cargar razas</option>';
                     }
@@ -795,44 +936,174 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Validación específica para el campo RUT del tutor
-    const rutInput = document.querySelector('input[name="rut_tutor"]');
-    if (rutInput) {
-        rutInput.addEventListener('input', function(e) {
-            let value = this.value;
-            
-            // Solo permitir números, guión y K/k
-            value = value.replace(/[^0-9Kk-]/g, '');
-            
-            // Convertir k minúscula a K mayúscula
-            value = value.replace(/k/g, 'K');
-            
-            // Asegurar que solo haya un guión
-            const parts = value.split('-');
-            if (parts.length > 2) {
-                value = parts[0] + '-' + parts.slice(1).join('');
-            }
-            
-            this.value = value;
-        });
-        
-        // Prevenir pegado de caracteres no válidos
-        rutInput.addEventListener('paste', function(e) {
-            e.preventDefault();
-            let pastedText = (e.clipboardData || window.clipboardData).getData('text');
-            
-            // Limpiar texto pegado
-            pastedText = pastedText.replace(/[^0-9Kk-]/g, '').replace(/k/g, 'K');
-            
-            // Insertar en la posición del cursor
-            const start = this.selectionStart;
-            const end = this.selectionEnd;
-            const currentValue = this.value;
-            
-            this.value = currentValue.substring(0, start) + pastedText + currentValue.substring(end);
-            this.setSelectionRange(start + pastedText.length, start + pastedText.length);
-        });
-    }
+         // Validación específica para el campo RUT del tutor
+     const rutInput = document.querySelector('input[name="rut_tutor"]');
+     const btnBuscarTutor = document.getElementById('btn-buscar-tutor');
+     const rutValidationMessage = document.getElementById('rut-validation-message');
+     let rutTimeoutId;
+     let rutValido = false;
+     
+     if (rutInput) {
+         rutInput.addEventListener('input', function(e) {
+             let value = this.value;
+             
+             // Solo permitir números, guión y K/k
+             value = value.replace(/[^0-9Kk-]/g, '');
+             
+             // Convertir k minúscula a K mayúscula
+             value = value.replace(/k/g, 'K');
+             
+             // Asegurar que solo haya un guión
+             const parts = value.split('-');
+             if (parts.length > 2) {
+                 value = parts[0] + '-' + parts.slice(1).join('');
+             }
+             
+             this.value = value;
+             
+             // Limpiar timeout anterior
+             clearTimeout(rutTimeoutId);
+             
+             // Limpiar mensajes anteriores
+             if (rutValidationMessage) {
+                 rutValidationMessage.style.display = 'none';
+                 rutValidationMessage.className = 'rut-validation-message';
+                 rutValidationMessage.innerHTML = '';
+             }
+             
+             // Resetear estado de RUT válido
+             rutValido = false;
+             habilitarBotonBuscar(false);
+             
+             // Solo validar si hay un valor
+             if (value.length > 0) {
+                 // Esperar 500ms después de que el usuario deje de escribir
+                 rutTimeoutId = setTimeout(() => {
+                     validarRut(value, this);
+                 }, 500);
+             }
+         });
+         
+         // Prevenir pegado de caracteres no válidos
+         rutInput.addEventListener('paste', function(e) {
+             e.preventDefault();
+             let pastedText = (e.clipboardData || window.clipboardData).getData('text');
+             
+             // Limpiar texto pegado
+             pastedText = pastedText.replace(/[^0-9Kk-]/g, '').replace(/k/g, 'K');
+             
+             // Insertar en la posición del cursor
+             const start = this.selectionStart;
+             const end = this.selectionEnd;
+             const currentValue = this.value;
+             
+             this.value = currentValue.substring(0, start) + pastedText + currentValue.substring(end);
+             this.setSelectionRange(start + pastedText.length, start + pastedText.length);
+         });
+     }
+     
+     // Función para habilitar/deshabilitar el botón de búsqueda
+     function habilitarBotonBuscar(habilitado) {
+         if (btnBuscarTutor) {
+             if (habilitado) {
+                 btnBuscarTutor.disabled = false;
+                 btnBuscarTutor.style.backgroundColor = '#007bff';
+                 btnBuscarTutor.style.cursor = 'pointer';
+                 btnBuscarTutor.title = 'Buscar tutor';
+             } else {
+                 btnBuscarTutor.disabled = true;
+                 btnBuscarTutor.style.backgroundColor = '#6c757d';
+                 btnBuscarTutor.style.cursor = 'not-allowed';
+                 btnBuscarTutor.title = 'Ingrese un RUT válido para buscar';
+             }
+         }
+     }
+     
+     // Función para validar RUT chileno
+     function validarRut(rut, inputElement) {
+         // Limpiar mensajes anteriores
+         if (rutValidationMessage) {
+             rutValidationMessage.style.display = 'none';
+             rutValidationMessage.className = 'rut-validation-message';
+         }
+         
+         // Validar formato básico
+         if (!/^\d{7,8}-[0-9K]$/.test(rut)) {
+             mostrarMensajeRut('error', '❌ Formato de RUT inválido. Use: 12345678-9', inputElement);
+             return;
+         }
+         
+         // Extraer número y dígito verificador
+         const numero = rut.split('-')[0];
+         const dv = rut.split('-')[1];
+         
+         // Calcular dígito verificador
+         let suma = 0;
+         let multiplicador = 2;
+         
+         for (let i = numero.length - 1; i >= 0; i--) {
+             suma += parseInt(numero[i]) * multiplicador;
+             multiplicador = multiplicador === 7 ? 2 : multiplicador + 1;
+         }
+         
+         let dvCalculado = 11 - (suma % 11);
+         if (dvCalculado === 11) {
+             dvCalculado = '0';
+         } else if (dvCalculado === 10) {
+             dvCalculado = 'K';
+         } else {
+             dvCalculado = dvCalculado.toString();
+         }
+         
+         // Validar dígito verificador
+         if (dv.toUpperCase() === dvCalculado) {
+             mostrarMensajeRut('success', '✅ RUT válido', inputElement);
+             rutValido = true;
+             habilitarBotonBuscar(true);
+         } else {
+             mostrarMensajeRut('error', '❌ Dígito verificador incorrecto', inputElement);
+             rutValido = false;
+             habilitarBotonBuscar(false);
+         }
+     }
+     
+     // Función para mostrar mensaje de validación del RUT
+     function mostrarMensajeRut(tipo, mensaje, inputElement) {
+         if (rutValidationMessage) {
+             rutValidationMessage.className = `rut-validation-message ${tipo}`;
+             rutValidationMessage.innerHTML = mensaje;
+             
+             // Solo mostrar si hay un mensaje
+             if (mensaje && mensaje.trim().length > 0) {
+                 rutValidationMessage.style.display = 'flex';
+             } else {
+                 rutValidationMessage.style.display = 'none';
+             }
+             
+             // Aplicar estilos al input
+             inputElement.classList.remove('rut-error', 'rut-success');
+             if (tipo === 'error') {
+                 inputElement.classList.add('rut-error');
+             } else if (tipo === 'success') {
+                 inputElement.classList.add('rut-success');
+             }
+         }
+     }
+     
+     // Prevenir envío del formulario si el RUT no es válido
+     const buscarTutorForm = document.querySelector('.buscar-tutor-form');
+     if (buscarTutorForm) {
+         buscarTutorForm.addEventListener('submit', function(e) {
+             if (!rutValido && rutInput && rutInput.value.trim().length > 0) {
+                 e.preventDefault();
+                 alert('Por favor, ingrese un RUT válido antes de buscar.');
+                 return false;
+             }
+         });
+     }
+     
+     // Inicializar botón de búsqueda como deshabilitado
+     habilitarBotonBuscar(false);
     
     // Aplicar estilos específicos a los campos del formulario de mascota
     const mascotaFormControls = document.querySelectorAll('.card-body input, .card-body select, .card-body textarea');
@@ -878,8 +1149,8 @@ document.addEventListener('DOMContentLoaded', function() {
         dateInput.style.setProperty('border', '1px solid #ddd', 'important');
     });
     
-    // Estilo específico para selects en el formulario de mascota
-    const mascotaSelects = document.querySelectorAll('.card-body select');
+    // Estilo específico para selects en el formulario de mascota (excluyendo Select2)
+    const mascotaSelects = document.querySelectorAll('.card-body select:not(.select2-enabled)');
     mascotaSelects.forEach(select => {
         select.style.setProperty('height', '42px', 'important');
         select.style.setProperty('padding', '0px 12px', 'important');
@@ -1086,24 +1357,71 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Funcionalidad para deshabilitar formulario de búsqueda de tutor
-    const inputRutTutor = document.getElementById('{{ buscar_tutor_form.rut_tutor.id_for_label }}');
-    const btnBuscarTutor = document.getElementById('btn-buscar-tutor');
-    const btnNuevaBusquedaTutor = document.getElementById('btn-nueva-busqueda-tutor');
-    
-    // Si hay un tutor encontrado, deshabilitar solo el input y el botón Buscar
-    {% if tutor_encontrado %}
-    if (inputRutTutor && btnBuscarTutor) {
-        inputRutTutor.disabled = true;
-        btnBuscarTutor.disabled = true;
-    }
-    {% endif %}
+         // Funcionalidad para deshabilitar formulario de búsqueda de tutor cuando ya hay un tutor encontrado
+     const inputRutTutor = document.getElementById('{{ buscar_tutor_form.rut_tutor.id_for_label }}');
+     const btnNuevaBusquedaTutor = document.getElementById('btn-nueva-busqueda-tutor');
+     
+     // Si hay un tutor encontrado, deshabilitar solo el input y el botón Buscar
+     {% if tutor_encontrado %}
+     if (inputRutTutor && btnBuscarTutor) {
+         inputRutTutor.disabled = true;
+         btnBuscarTutor.disabled = true;
+         btnBuscarTutor.style.backgroundColor = '#6c757d';
+         btnBuscarTutor.style.cursor = 'not-allowed';
+     }
+     {% endif %}
     
     // Evento para el botón "Realizar una nueva búsqueda"
     if (btnNuevaBusquedaTutor) {
         btnNuevaBusquedaTutor.addEventListener('click', function() {
             // Redirigir a la página inicial del formulario
             window.location.href = '/mascotas/registrar/';
+        });
+    }
+    
+    // Funcionalidad para el documento de consentimiento
+    const documentoConsentimiento = document.getElementById('documento_consentimiento');
+    const consentimientoSi = document.getElementById('consentimiento_si');
+    const consentimientoNo = document.getElementById('consentimiento_no');
+    const eliminarDocumento = document.getElementById('eliminar_documento');
+    
+         if (documentoConsentimiento) {
+         documentoConsentimiento.addEventListener('change', function() {
+             if (this.files && this.files[0]) {
+                 // Se ha seleccionado un archivo
+                 consentimientoSi.checked = true;
+                 consentimientoNo.checked = false;
+                 consentimientoSi.disabled = true;
+                 consentimientoNo.disabled = true;
+                 eliminarDocumento.style.display = 'inline-block';
+             } else {
+                 // No hay archivo seleccionado
+                 consentimientoSi.checked = false;
+                 consentimientoNo.checked = true;
+                 consentimientoSi.disabled = true;
+                 consentimientoNo.disabled = true;
+                 eliminarDocumento.style.display = 'none';
+             }
+         });
+     }
+    
+    if (eliminarDocumento) {
+        eliminarDocumento.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Limpiar el input de archivo
+            if (documentoConsentimiento) {
+                documentoConsentimiento.value = '';
+            }
+            
+            // Resetear radio buttons
+            consentimientoSi.checked = false;
+            consentimientoNo.checked = true;
+            consentimientoSi.disabled = true;
+            consentimientoNo.disabled = true;
+            
+            // Ocultar enlace de eliminar
+            this.style.display = 'none';
         });
     }
 });

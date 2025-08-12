@@ -153,5 +153,10 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
+        'mascotas': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
     },
 }

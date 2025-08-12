@@ -9,7 +9,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
-from core.models import Tutor, Mascota, Especie, Raza, ClinicaVeterinaria, Servicio, ServicioDetalle, PersonalClinica, AtencionClinica, DocumentoAdjunto
+from core.models import Tutor, Mascota, Especie, Raza, ClinicaVeterinaria, Servicio, ServicioDetalle, PersonalClinica, AtencionClinica, DocumentoAdjunto, AtencionInsumo, InsumoClinico
 from .forms import BuscarTutorMascotaForm, RegistrarMascotaForm, BuscarFichaClinicaForm
 import json
 import logging
@@ -79,13 +79,17 @@ def probar_insercion_directa(tutor_encontrado, datos_mascota):
             sql = """
                 INSERT INTO mascota (
                     id_tutor, id_especie, id_raza, nombre, nro_chip, sexo, 
-                    color, fecha_nacimiento, estado_reproductivo, notas_adicionales,
-                    estado_vital, consentimiento, fecha_consentimiento, 
-                    url_doc_consentimiento, foto, fecha_registro
+                    color, patron, fecha_nacimiento, estado_reproductivo, modo_obtencion, razon_tenencia,
+                    notas_adicionales, estado_vital, consentimiento, fecha_consentimiento, 
+                    id_clinica_consentimiento, url_doc_consentimiento, foto, fecha_registro
                 ) VALUES (
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                 ) RETURNING id_mascota
             """
+            
+            # Determinar consentimiento basado en si hay documento adjunto
+            tiene_consentimiento = bool(datos_mascota.get('documento_consentimiento'))
+            fecha_consentimiento = datetime.now().date() if tiene_consentimiento else None
             
             valores = (
                 tutor_encontrado.id_tutor,
@@ -93,15 +97,19 @@ def probar_insercion_directa(tutor_encontrado, datos_mascota):
                 datos_mascota['raza'].id_raza,
                 datos_mascota['nombre'],
                 datos_mascota['nro_chip'],
-                datos_mascota['sexo'],
+                datos_mascota['sexo'].upper(),
                 datos_mascota['color'] or '',
+                datos_mascota['patron'] or '',
                 datos_mascota['fecha_nacimiento'],
-                datos_mascota['estado_reproductivo'] or '',
+                datos_mascota['estado_reproductivo'] == 'True' if datos_mascota['estado_reproductivo'] else False,
+                datos_mascota.get('modo_obtencion', '').upper() or '',
+                datos_mascota.get('razon_tenencia', '').upper() or '',
                 datos_mascota['notas_adicionales'] or '',
                 'Vivo',
-                bool(datos_mascota['documento_consentimiento']),
-                datetime.now().date() if datos_mascota['documento_consentimiento'] else None,
-                '',
+                tiene_consentimiento,
+                fecha_consentimiento,
+                1,  # id_clinica_consentimiento - valor por defecto
+                '',  # url_doc_consentimiento - se manejará después si hay archivo
                 '',
                 datetime.now()
             )
@@ -122,6 +130,12 @@ def registrar_mascota_view(request):
     Vista para registrar una nueva mascota.
     Incluye búsqueda de tutor por RUT y formulario de registro.
     """
+    logger.info("=== INICIO DE VISTA registrar_mascota_view ===")
+    logger.info(f"Método de request: {request.method}")
+    logger.info(f"URL: {request.path}")
+    logger.info(f"POST data: {request.POST}")
+    logger.info(f"FILES data: {request.FILES}")
+    
     tutor_encontrado = None
     mascota_guardada = None
     mensaje_exito = None
@@ -182,12 +196,15 @@ def registrar_mascota_view(request):
         elif 'registrar_mascota' in request.POST:
             # Registro de mascota
             tutor_id = request.POST.get('tutor_id')
+            # Si tutor_id es una lista, tomar el primer valor no vacío
+            if isinstance(tutor_id, list):
+                tutor_id = next((tid for tid in tutor_id if tid), None)
             logger.info(f"Registrando mascota para tutor ID: {tutor_id}")
             
             if tutor_id:
                 try:
                     tutor_encontrado = Tutor.objects.get(id_tutor=tutor_id)
-                    registrar_mascota_form = RegistrarMascotaForm(request.POST, request.FILES, tutor_id=tutor_id)
+                    registrar_mascota_form = RegistrarMascotaForm(request.POST, request.FILES)
                     
                     # Configurar queryset de razas si se seleccionó especie
                     if 'especie' in request.POST and request.POST['especie']:
@@ -197,8 +214,16 @@ def registrar_mascota_view(request):
                         ).order_by('nombre')
                     
                     if registrar_mascota_form.is_valid():
+                        logger.info("=== INICIO DE REGISTRO DE MASCOTA ===")
                         logger.info("Formulario de mascota válido, procediendo a crear")
                         logger.info(f"Datos limpios: {registrar_mascota_form.cleaned_data}")
+                        logger.info(f"Archivos recibidos: {request.FILES}")
+                        logger.info(f"Tutor ID: {tutor_id}")
+                        logger.info(f"Tutor encontrado: {tutor_encontrado}")
+                        logger.info(f"Tipo de request: {request.method}")
+                        logger.info(f"Content-Type: {request.content_type}")
+                        logger.info(f"POST data keys: {list(request.POST.keys())}")
+                        logger.info(f"FILES data keys: {list(request.FILES.keys())}")
                         
                         try:
                             # Verificar el estado de la secuencia antes de crear la mascota
@@ -214,6 +239,10 @@ def registrar_mascota_view(request):
                             
                             try:
                                 # Intentar con Django ORM primero
+                                # Determinar consentimiento basado en si hay documento adjunto
+                                tiene_consentimiento = bool(registrar_mascota_form.cleaned_data.get('documento_consentimiento'))
+                                fecha_consentimiento = datetime.now().date() if tiene_consentimiento else None
+                                
                                 mascota = Mascota.objects.create(
                                     # NO asignar id_mascota - se usará la secuencia automática
                                     id_tutor=tutor_encontrado,
@@ -221,15 +250,19 @@ def registrar_mascota_view(request):
                                     id_raza=registrar_mascota_form.cleaned_data['raza'],
                                     nombre=registrar_mascota_form.cleaned_data['nombre'],
                                     nro_chip=registrar_mascota_form.cleaned_data['nro_chip'],
-                                    sexo=registrar_mascota_form.cleaned_data['sexo'],
+                                    sexo=registrar_mascota_form.cleaned_data['sexo'].upper(),
                                     color=registrar_mascota_form.cleaned_data['color'] or '',
+                                    patron=registrar_mascota_form.cleaned_data['patron'] or '',
                                     fecha_nacimiento=registrar_mascota_form.cleaned_data['fecha_nacimiento'],
-                                    estado_reproductivo=registrar_mascota_form.cleaned_data['estado_reproductivo'] or '',
+                                    estado_reproductivo=registrar_mascota_form.cleaned_data['estado_reproductivo'] == 'True' if registrar_mascota_form.cleaned_data['estado_reproductivo'] else False,
+                                    modo_obtencion=registrar_mascota_form.cleaned_data.get('modo_obtencion', '').upper() or '',
+                                    razon_tenencia=registrar_mascota_form.cleaned_data.get('razon_tenencia', '').upper() or '',
                                     notas_adicionales=registrar_mascota_form.cleaned_data['notas_adicionales'] or '',
                                     estado_vital='Vivo',  # Por defecto
-                                    consentimiento=bool(registrar_mascota_form.cleaned_data['documento_consentimiento']),
-                                    fecha_consentimiento=datetime.now().date() if registrar_mascota_form.cleaned_data['documento_consentimiento'] else None,
-                                    url_doc_consentimiento='',  # Por ahora vacío
+                                    consentimiento=tiene_consentimiento,
+                                    fecha_consentimiento=fecha_consentimiento,
+                                    id_clinica_consentimiento=1,  # Valor por defecto
+                                    url_doc_consentimiento='',  # Se manejará después si hay archivo
                                     foto='',  # Por ahora vacío
                                     fecha_registro=datetime.now()
                                 )
@@ -250,6 +283,49 @@ def registrar_mascota_view(request):
                                 else:
                                     raise Exception("No se pudo crear la mascota ni con ORM ni con SQL directo")
                             
+                            # Manejar el archivo de consentimiento si se subió
+                            if 'documento_consentimiento' in request.FILES and request.FILES['documento_consentimiento']:
+                                archivo = request.FILES['documento_consentimiento']
+                                
+                                # Validar tipo de archivo
+                                extensiones_permitidas = ['.pdf', '.jpg', '.jpeg', '.png']
+                                nombre_archivo = archivo.name.lower()
+                                if not any(nombre_archivo.endswith(ext) for ext in extensiones_permitidas):
+                                    logger.warning(f"Tipo de archivo no permitido: {nombre_archivo}")
+                                else:
+                                    try:
+                                        # Crear directorio si no existe
+                                        import os
+                                        from django.conf import settings
+                                        from datetime import datetime
+                                        
+                                        # Crear subcarpeta con el ID del tutor
+                                        directorio_consentimientos = os.path.join(settings.MEDIA_ROOT, 'consentimientos', str(tutor_encontrado.id_tutor))
+                                        os.makedirs(directorio_consentimientos, exist_ok=True)
+                                        
+                                        # Generar nombre único para el archivo
+                                        import uuid
+                                        extension = archivo.name.split('.')[-1].lower()
+                                        fecha = datetime.now().strftime('%Y%m%d')
+                                        uuid_short = str(uuid.uuid4())[:8]
+                                        nombre_archivo = f"consent_{mascota.nro_chip}_{fecha}_{uuid_short}.{extension}"
+                                        ruta_archivo = os.path.join(directorio_consentimientos, nombre_archivo)
+                                        
+                                        # Guardar archivo
+                                        with open(ruta_archivo, 'wb+') as destination:
+                                            for chunk in archivo.chunks():
+                                                destination.write(chunk)
+                                        
+                                        # Actualizar la mascota con la URL del documento
+                                        url_documento = f'consentimientos/{tutor_encontrado.id_tutor}/{nombre_archivo}'
+                                        mascota.url_doc_consentimiento = url_documento
+                                        mascota.save()
+                                        
+                                        logger.info(f"Documento de consentimiento guardado: {url_documento}")
+                                        
+                                    except Exception as e:
+                                        logger.error(f"Error al guardar documento de consentimiento: {e}")
+                            
                             mascota_guardada = mascota
                             mensaje_exito = f"La mascota '{mascota.nombre}' ha sido registrada exitosamente"
                             
@@ -265,11 +341,19 @@ def registrar_mascota_view(request):
                             registrar_mascota_form.add_error(None, f"Error al guardar la mascota: {str(e)}")
                     
                     else:
+                        logger.info("=== FORMULARIO NO VÁLIDO ===")
                         logger.info("Formulario de mascota no válido")
                         logger.info(f"Errores del formulario: {registrar_mascota_form.errors}")
+                        logger.info(f"Datos POST recibidos: {request.POST}")
+                        logger.info(f"Archivos recibidos: {request.FILES}")
+                        logger.info(f"Tipo de request: {request.method}")
+                        logger.info(f"Content-Type: {request.content_type}")
+                        logger.info(f"POST data keys: {list(request.POST.keys())}")
+                        logger.info(f"FILES data keys: {list(request.FILES.keys())}")
                         logger.info(f"Errores de campos específicos:")
                         for field, errors in registrar_mascota_form.errors.items():
                             logger.info(f"  {field}: {errors}")
+                        logger.info("=== FIN DE FORMULARIO NO VÁLIDO ===")
                 
                 except Tutor.DoesNotExist:
                     logger.error(f"Tutor con ID {tutor_id} no encontrado")
@@ -277,6 +361,7 @@ def registrar_mascota_view(request):
     
     logger.info(f"Tutor encontrado: {tutor_encontrado}")
     logger.info(f"Mascota guardada: {mascota_guardada}")
+    logger.info("=== FIN DE VISTA registrar_mascota_view ===")
     
     return render(request, 'mascotas/registrar_mascota.html', {
         'buscar_tutor_form': buscar_tutor_form,
@@ -418,17 +503,30 @@ def ficha_clinica_view(request):
                 
                 logger.info(f"Mascota encontrada: {mascota_encontrada}")
                 
-                # Obtener historial de atenciones médicas ordenado por fecha más reciente
-                historial_atenciones = AtencionClinica.objects.filter(
-                    id_mascota=mascota_encontrada
-                ).select_related(
-                    'id_clinica',
-                    'id_personal',
-                    'id_servicio_detalle',
-                    'id_servicio_detalle__id_servicio'
-                ).order_by('-fecha_atencion')
-                
-                logger.info(f"Encontradas {historial_atenciones.count()} atenciones")
+                # Obtener historial de atenciones médicas según el consentimiento
+                if mascota_encontrada.consentimiento:
+                    # Si consentimiento = True, mostrar todas las atenciones
+                    historial_atenciones = AtencionClinica.objects.filter(
+                        id_mascota=mascota_encontrada
+                    ).select_related(
+                        'id_clinica',
+                        'id_personal',
+                        'id_servicio_detalle',
+                        'id_servicio_detalle__id_servicio'
+                    ).order_by('-fecha_atencion')
+                    logger.info(f"Consentimiento TRUE: Mostrando todas las atenciones ({historial_atenciones.count()} encontradas)")
+                else:
+                    # Si consentimiento = False, mostrar solo atenciones de la clínica actual (ID = 1 por defecto)
+                    historial_atenciones = AtencionClinica.objects.filter(
+                        id_mascota=mascota_encontrada,
+                        id_clinica_id=1  # Clínica por defecto hasta implementar autenticación
+                    ).select_related(
+                        'id_clinica',
+                        'id_personal',
+                        'id_servicio_detalle',
+                        'id_servicio_detalle__id_servicio'
+                    ).order_by('-fecha_atencion')
+                    logger.info(f"Consentimiento FALSE: Mostrando solo atenciones de clínica 1 ({historial_atenciones.count()} encontradas)")
                 
             except Mascota.DoesNotExist:
                 mensaje = f"No se encontraron registros para este número de chip: {nro_chip}"
@@ -454,17 +552,30 @@ def ficha_clinica_view(request):
             
             logger.info(f"Mascota encontrada: {mascota_encontrada}")
             
-            # Obtener historial de atenciones médicas ordenado por fecha más reciente
-            historial_atenciones = AtencionClinica.objects.filter(
-                id_mascota=mascota_encontrada
-            ).select_related(
-                'id_clinica',
-                'id_personal',
-                'id_servicio_detalle',
-                'id_servicio_detalle__id_servicio'
-            ).order_by('-fecha_atencion')
-            
-            logger.info(f"Encontradas {historial_atenciones.count()} atenciones")
+            # Obtener historial de atenciones médicas según el consentimiento
+            if mascota_encontrada.consentimiento:
+                # Si consentimiento = True, mostrar todas las atenciones
+                historial_atenciones = AtencionClinica.objects.filter(
+                    id_mascota=mascota_encontrada
+                ).select_related(
+                    'id_clinica',
+                    'id_personal',
+                    'id_servicio_detalle',
+                    'id_servicio_detalle__id_servicio'
+                ).order_by('-fecha_atencion')
+                logger.info(f"Consentimiento TRUE: Mostrando todas las atenciones ({historial_atenciones.count()} encontradas)")
+            else:
+                # Si consentimiento = False, mostrar solo atenciones de la clínica actual (ID = 1 por defecto)
+                historial_atenciones = AtencionClinica.objects.filter(
+                    id_mascota=mascota_encontrada,
+                    id_clinica_id=1  # Clínica por defecto hasta implementar autenticación
+                ).select_related(
+                    'id_clinica',
+                    'id_personal',
+                    'id_servicio_detalle',
+                    'id_servicio_detalle__id_servicio'
+                ).order_by('-fecha_atencion')
+                logger.info(f"Consentimiento FALSE: Mostrando solo atenciones de clínica 1 ({historial_atenciones.count()} encontradas)")
             
             # Crear formulario precargado con el chip
             form = BuscarFichaClinicaForm(initial={'nro_chip': nro_chip_get})
@@ -487,48 +598,7 @@ def ficha_clinica_view(request):
     })
 
 
-def atencion_detalle_view(request, atencion_id):
-    """
-    Vista para mostrar el detalle completo de una atención médica específica.
-    Incluye información del tutor, mascota, atención y documentos adjuntos.
-    """
-    try:
-        # Obtener la atención clínica con todas las relaciones necesarias
-        atencion = AtencionClinica.objects.select_related(
-            'id_mascota',
-            'id_mascota__id_tutor',
-            'id_mascota__id_tutor__id_comuna',
-            'id_mascota__id_tutor__id_comuna__id_provincia',
-            'id_mascota__id_tutor__id_comuna__id_provincia__id_region',
-            'id_mascota__id_especie',
-            'id_mascota__id_raza',
-            'id_clinica',
-            'id_personal',
-            'id_servicio_detalle',
-            'id_servicio_detalle__id_servicio'
-        ).get(id_atencion=atencion_id)
-        
-        # Obtener documentos adjuntos asociados a esta atención
-        documentos_adjuntos = atencion.documentoadjunto_set.all().order_by('fecha_subida')
-        
-        logger.info(f"Detalle de atención cargado: {atencion}")
-        logger.info(f"Documentos adjuntos encontrados: {documentos_adjuntos.count()}")
-        
-        return render(request, 'mascotas/atencion_detalle.html', {
-            'atencion': atencion,
-            'documentos_adjuntos': documentos_adjuntos,
-        })
-        
-    except AtencionClinica.DoesNotExist:
-        logger.error(f"Atención con ID {atencion_id} no encontrada")
-        return render(request, 'mascotas/atencion_detalle.html', {
-            'error': 'La atención médica especificada no fue encontrada.',
-        })
-    except Exception as e:
-        logger.error(f"Error al cargar detalle de atención {atencion_id}: {e}")
-        return render(request, 'mascotas/atencion_detalle.html', {
-            'error': 'Ocurrió un error al cargar los detalles de la atención médica.',
-        })
+
 
 
 def ver_consentimiento(request, mascota_id):
@@ -626,7 +696,7 @@ def subir_consentimiento(request, mascota_id):
         from django.conf import settings
         
         # Crear directorio si no existe
-        directorio = os.path.join(settings.MEDIA_ROOT, 'consentimientos', str(mascota.id_mascota))
+        directorio = os.path.join(settings.MEDIA_ROOT, 'consentimientos', str(mascota.id_tutor.id_tutor))
         os.makedirs(directorio, exist_ok=True)
         
         ruta_archivo = os.path.join(directorio, nombre_archivo)
@@ -636,13 +706,16 @@ def subir_consentimiento(request, mascota_id):
                 destino.write(chunk)
         
         # Actualizar consentimiento de la mascota
-        url_relativa = f'consentimientos/{mascota.id_mascota}/{nombre_archivo}'
+        url_relativa = f'consentimientos/{mascota.id_tutor.id_tutor}/{nombre_archivo}'
         
         mascota.consentimiento = True
         mascota.fecha_consentimiento = datetime.now().date()
         mascota.url_doc_consentimiento = url_relativa
         # Asignar clínica por defecto (ID = 1) - posteriormente se reemplazará por la clínica del usuario autenticado
         mascota.id_clinica_consentimiento_id = 1
+        # Actualizar fecha_ultima_actualizacion
+        from django.utils import timezone
+        mascota.fecha_ultima_actualizacion = timezone.now()
         mascota.save()
         
         return JsonResponse({
@@ -652,7 +725,9 @@ def subir_consentimiento(request, mascota_id):
                 'id': mascota.id_mascota,  # Usar ID de mascota como identificador
                 'nombre': archivo.name,
                 'url': url_relativa
-            }
+            },
+            'clinica_consentimiento': mascota.id_clinica_consentimiento.nombre if mascota.id_clinica_consentimiento else 'Clínica por defecto',
+            'fecha_consentimiento': mascota.fecha_consentimiento.strftime('%d/%m/%Y') if mascota.fecha_consentimiento else ''
         })
         
     except Mascota.DoesNotExist:
@@ -762,5 +837,149 @@ def ver_consentimiento_pdf(request, documento_id):
         return HttpResponse("Mascota no encontrada", status=404)
     except Exception as e:
         logger.error(f"Error al ver consentimiento PDF: {e}")
+        from django.http import HttpResponse
+        return HttpResponse("Error al mostrar el documento", status=500)
+
+
+def atencion_detalle_view(request, atencion_id):
+    """
+    Vista para mostrar el detalle completo de una atención médica.
+    Incluye información del tutor, mascota, atención, insumos y documentos adjuntos.
+    """
+    try:
+        # Obtener la atención con todas las relaciones necesarias
+        atencion = AtencionClinica.objects.select_related(
+            'id_mascota',
+            'id_mascota__id_tutor',
+            'id_mascota__id_tutor__id_comuna',
+            'id_mascota__id_tutor__id_comuna__id_provincia',
+            'id_mascota__id_tutor__id_comuna__id_provincia__id_region',
+            'id_mascota__id_especie',
+            'id_mascota__id_raza',
+            'id_clinica',
+            'id_personal',
+            'id_servicio_detalle',
+            'id_servicio_detalle__id_servicio'
+        ).get(id_atencion=atencion_id)
+        
+        # Obtener documentos adjuntos
+        documentos = DocumentoAdjunto.objects.filter(id_atencion=atencion).order_by('fecha_subida')
+        
+        # Obtener insumos utilizados
+        insumos = AtencionInsumo.objects.select_related(
+            'id_insumo'
+        ).filter(id_atencion=atencion).order_by('fecha_registro')
+        
+        logger.info(f"Detalle de atención cargado: {atencion.id_atencion}")
+        logger.info(f"Documentos encontrados: {documentos.count()}")
+        logger.info(f"Insumos encontrados: {insumos.count()}")
+        
+        return render(request, 'mascotas/atencion_detalle.html', {
+            'atencion': atencion,
+            'documentos': documentos,
+            'insumos': insumos,
+        })
+        
+    except AtencionClinica.DoesNotExist:
+        logger.error(f"Atención con ID {atencion_id} no encontrada")
+        return render(request, 'mascotas/atencion_detalle.html', {
+            'error': 'La atención médica no fue encontrada'
+        })
+    except Exception as e:
+        logger.error(f"Error al cargar detalle de atención {atencion_id}: {e}")
+        return render(request, 'mascotas/atencion_detalle.html', {
+            'error': 'Error al cargar los detalles de la atención médica'
+        })
+
+
+def descargar_documento_atencion(request, documento_id):
+    """
+    Vista para descargar un documento adjunto de una atención médica.
+    """
+    try:
+        documento = DocumentoAdjunto.objects.get(id_documento=documento_id)
+        
+        if not documento.url_archivo:
+            return JsonResponse({
+                'success': False,
+                'error': 'No existe archivo asociado a este documento'
+            })
+        
+        # Construir ruta completa del archivo
+        import os
+        from django.conf import settings
+        from django.http import FileResponse
+        
+        ruta_archivo = os.path.join(settings.MEDIA_ROOT, documento.url_archivo)
+        
+        if os.path.exists(ruta_archivo):
+            response = FileResponse(open(ruta_archivo, 'rb'))
+            response['Content-Type'] = 'application/octet-stream'
+            response['Content-Disposition'] = f'attachment; filename="{documento.nombre_archivo}"'
+            return response
+        else:
+            return JsonResponse({
+                'success': False,
+                'error': 'Archivo no encontrado'
+            })
+            
+    except DocumentoAdjunto.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'Documento no encontrado'
+        })
+    except Exception as e:
+        logger.error(f"Error al descargar documento {documento_id}: {e}")
+        return JsonResponse({
+            'success': False,
+            'error': 'Error al descargar el documento'
+        })
+
+
+def ver_documento_atencion(request, documento_id):
+    """
+    Vista para mostrar documentos de atención médica en el navegador.
+    """
+    try:
+        documento = DocumentoAdjunto.objects.get(id_documento=documento_id)
+        
+        if not documento.url_archivo:
+            from django.http import HttpResponse
+            return HttpResponse("No existe archivo asociado a este documento", status=404)
+        
+        # Construir ruta completa del archivo
+        import os
+        from django.conf import settings
+        from django.http import FileResponse
+        
+        ruta_archivo = os.path.join(settings.MEDIA_ROOT, documento.url_archivo)
+        
+        if os.path.exists(ruta_archivo):
+            # Extraer extensión del archivo
+            extension = os.path.splitext(documento.url_archivo)[1].lower()
+            
+            # Determinar el Content-Type apropiado
+            if extension == '.pdf':
+                content_type = 'application/pdf'
+            elif extension in ['.jpg', '.jpeg']:
+                content_type = 'image/jpeg'
+            elif extension == '.png':
+                content_type = 'image/png'
+            else:
+                content_type = 'application/octet-stream'
+            
+            response = FileResponse(open(ruta_archivo, 'rb'))
+            response['Content-Type'] = content_type
+            response['Content-Disposition'] = 'inline'
+            return response
+        else:
+            from django.http import HttpResponse
+            return HttpResponse("Archivo no encontrado", status=404)
+            
+    except DocumentoAdjunto.DoesNotExist:
+        from django.http import HttpResponse
+        return HttpResponse("Documento no encontrado", status=404)
+    except Exception as e:
+        logger.error(f"Error al ver documento {documento_id}: {e}")
         from django.http import HttpResponse
         return HttpResponse("Error al mostrar el documento", status=500)
