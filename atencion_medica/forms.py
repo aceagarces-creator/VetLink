@@ -99,8 +99,8 @@ class AtencionMedicaForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Configurar querysets iniciales
-        self.fields['id_clinica'].queryset = ClinicaVeterinaria.objects.filter(activo=True).order_by('nombre')
-        self.fields['id_personal'].queryset = PersonalClinica.objects.filter(activo=True).order_by('nombres')
+        self.fields['id_clinica'].queryset = ClinicaVeterinaria.objects.all().order_by('nombre')
+        self.fields['id_personal'].queryset = PersonalClinica.objects.all().order_by('nombres')
         self.fields['id_servicio_detalle'].queryset = ServicioDetalle.objects.filter(activo=True).order_by('nombre')
 
 

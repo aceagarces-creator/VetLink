@@ -1,14 +1,11 @@
 {% extends 'base.html' %}
 
-{% block title %}Registrar Atención Médica - {{ mascota.nombre }}{% endblock %}
+{% block title %}Registrar Atención Médica{% endblock %}
 
 {% block content %}
 <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
-    <!-- Título principal -->
-    <div style="text-align: center; margin-bottom: 30px;">
-        <h2 style="color: #333; font-size: 1.8rem; margin-bottom: 10px;">Registrar Atención Médica</h2>
-        <p style="color: #666; font-size: 1rem;">Registro de nueva atención médica para mascota</p>
-    </div>
+    <!-- Título principal con espacio superior reducido y en mayúsculas -->
+    <h1 style="text-align: center; font-weight: bold; margin-top: 0.1rem; margin-bottom: 20px; color: #333; font-size: 1.3rem; text-transform: uppercase;">REGISTRAR ATENCIÓN MÉDICA</h1>
 
     {% if mensaje_exito %}
     <div style="background-color: #d4edda; color: #155724; padding: 12px; border-radius: 4px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
@@ -17,361 +14,761 @@
     </div>
     {% endif %}
 
-    <form method="post" enctype="multipart/form-data" id="atencion-form">
-        {% csrf_token %}
-        
-        <!-- DATOS DEL TUTOR -->
-        <div style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 25px; margin-bottom: 20px;">
-            <h3 style="color: #333; font-size: 1.2rem; margin-bottom: 20px; border-bottom: 2px solid #007bff; padding-bottom: 10px;">
-                <i class="fas fa-user" style="margin-right: 8px;"></i>
-                DATOS DEL TUTOR
-            </h3>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">RUT</label>
-                    <input type="text" value="{{ mascota.id_tutor.nro_documento }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Nombres</label>
-                    <input type="text" value="{{ mascota.id_tutor.nombres }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Apellidos</label>
-                    <input type="text" value="{{ mascota.id_tutor.apellido_paterno }} {{ mascota.id_tutor.apellido_materno }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
+    {% if mensaje_error %}
+    <div style="background-color: #f8d7da; color: #721c24; padding: 12px; border-radius: 4px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+        <i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>
+        {{ mensaje_error }}
+    </div>
+    {% endif %}
+
+    <!-- SECCIÓN DE BÚSQUEDA DE MASCOTA -->
+    <div style="display: flex; justify-content: center; margin-bottom: 30px;">
+        <form method="post" class="mb-4" style="display: flex; align-items: center; gap: 15px; max-width: 600px;">
+            {% csrf_token %}
+            <label for="{{ buscar_form.nro_chip.id_for_label }}" style="display: block; font-weight: bold; color: #333; white-space: nowrap; font-size: 0.8rem;">
+                Ingrese Microchip(*)
+            </label>
+            {{ buscar_form.nro_chip }}
+            <button type="submit" name="buscar_mascota" class="btn btn-primary" id="btn-buscar" style="padding: 8px 16px; border-radius: 4px; background-color: #007bff; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+                Buscar
+            </button>
+            {% if mascota_encontrada %}
+            <button type="button" class="btn btn-success" id="btn-nueva-busqueda" style="padding: 8px 16px; border-radius: 4px; background-color: #28a745; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+                Realizar nueva búsqueda
+            </button>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Mensaje de error centrado bajo la línea de búsqueda -->
+    {% if buscar_form.nro_chip.errors %}
+        <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+            <div style="color: #dc3545; font-size: 0.65rem; text-align: center;">
+                {% for error in buscar_form.nro_chip.errors %}
+                    {{ error }}
+                {% endfor %}
             </div>
         </div>
+    {% endif %}
 
-        <!-- DATOS DE LA MASCOTA -->
-        <div style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 25px; margin-bottom: 20px;">
-            <h3 style="color: #333; font-size: 1.2rem; margin-bottom: 20px; border-bottom: 2px solid #007bff; padding-bottom: 10px;">
-                <i class="fas fa-paw" style="margin-right: 8px;"></i>
-                DATOS DE LA MASCOTA
-            </h3>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Nombre</label>
-                    <input type="text" value="{{ mascota.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Especie</label>
-                    <input type="text" value="{{ mascota.id_especie.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
+    <!-- SECCIÓN DE DATOS DE LA MASCOTA ENCONTRADA -->
+    {% if mascota_encontrada %}
+                   <!-- Título "REGISTRO DE ATENCIÓN MÉDICA" movido fuera del contenedor -->
+             <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 80%; margin-left: auto; margin-right: auto;">REGISTRO DE ATENCIÓN MÉDICA</h5>
+     
+                       <div class="paciente-info" style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 25px; margin-bottom: 20px;">
+           
+                                                                           <!-- PRIMERA FILA: Clínica (columna 1) + Médico tratante (columna 2) + Fecha de atención (columna 3) -->
+                                      <div class="grid-3">
                 <div>
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Clínica</label>
-                    {{ form.id_clinica }}
-                    {% if form.id_clinica.errors %}
-                    <div style="color: #dc3545; font-size: 0.7rem; margin-top: 5px;">
-                        {% for error in form.id_clinica.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                    {% endif %}
+                    <input type="text" value="Clínica 1" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                    <input type="hidden" name="id_clinica" value="1">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Médico tratante</label>
+                    <input type="text" value="{{ medico_tratante.nombres }} {{ medico_tratante.apellido_paterno }} {{ medico_tratante.apellido_materno }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                    <input type="hidden" name="id_personal" value="{{ medico_tratante.id_personal }}">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Fecha de Atención</label>
+                    <input type="text" id="fecha_display" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                    <input type="hidden" name="fecha_atencion" id="fecha_hidden">
                 </div>
             </div>
-        </div>
-
-        <!-- INFORMACIÓN DE LA ATENCIÓN -->
-        <div style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 25px; margin-bottom: 20px;">
-            <h3 style="color: #333; font-size: 1.2rem; margin-bottom: 20px; border-bottom: 2px solid #007bff; padding-bottom: 10px;">
-                <i class="fas fa-stethoscope" style="margin-right: 8px;"></i>
-                INFORMACIÓN DE LA ATENCIÓN
-            </h3>
             
-            <!-- Primera fila -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 15px;">
+                                                  <!-- SEGUNDA FILA: Rut Tutor y Tutor(a) -->
+             <div class="grid-3" style="margin-top: 10px;">
                 <div>
-                    <label for="{{ form.fecha_atencion.id_for_label }}" style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Fecha de Atención</label>
-                    {{ form.fecha_atencion }}
-                    {% if form.fecha_atencion.errors %}
-                    <div style="color: #dc3545; font-size: 0.7rem; margin-top: 5px;">
-                        {% for error in form.fecha_atencion.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                    {% endif %}
+                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Rut Tutor(a)</label>
+                    <input type="text" value="{{ mascota_encontrada.id_tutor.nro_documento }}" readonly
+                           style="width: 100%; max-width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
                 </div>
-                <div>
-                    <label for="{{ form.id_personal.id_for_label }}" style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Doctor(a)</label>
-                    {{ form.id_personal }}
-                    {% if form.id_personal.errors %}
-                    <div style="color: #dc3545; font-size: 0.7rem; margin-top: 5px;">
-                        {% for error in form.id_personal.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                </div>
-                <div>
-                    <label for="{{ form.id_servicio_detalle.id_for_label }}" style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Servicio Prestado</label>
-                    {{ form.id_servicio_detalle }}
-                    {% if form.id_servicio_detalle.errors %}
-                    <div style="color: #dc3545; font-size: 0.7rem; margin-top: 5px;">
-                        {% for error in form.id_servicio_detalle.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                    {% endif %}
+
+                <!-- Tutor(a) alineado con Especie y extendido hasta donde termina Raza -->
+                <div style="grid-column: 2 / 4;">
+                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Tutor(a)</label>
+                    <input type="text" value="{{ mascota_encontrada.id_tutor.nombres }} {{ mascota_encontrada.id_tutor.apellido_paterno }}" readonly
+                           style="width: 100%; max-width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
                 </div>
             </div>
-
-            <!-- Segunda fila -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px;">
-                <div>
-                    <label for="{{ form.peso.id_for_label }}" style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Peso (kg)</label>
-                    {{ form.peso }}
-                    {% if form.peso.errors %}
-                    <div style="color: #dc3545; font-size: 0.7rem; margin-top: 5px;">
-                        {% for error in form.peso.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                </div>
-                <div>
-                    <label for="{{ form.temperatura.id_for_label }}" style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Temperatura (°C)</label>
-                    {{ form.temperatura }}
-                    {% if form.temperatura.errors %}
-                    <div style="color: #dc3545; font-size: 0.7rem; margin-top: 5px;">
-                        {% for error in form.temperatura.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Motivo de atención -->
-            <div style="margin-bottom: 15px;">
-                <label for="{{ form.motivo_atencion.id_for_label }}" style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Motivo de la Atención</label>
-                {{ form.motivo_atencion }}
-                {% if form.motivo_atencion.errors %}
-                <div style="color: #dc3545; font-size: 0.7rem; margin-top: 5px;">
-                    {% for error in form.motivo_atencion.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- DETALLE CLÍNICO, DIAGNÓSTICO Y TRATAMIENTO -->
-        <div style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 25px; margin-bottom: 20px;">
-            <h3 style="color: #333; font-size: 1.2rem; margin-bottom: 20px; border-bottom: 2px solid #007bff; padding-bottom: 10px;">
-                <i class="fas fa-notes-medical" style="margin-right: 8px;"></i>
-                DETALLE CLÍNICO, DIAGNÓSTICO Y TRATAMIENTO
-            </h3>
+             
+             <!-- TERCERA FILA: Mascota, Especie, Raza -->
+             <div class="grid-3" style="margin-top: 10px;">
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Mascota</label>
+                     <input type="text" value="{{ mascota_encontrada.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Especie</label>
+                     <input type="text" value="{{ mascota_encontrada.id_especie.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Raza</label>
+                     <input type="text" value="{{ mascota_encontrada.id_raza.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr; gap: 15px;">
-                <div>
-                    <label for="{{ form.detalle_clinico.id_for_label }}" style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Detalle Clínico</label>
-                    {{ form.detalle_clinico }}
-                    {% if form.detalle_clinico.errors %}
-                    <div style="color: #dc3545; font-size: 0.7rem; margin-top: 5px;">
-                        {% for error in form.detalle_clinico.errors %}
-                            {{ error }}
-                        {% endfor %}
+                        
+             
+                                                                                                         <div class="grid-3" style="margin-top: 10px;">
+                    <!-- Tercera fila: Servicio, Detalle servicio, Peso y Temperatura -->
+                    <div>
+                        <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Servicio (*)</label>
+                        <select name="id_servicio" id="id_servicio" style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                            <option value="">Seleccione servicio</option>
+                            {% for servicio in servicios %}
+                                <option value="{{ servicio.id_servicio }}">{{ servicio.nombre }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-                    {% endif %}
-                </div>
-                
-                <div>
-                    <label for="{{ form.diagnostico.id_for_label }}" style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Diagnóstico</label>
-                    {{ form.diagnostico }}
-                    {% if form.diagnostico.errors %}
-                    <div style="color: #dc3545; font-size: 0.7rem; margin-top: 5px;">
-                        {% for error in form.diagnostico.errors %}
-                            {{ error }}
-                        {% endfor %}
+                    <div>
+                        <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Detalle Servicio (*)</label>
+                        <select name="id_servicio_detalle" id="id_servicio_detalle" style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                            <option value="">Seleccione un servicio primero</option>
+                        </select>
                     </div>
-                    {% endif %}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               <div>
+                             <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Peso (kg)</label>
+                             <input type="number" name="peso" step="0.1" min="0" style="width: 30%; padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; color: #333; box-sizing: border-box; font-size: 0.65rem; margin-right: 2px;">
+                             <label style="display: inline-block; font-weight: bold; color: #666; font-size: 0.65rem; margin-left: 2px; margin-right: 2px;">Temp (°C)</label>
+                             <input type="number" name="temperatura" step="0.1" min="0" style="width: 30%; padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                         </div>
                 </div>
-                
-                <div>
-                    <label for="{{ form.tratamiento.id_for_label }}" style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Tratamiento</label>
-                    {{ form.tratamiento }}
-                    {% if form.tratamiento.errors %}
-                    <div style="color: #dc3545; font-size: 0.7rem; margin-top: 5px;">
-                        {% for error in form.tratamiento.errors %}
-                            {{ error }}
-                        {% endfor %}
+              
+                                                        
+               
+                              <div class="grid-3" style="margin-top: 10px;">
+                    <!-- Quinta fila: Motivo consulta (3 columnas) -->
+                    <div style="grid-column: 1 / -1;">
+                        <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Motivo Consulta (*)</label>
+                        <textarea name="detalle_atencion" rows="4" style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; color: #333; box-sizing: border-box; font-size: 0.65rem; resize: vertical; font-family: Arial, sans-serif;"></textarea>
                     </div>
-                    {% endif %}
                 </div>
+               
+               <div class="grid-3" style="margin-top: 10px;">
+                   <!-- Sexta fila: Diagnóstico (3 columnas) -->
+                   <div style="grid-column: 1 / -1;">
+                       <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Diagnóstico</label>
+                       <textarea name="diagnostico" rows="4" style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; color: #333; box-sizing: border-box; font-size: 0.65rem; resize: vertical; font-family: Arial, sans-serif;"></textarea>
+                   </div>
+               </div>
+               
+               <div class="grid-3" style="margin-top: 10px;">
+                   <!-- Séptima fila: Tratamiento (3 columnas) -->
+                   <div style="grid-column: 1 / -1;">
+                       <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Tratamiento</label>
+                       <textarea name="tratamiento" rows="4" style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; color: #333; box-sizing: border-box; font-size: 0.65rem; resize: vertical; font-family: Arial, sans-serif;"></textarea>
+                   </div>
+               </div>
+
+               <!-- TABLA DE DOCUMENTOS ADJUNTOS -->
+               <div class="grid-3" style="margin-top: 20px;">
+                   <div style="grid-column: 1 / -1;">
+                       <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 10px;">Documentos Adjuntos</label>
+                       
+                       <!-- Tabla de documentos -->
+                       <div style="border: 1px solid #ddd; border-radius: 4px; overflow: hidden;">
+                           <table id="documentos-table" style="width: 100%; border-collapse: collapse; background-color: #fff;">
+                                                               <thead>
+                                    <tr style="background-color: #f8f9fa;">
+                                        <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd; font-weight: bold; color: #666; font-size: 0.65rem; width: 25%;">Documento</th>
+                                        <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd; font-weight: bold; color: #666; font-size: 0.65rem; width: 25%;">Tipo de Documento</th>
+                                        <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd; font-weight: bold; color: #666; font-size: 0.65rem; width: 35%;">Nombre del Documento</th>
+                                        <th style="padding: 12px; text-align: center; border-bottom: 1px solid #ddd; font-weight: bold; color: #666; font-size: 0.65rem; width: 15%;">Acción</th>
+                                    </tr>
+                                </thead>
+                               <tbody id="documentos-tbody">
+                                                                       <!-- Fila inicial -->
+                                    <tr class="documento-row" data-row-id="0">
+                                        <td style="padding: 8px; border-bottom: 1px solid #eee;">
+                                            <input type="file" name="documento_0" accept=".pdf,.jpg,.jpeg,.png" style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.65rem;">
+                                            <div class="error-message" style="color: #dc3545; font-size: 0.6rem; margin-top: 2px; display: none;"></div>
+                                        </td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #eee;">
+                                                                                         <select name="tipo_documento_0" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; font-size: 0.65rem;">
+                                                 <option value="">Seleccione tipo</option>
+                                                 <option value="Certificado Médico">Certificado Médico</option>
+                                                 <option value="Examen Médico">Examen Médico</option>
+                                                 <option value="Receta Médica">Receta Médica</option>
+                                                 <option value="Formulario de Consentimiento">Formulario de Consentimiento</option>
+                                                 <option value="Otros">Otros</option>
+                                             </select>
+                                            <div class="error-message" style="color: #dc3545; font-size: 0.6rem; margin-top: 2px; display: none;"></div>
+                                        </td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #eee;">
+                                            <input type="text" name="nombre_documento_0" placeholder="Nombre del documento" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; font-size: 0.65rem;">
+                                            <div class="error-message" style="color: #dc3545; font-size: 0.6rem; margin-top: 2px; display: none;"></div>
+                                        </td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">
+                                            <button type="button" class="btn-eliminar-documento" style="padding: 4px 8px; border-radius: 3px; background-color: #dc3545; border: none; color: #FFFFFF; font-weight: bold; font-size: 10px; cursor: pointer;" title="Eliminar documento">
+                                                ✕
+                                            </button>
+                                        </td>
+                                    </tr>
+                               </tbody>
+                           </table>
+                       </div>
+                       
+                       <!-- Botón para agregar documento -->
+                       <div style="margin-top: 10px; text-align: center;">
+                           <button type="button" id="btn-agregar-documento" style="padding: 8px 16px; border-radius: 4px; background-color: #28a745; border: none; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer;">
+                               Agregar Documento
+                           </button>
+                       </div>
+                       
+                       <!-- Mensaje de límite alcanzado -->
+                       <div id="mensaje-limite" style="color: #dc3545; font-size: 0.65rem; text-align: center; margin-top: 5px; display: none;">
+                           Máximo 5 documentos permitidos
+                       </div>
+                   </div>
+               </div>
+         
+                             
+          
             </div>
-        </div>
-
-        <!-- ADJUNTAR DOCUMENTOS -->
-        <div style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 25px; margin-bottom: 20px;">
-            <h3 style="color: #333; font-size: 1.2rem; margin-bottom: 20px; border-bottom: 2px solid #007bff; padding-bottom: 10px;">
-                <i class="fas fa-paperclip" style="margin-right: 8px;"></i>
-                ADJUNTAR DOCUMENTOS
-            </h3>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
-                <!-- Documento 1 -->
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Tipo de Documento</label>
-                    <select name="tipo_documento_1" style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.65rem; background-color: white;">
-                        <option value="">Seleccione tipo</option>
-                        <option value="RADIOGRAFIA">Radiografía</option>
-                        <option value="ANALISIS_SANGRE">Análisis de Sangre</option>
-                        <option value="ECOGRAFIA">Ecografía</option>
-                        <option value="HISTORIA_CLINICA">Historia Clínica</option>
-                        <option value="RECETA">Receta</option>
-                        <option value="CERTIFICADO">Certificado</option>
-                        <option value="OTRO">Otro</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Archivo</label>
-                    <input type="file" name="archivo_1" accept=".pdf,.jpg,.jpeg,.png" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.65rem;">
-                </div>
-                <div style="display: flex; align-items: end;">
-                    <button type="button" class="btn-cargar" data-doc="1" style="background-color: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 4px; font-size: 0.65rem; cursor: pointer;">
-                        <i class="fas fa-upload" style="margin-right: 5px;"></i>
-                        Cargar
-                    </button>
-                </div>
-
-                <!-- Documento 2 -->
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Tipo de Documento</label>
-                    <select name="tipo_documento_2" style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.65rem; background-color: white;">
-                        <option value="">Seleccione tipo</option>
-                        <option value="RADIOGRAFIA">Radiografía</option>
-                        <option value="ANALISIS_SANGRE">Análisis de Sangre</option>
-                        <option value="ECOGRAFIA">Ecografía</option>
-                        <option value="HISTORIA_CLINICA">Historia Clínica</option>
-                        <option value="RECETA">Receta</option>
-                        <option value="CERTIFICADO">Certificado</option>
-                        <option value="OTRO">Otro</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Archivo</label>
-                    <input type="file" name="archivo_2" accept=".pdf,.jpg,.jpeg,.png" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.65rem;">
-                </div>
-                <div style="display: flex; align-items: end;">
-                    <button type="button" class="btn-cargar" data-doc="2" style="background-color: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 4px; font-size: 0.65rem; cursor: pointer;">
-                        <i class="fas fa-upload" style="margin-right: 5px;"></i>
-                        Cargar
-                    </button>
-                </div>
-
-                <!-- Documento 3 -->
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Tipo de Documento</label>
-                    <select name="tipo_documento_3" style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.65rem; background-color: white;">
-                        <option value="">Seleccione tipo</option>
-                        <option value="RADIOGRAFIA">Radiografía</option>
-                        <option value="ANALISIS_SANGRE">Análisis de Sangre</option>
-                        <option value="ECOGRAFIA">Ecografía</option>
-                        <option value="HISTORIA_CLINICA">Historia Clínica</option>
-                        <option value="RECETA">Receta</option>
-                        <option value="CERTIFICADO">Certificado</option>
-                        <option value="OTRO">Otro</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Archivo</label>
-                    <input type="file" name="archivo_3" accept=".pdf,.jpg,.jpeg,.png" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.65rem;">
-                </div>
-                <div style="display: flex; align-items: end;">
-                    <button type="button" class="btn-cargar" data-doc="3" style="background-color: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 4px; font-size: 0.65rem; cursor: pointer;">
-                        <i class="fas fa-upload" style="margin-right: 5px;"></i>
-                        Cargar
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- BOTONES DE ACCIÓN -->
-        <div style="text-align: center; margin-top: 30px;">
-            <button type="submit" id="btn-registrar" style="background-color: #007bff; color: white; border: none; padding: 15px 40px; border-radius: 4px; font-size: 1rem; cursor: pointer; margin-right: 15px; transition: background-color 0.3s;">
-                <i class="fas fa-save" style="margin-right: 8px;"></i>
-                Registrar Atención Médica
-            </button>
-            
-            <button type="button" id="btn-finalizar" disabled style="background-color: #6c757d; color: white; border: none; padding: 15px 40px; border-radius: 4px; font-size: 1rem; cursor: not-allowed; transition: background-color 0.3s;">
-                <i class="fas fa-check-double" style="margin-right: 8px;"></i>
-                Finalizar Registro de Atención
-            </button>
-        </div>
-    </form>
+    {% endif %}
 </div>
 
-<style>
-    .form-control:focus {
-        border-color: #007bff;
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    }
-    
-    button:hover:not(:disabled) {
-        background-color: #0056b3 !important;
-    }
-    
-    .btn-cargar:hover {
-        background-color: #218838 !important;
-    }
-    
-    button:disabled {
-        opacity: 0.6;
-    }
-</style>
-
 <script>
+// Funcionalidad para el buscador de mascota y documentos adjuntos
 document.addEventListener('DOMContentLoaded', function() {
-    // Botones de cargar documentos
-    const btnCargar = document.querySelectorAll('.btn-cargar');
-    btnCargar.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const docNum = this.getAttribute('data-doc');
-            const tipoSelect = document.querySelector(`select[name="tipo_documento_${docNum}"]`);
-            const archivoInput = document.querySelector(`input[name="archivo_${docNum}"]`);
-            
-            if (!tipoSelect.value) {
-                alert('Por favor seleccione un tipo de documento');
-                return;
-            }
-            
-            if (!archivoInput.files[0]) {
-                alert('Por favor seleccione un archivo');
-                return;
-            }
-            
-            // Aquí se podría implementar la carga AJAX si es necesario
-            alert('Documento cargado correctamente');
-        });
-    });
+    const chipInput = document.querySelector('input[name="nro_chip"]');
+    const btnBuscar = document.getElementById('btn-buscar');
+    const btnNuevaBusqueda = document.getElementById('btn-nueva-busqueda');
     
-    // Validación del formulario
-    const form = document.getElementById('atencion-form');
-    const btnRegistrar = document.getElementById('btn-registrar');
-    const btnFinalizar = document.getElementById('btn-finalizar');
-    
-    form.addEventListener('submit', function(e) {
-        // Validaciones básicas
-        const fechaAtencion = document.querySelector('input[name="fecha_atencion"]').value;
-        const doctor = document.querySelector('select[name="id_personal"]').value;
-        const servicio = document.querySelector('select[name="id_servicio_detalle"]').value;
-        const motivo = document.querySelector('textarea[name="motivo_atencion"]').value;
-        
-        if (!fechaAtencion || !doctor || !servicio || !motivo.trim()) {
-            e.preventDefault();
-            alert('Por favor complete todos los campos obligatorios');
-            return;
-        }
-    });
-    
-    // Habilitar botón finalizar después de registrar
-    if (document.querySelector('.alert-success')) {
-        btnFinalizar.disabled = false;
-        btnFinalizar.style.backgroundColor = '#28a745';
-        btnFinalizar.style.cursor = 'pointer';
+    // Si hay una mascota encontrada, deshabilitar solo el input y el botón Buscar
+    {% if mascota_encontrada %}
+    if (chipInput && btnBuscar) {
+        chipInput.disabled = true;
+        btnBuscar.disabled = true;
     }
+    {% endif %}
+    
+    // Evento para el botón "Realizar nueva búsqueda"
+    if (btnNuevaBusqueda) {
+        btnNuevaBusqueda.addEventListener('click', function() {
+            // Redirigir a la página inicial del formulario
+            window.location.href = '/atencion-medica/registrar/';
+        });
+    }
+    
+         // Ocultar campos de documentos si no hay archivo seleccionado
+     const fileInputs = document.querySelectorAll('input[type="file"]');
+     const tipoSelects = document.querySelectorAll('select[name^="tipo_documento"]');
+     
+     fileInputs.forEach((input, index) => {
+         input.addEventListener('change', function() {
+             const tipoSelect = tipoSelects[index];
+             if (this.files.length > 0) {
+                 tipoSelect.style.backgroundColor = '#fff';
+             } else {
+                 tipoSelect.style.backgroundColor = '#f8f9fa';
+             }
+         });
+     });
+     
+     // Establecer fecha actual en el campo de fecha
+     const fechaDisplay = document.getElementById('fecha_display');
+     const fechaHidden = document.getElementById('fecha_hidden');
+     if (fechaDisplay && fechaHidden) {
+         const today = new Date();
+         const formattedDate = today.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+         fechaHidden.value = formattedDate;
+         fechaDisplay.value = today.toLocaleDateString('es-ES'); // Formato DD/MM/YYYY para mostrar
+     }
+     
+     // Función para cargar servicios detalle cuando se selecciona un servicio
+     const servicioSelect = document.getElementById('id_servicio');
+     const detalleSelect = document.getElementById('id_servicio_detalle');
+     
+     if (servicioSelect && detalleSelect) {
+         servicioSelect.addEventListener('change', function() {
+             const servicioId = this.value;
+             
+             // Limpiar el dropdown de detalle
+             detalleSelect.innerHTML = '<option value="">Cargando...</option>';
+             
+             if (servicioId) {
+                 // Obtener el token CSRF
+                 const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                 
+                 // Hacer petición AJAX para obtener servicios detalle
+                 fetch('/atencion-medica/cargar-servicios-detalle/', {
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/json',
+                         'X-CSRFToken': csrfToken
+                     },
+                     body: JSON.stringify({
+                         servicio_id: servicioId
+                     })
+                 })
+                 .then(response => response.json())
+                 .then(data => {
+                     if (data.success) {
+                         // Limpiar y llenar el dropdown
+                         detalleSelect.innerHTML = '<option value="">Seleccione un detalle</option>';
+                         data.servicios_detalle.forEach(servicio => {
+                             const option = document.createElement('option');
+                             option.value = servicio.id_servicio_detalle;
+                             option.textContent = servicio.nombre;
+                             detalleSelect.appendChild(option);
+                         });
+                     } else {
+                         detalleSelect.innerHTML = '<option value="">Error al cargar detalles</option>';
+                         console.error('Error:', data.error);
+                     }
+                 })
+                 .catch(error => {
+                     detalleSelect.innerHTML = '<option value="">Error al cargar detalles</option>';
+                     console.error('Error:', error);
+                 });
+             } else {
+                 detalleSelect.innerHTML = '<option value="">Seleccione un servicio primero</option>';
+             }
+         });
+     }
+
+     // FUNCIONALIDAD PARA TABLA DE DOCUMENTOS ADJUNTOS
+     let documentoCount = 1; // Ya tenemos 1 fila inicial
+     const maxDocumentos = 5;
+     const btnAgregarDocumento = document.getElementById('btn-agregar-documento');
+     const tbody = document.getElementById('documentos-tbody');
+     const mensajeLimite = document.getElementById('mensaje-limite');
+
+     // Función para agregar nueva fila de documento
+     function agregarFilaDocumento() {
+         if (documentoCount >= maxDocumentos) {
+             return;
+         }
+
+                   const newRow = document.createElement('tr');
+          newRow.className = 'documento-row';
+          newRow.setAttribute('data-row-id', documentoCount);
+          newRow.innerHTML = `
+              <td style="padding: 8px; border-bottom: 1px solid #eee;">
+                  <input type="file" name="documento_${documentoCount}" accept=".pdf,.jpg,.jpeg,.png" style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.65rem;">
+                  <div class="error-message" style="color: #dc3545; font-size: 0.6rem; margin-top: 2px; display: none;"></div>
+              </td>
+              <td style="padding: 8px; border-bottom: 1px solid #eee;">
+                  <select name="tipo_documento_${documentoCount}" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; font-size: 0.65rem;">
+                      <option value="">Seleccione tipo</option>
+                      <option value="Certificado Médico">Certificado Médico</option>
+                      <option value="Examen Médico">Examen Médico</option>
+                      <option value="Receta Médica">Receta Médica</option>
+                      <option value="Formulario de Consentimiento">Formulario de Consentimiento</option>
+                      <option value="Otros">Otros</option>
+                  </select>
+                  <div class="error-message" style="color: #dc3545; font-size: 0.6rem; margin-top: 2px; display: none;"></div>
+              </td>
+              <td style="padding: 8px; border-bottom: 1px solid #eee;">
+                  <input type="text" name="nombre_documento_${documentoCount}" placeholder="Nombre del documento" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; font-size: 0.65rem;">
+                  <div class="error-message" style="color: #dc3545; font-size: 0.6rem; margin-top: 2px; display: none;"></div>
+              </td>
+              <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">
+                  <button type="button" class="btn-eliminar-documento" style="padding: 4px 8px; border-radius: 3px; background-color: #dc3545; border: none; color: #FFFFFF; font-weight: bold; font-size: 10px; cursor: pointer;" title="Eliminar documento">
+                      ✕
+                  </button>
+              </td>
+          `;
+
+         tbody.appendChild(newRow);
+         documentoCount++;
+
+         // Configurar eventos para la nueva fila
+         configurarEventosFila(newRow);
+
+         // Verificar si alcanzamos el límite
+         if (documentoCount >= maxDocumentos) {
+             btnAgregarDocumento.style.display = 'none';
+             mensajeLimite.style.display = 'block';
+         }
+     }
+
+     // Función para configurar eventos de una fila
+     function configurarEventosFila(row) {
+         const fileInput = row.querySelector('input[type="file"]');
+         const tipoSelect = row.querySelector('select');
+         const nombreInput = row.querySelector('input[type="text"]');
+
+         // Evento para cambio de archivo
+         fileInput.addEventListener('change', function() {
+             if (this.files.length > 0) {
+                 // Validar tipo de archivo
+                 const file = this.files[0];
+                 const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+                 
+                 if (!allowedTypes.includes(file.type)) {
+                     mostrarError(this, 'Solo se permiten archivos PDF, JPG, JPEG y PNG');
+                     this.value = '';
+                     return;
+                 }
+
+                 // Validar tamaño (máximo 5MB)
+                 if (file.size > 5 * 1024 * 1024) {
+                     mostrarError(this, 'El archivo no puede superar 5MB');
+                     this.value = '';
+                     return;
+                 }
+
+                 // Cambiar color de fondo de campos relacionados
+                 tipoSelect.style.backgroundColor = '#fff';
+                 nombreInput.style.backgroundColor = '#fff';
+                 
+                 // Hacer campos obligatorios
+                 tipoSelect.required = true;
+                 nombreInput.required = true;
+                 
+                 limpiarError(this);
+                 limpiarError(tipoSelect);
+                 limpiarError(nombreInput);
+             } else {
+                 // Restaurar estado inicial
+                 tipoSelect.style.backgroundColor = '#f8f9fa';
+                 nombreInput.style.backgroundColor = '#f8f9fa';
+                 tipoSelect.required = false;
+                 nombreInput.required = false;
+                 
+                 limpiarError(this);
+                 limpiarError(tipoSelect);
+                 limpiarError(nombreInput);
+             }
+         });
+
+         // Evento para cambio de tipo de documento
+         tipoSelect.addEventListener('change', function() {
+             if (fileInput.files.length > 0 && !this.value) {
+                 mostrarError(this, 'Tipo de documento es obligatorio cuando hay un archivo');
+             } else {
+                 limpiarError(this);
+             }
+         });
+
+                   // Evento para cambio de nombre de documento
+          nombreInput.addEventListener('input', function() {
+              if (fileInput.files.length > 0 && !this.value.trim()) {
+                  mostrarError(this, 'Nombre del documento es obligatorio cuando hay un archivo');
+              } else {
+                  limpiarError(this);
+              }
+          });
+
+          // Evento para el botón eliminar
+          const btnEliminar = row.querySelector('.btn-eliminar-documento');
+          if (btnEliminar) {
+              btnEliminar.addEventListener('click', function() {
+                  eliminarFilaDocumento(row);
+              });
+          }
+      }
+
+     // Función para mostrar error
+     function mostrarError(element, message) {
+         const errorDiv = element.parentNode.querySelector('.error-message');
+         errorDiv.textContent = message;
+         errorDiv.style.display = 'block';
+         element.style.borderColor = '#dc3545';
+     }
+
+           // Función para limpiar error
+      function limpiarError(element) {
+          const errorDiv = element.parentNode.querySelector('.error-message');
+          errorDiv.style.display = 'none';
+          element.style.borderColor = '#ccc';
+      }
+
+      // Función para eliminar fila de documento
+      function eliminarFilaDocumento(row) {
+          row.remove();
+          documentoCount--;
+          
+          // Reordenar los nombres de los campos para mantener secuencia
+          reordenarNombresCampos();
+          
+          // Verificar si debemos mostrar el botón de agregar
+          if (documentoCount < maxDocumentos) {
+              btnAgregarDocumento.style.display = 'inline-block';
+              mensajeLimite.style.display = 'none';
+          }
+      }
+
+      // Función para reordenar los nombres de los campos después de eliminar una fila
+      function reordenarNombresCampos() {
+          const filas = document.querySelectorAll('.documento-row');
+          filas.forEach((fila, index) => {
+              const fileInput = fila.querySelector('input[type="file"]');
+              const tipoSelect = fila.querySelector('select');
+              const nombreInput = fila.querySelector('input[type="text"]');
+              
+              // Actualizar nombres de los campos
+              fileInput.name = `documento_${index}`;
+              tipoSelect.name = `tipo_documento_${index}`;
+              nombreInput.name = `nombre_documento_${index}`;
+              
+              // Actualizar data-row-id
+              fila.setAttribute('data-row-id', index);
+          });
+      }
+
+      // Configurar eventos para la fila inicial
+      const filaInicial = document.querySelector('.documento-row');
+      if (filaInicial) {
+          configurarEventosFila(filaInicial);
+          
+          // Agregar evento para el botón eliminar de la fila inicial
+          const btnEliminar = filaInicial.querySelector('.btn-eliminar-documento');
+          if (btnEliminar) {
+              btnEliminar.addEventListener('click', function() {
+                  // Solo permitir eliminar si hay más de una fila
+                  if (documentoCount > 1) {
+                      eliminarFilaDocumento(filaInicial);
+                  } else {
+                      // Si es la única fila, solo limpiar los campos
+                      const fileInput = filaInicial.querySelector('input[type="file"]');
+                      const tipoSelect = filaInicial.querySelector('select');
+                      const nombreInput = filaInicial.querySelector('input[type="text"]');
+                      
+                      fileInput.value = '';
+                      tipoSelect.value = '';
+                      nombreInput.value = '';
+                      tipoSelect.style.backgroundColor = '#f8f9fa';
+                      nombreInput.style.backgroundColor = '#f8f9fa';
+                      tipoSelect.required = false;
+                      nombreInput.required = false;
+                      
+                      limpiarError(fileInput);
+                      limpiarError(tipoSelect);
+                      limpiarError(nombreInput);
+                  }
+              });
+          }
+      }
+
+     // Evento para el botón agregar documento
+     if (btnAgregarDocumento) {
+         btnAgregarDocumento.addEventListener('click', agregarFilaDocumento);
+     }
+
+     // Validación antes de enviar el formulario
+     document.querySelector('form').addEventListener('submit', function(e) {
+         const filas = document.querySelectorAll('.documento-row');
+         let hayErrores = false;
+
+         filas.forEach(fila => {
+             const fileInput = fila.querySelector('input[type="file"]');
+             const tipoSelect = fila.querySelector('select');
+             const nombreInput = fila.querySelector('input[type="text"]');
+
+             if (fileInput.files.length > 0) {
+                 if (!tipoSelect.value) {
+                     mostrarError(tipoSelect, 'Tipo de documento es obligatorio');
+                     hayErrores = true;
+                 }
+                 if (!nombreInput.value.trim()) {
+                     mostrarError(nombreInput, 'Nombre del documento es obligatorio');
+                     hayErrores = true;
+                 }
+             }
+         });
+
+         if (hayErrores) {
+             e.preventDefault();
+             alert('Por favor, complete todos los campos obligatorios para los documentos adjuntos.');
+         }
+     });
 });
 </script>
+
+<style>
+    /* Variables CSS para grid consistente */
+    :root{
+      --grid-gap: 20px;   /* mismo gap actual */
+      --col-w: 1fr;       /* usar fracciones para que se ajuste al espacio disponible */
+    }
+
+    .grid-3 { display:grid; grid-template-columns: repeat(3, var(--col-w)); gap: var(--grid-gap); }
+
+    /* Anchos calculados de cada tarjeta para que las columnas tengan exactamente el mismo ancho */
+    .paciente-info, .registro-info { width: 80%; margin: 0 auto; }
+
+    /* Que nada limite el ancho interno en estas tarjetas */
+    .paciente-info input[type="text"],
+    .registro-info input[type="text"],
+    .registro-info select,
+    .registro-info input[type="date"] {
+      max-width: 100% !important;
+    }
+
+    /* Estilos adicionales para mejorar la apariencia */
+    .container {
+        font-family: Arial, sans-serif;
+    }
+    
+         /* Estilo para el campo de entrada del formulario */
+     input[type="text"]:not([readonly]), input[type="email"] {
+         border-radius: 5px;
+         border: 1px solid #ddd;
+         padding: 8px 12px;
+         font-size: 12px;
+         box-sizing: border-box;
+         max-width: 175px; /* Tamaño normal para campos del formulario */
+     }
+     
+     /* Estilo para campos de solo lectura (sin límite de ancho) */
+     input[type="text"][readonly], input[type="email"][readonly] {
+         border-radius: 5px;
+         border: 1px solid #ddd;
+         padding: 8px 12px;
+         font-size: 12px;
+         box-sizing: border-box;
+         max-width: 100%; /* Sin límite para campos readonly */
+     }
+    
+    input[type="text"]:focus, input[type="email"]:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+    }
+    
+    /* Estilo para campos de solo lectura */
+    input[readonly] {
+        background-color: #f8f9fa !important;
+        color: #333 !important;
+        cursor: not-allowed;
+    }
+    
+    /* Estilos para botones */
+    .btn {
+        transition: all 0.3s ease;
+    }
+    
+    .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    /* Estilo para botón deshabilitado (mantiene color azul pero inactivo) */
+    .btn-primary:disabled {
+        background-color: #007bff !important;
+        opacity: 0.6 !important;
+        cursor: not-allowed !important;
+    }
+    
+    /* Estilo para input deshabilitado (mismo estilo que otros campos readonly) */
+    input:disabled {
+        background-color: #f8f9fa !important;
+        color: #333 !important;
+        cursor: not-allowed !important;
+    }
+    
+         /* Asegurar que todos los elementos usen border-box */
+     * {
+         box-sizing: border-box;
+     }
+     
+     /* Estilos específicos para la tabla de documentos adjuntos */
+     #documentos-table {
+         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+     }
+     
+     #documentos-table th {
+         background-color: #f8f9fa !important;
+         border-bottom: 2px solid #dee2e6 !important;
+     }
+     
+     #documentos-table td {
+         vertical-align: top;
+     }
+     
+     #documentos-table input[type="file"] {
+         border: 1px solid #ccc;
+         border-radius: 4px;
+         padding: 5px;
+         font-size: 0.65rem;
+         background-color: #fff;
+     }
+     
+     #documentos-table input[type="file"]:focus {
+         outline: none;
+         border-color: #007bff;
+         box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+     }
+     
+     #documentos-table select {
+         border: 1px solid #ccc;
+         border-radius: 4px;
+         padding: 8px;
+         font-size: 0.65rem;
+         background-color: #f8f9fa;
+         color: #333;
+     }
+     
+     #documentos-table select:focus {
+         outline: none;
+         border-color: #007bff;
+         box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+         background-color: #fff;
+     }
+     
+     #documentos-table input[type="text"] {
+         border: 1px solid #ccc;
+         border-radius: 4px;
+         padding: 8px;
+         font-size: 0.65rem;
+         background-color: #f8f9fa;
+         color: #333;
+     }
+     
+     #documentos-table input[type="text"]:focus {
+         outline: none;
+         border-color: #007bff;
+         box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+         background-color: #fff;
+     }
+     
+     #btn-agregar-documento {
+         transition: all 0.3s ease;
+     }
+     
+     #btn-agregar-documento:hover {
+         background-color: #218838 !important;
+         transform: translateY(-1px);
+         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+     }
+     
+     #btn-agregar-documento:disabled {
+         background-color: #6c757d !important;
+         cursor: not-allowed !important;
+         opacity: 0.6 !important;
+     }
+     
+     .error-message {
+         color: #dc3545;
+         font-size: 0.6rem;
+         margin-top: 2px;
+         display: none;
+     }
+     
+           .documento-row:hover {
+          background-color: #f8f9fa;
+      }
+      
+      /* Estilos para el botón eliminar documento */
+      .btn-eliminar-documento {
+          transition: all 0.3s ease;
+      }
+      
+      .btn-eliminar-documento:hover {
+          background-color: #c82333 !important;
+          transform: scale(1.1);
+          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      }
+      
+      .btn-eliminar-documento:active {
+          transform: scale(0.95);
+      }
+      
+
+</style>
 {% endblock %}
