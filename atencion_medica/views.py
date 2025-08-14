@@ -637,30 +637,4 @@ def cargar_servicios_detalle(request):
     })
 
 
-def listar_atenciones_view(request):
-    """
-    Vista para listar todas las atenciones médicas registradas.
-    """
-    atenciones = AtencionMedica.objects.select_related(
-        'id_mascota',
-        'id_mascota__id_tutor',
-        'id_clinica',
-        'id_personal',
-        'id_servicio_detalle',
-        'id_servicio_detalle__id_servicio'
-    ).order_by('-fecha_atencion', '-fecha_registro')
-    
-    return render(request, 'atencion_medica/listar_atenciones.html', {
-        'atenciones': atenciones,
-    })
 
-
-def detalle_atencion_view(request, atencion_id):
-    """
-    Vista para mostrar el detalle de una atención médica específica.
-    """
-    atencion = get_object_or_404(AtencionMedica, id_atencion=atencion_id)
-    
-    return render(request, 'atencion_medica/detalle_atencion.html', {
-        'atencion': atencion,
-    })
