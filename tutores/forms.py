@@ -1,7 +1,7 @@
 from django import forms
 import re
 from datetime import date
-from core.models import Tutor, Region, Provincia, Comuna
+from core.models import Tutor, Region, Provincia, Comuna, Nacionalidad
 
 class BuscarTutorForm(forms.Form):
     nro_documento = forms.CharField(
@@ -15,7 +15,7 @@ class BuscarTutorForm(forms.Form):
             'placeholder': 'Ej: 15468064-0',
             'class': 'form-control',
             'style': 'border-radius: 5px; border: 1px solid #ddd; padding: 10px 12px; font-size: 0.65rem; max-width: 250px;',
-            'pattern': '[0-9Kk-]*',
+            'pattern': '[0-9Kk\-]*',
             'oninput': 'this.value = this.value.replace(/[^0-9Kk-]/g, "").replace(/k/g, "K");'
         })
     )
@@ -74,8 +74,7 @@ class RegistrarTutorForm(forms.Form):
             'placeholder': 'Ej: 15468064-0',
             'class': 'form-control',
             'style': 'border-radius: 5px; border: 1px solid #ddd; padding: 10px 12px; font-size: 0.65rem;',
-            'pattern': '[0-9Kk-]*',
-            'oninput': 'this.value = this.value.replace(/[^0-9Kk-]/g, "").replace(/k/g, "K");'
+            'pattern': '[0-9Kk\-]*'
         })
     )
     
@@ -115,7 +114,7 @@ class RegistrarTutorForm(forms.Form):
             'max_length': 'El apellido materno no puede tener más de 100 caracteres',
         },
         widget=forms.TextInput(attrs={
-            'placeholder': 'Opcional',
+            'placeholder': 'Ingrese apellido materno',
             'class': 'form-control',
             'style': 'border-radius: 5px; border: 1px solid #ddd; padding: 10px 12px; font-size: 0.65rem;'
         })
@@ -142,7 +141,7 @@ class RegistrarTutorForm(forms.Form):
             'max_length': 'El celular no puede tener más de 15 caracteres',
         },
         widget=forms.TextInput(attrs={
-            'placeholder': 'Solo números',
+            'placeholder': 'Celular (Solo números)',
             'class': 'form-control',
             'style': 'border-radius: 5px; border: 1px solid #ddd; padding: 10px 12px; font-size: 0.65rem;'
         })
@@ -156,7 +155,7 @@ class RegistrarTutorForm(forms.Form):
             'max_length': 'El teléfono no puede tener más de 15 caracteres',
         },
         widget=forms.TextInput(attrs={
-            'placeholder': 'Opcional',
+            'placeholder': 'Teléfono (Solo números)',
             'class': 'form-control',
             'style': 'border-radius: 5px; border: 1px solid #ddd; padding: 10px 12px; font-size: 0.65rem;'
         })
@@ -175,9 +174,24 @@ class RegistrarTutorForm(forms.Form):
         })
     )
     
+    nacionalidad = forms.ModelChoiceField(
+        label='Nacionalidad',
+        queryset=Nacionalidad.objects.all(),
+        required=False,
+        empty_label="Seleccione Nacionalidad",
+        error_messages={
+            'invalid_choice': 'Seleccione una nacionalidad válida',
+        },
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+            'style': 'border-radius: 5px; border: 1px solid #ddd; padding: 10px 12px; font-size: 0.65rem;'
+        })
+    )
+    
     region = forms.ModelChoiceField(
         label='Región (*)',
         queryset=Region.objects.all(),
+        empty_label="Seleccione Región",
         error_messages={
             'required': 'Debe seleccionar una región',
             'invalid_choice': 'Seleccione una región válida',
@@ -191,6 +205,7 @@ class RegistrarTutorForm(forms.Form):
     provincia = forms.ModelChoiceField(
         label='Provincia (*)',
         queryset=Provincia.objects.none(),
+        empty_label="Seleccione Provincia",
         error_messages={
             'required': 'Debe seleccionar una provincia',
             'invalid_choice': 'Seleccione una provincia válida',
@@ -204,6 +219,7 @@ class RegistrarTutorForm(forms.Form):
     comuna = forms.ModelChoiceField(
         label='Comuna (*)',
         queryset=Comuna.objects.none(),
+        empty_label="Seleccione Comuna",
         error_messages={
             'required': 'Debe seleccionar una comuna',
             'invalid_choice': 'Seleccione una comuna válida',
@@ -236,7 +252,21 @@ class RegistrarTutorForm(forms.Form):
             'max_length': 'El número no puede tener más de 10 caracteres',
         },
         widget=forms.TextInput(attrs={
-            'placeholder': 'Solo números',
+            'placeholder': 'Ingrese el número',
+            'class': 'form-control',
+            'style': 'border-radius: 5px; border: 1px solid #ddd; padding: 10px 12px; font-size: 0.65rem;'
+        })
+    )
+    
+    depto = forms.CharField(
+        label='Depto',
+        max_length=10,
+        required=False,
+        error_messages={
+            'max_length': 'El departamento no puede tener más de 10 caracteres',
+        },
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Ingrese departamento',
             'class': 'form-control',
             'style': 'border-radius: 5px; border: 1px solid #ddd; padding: 10px 12px; font-size: 0.65rem;'
         })
@@ -250,7 +280,7 @@ class RegistrarTutorForm(forms.Form):
             'max_length': 'El complemento no puede tener más de 100 caracteres',
         },
         widget=forms.TextInput(attrs={
-            'placeholder': 'Opcional',
+            'placeholder': 'Ingrese información complementaria',
             'class': 'form-control',
             'style': 'border-radius: 5px; border: 1px solid #ddd; padding: 10px 12px; font-size: 0.65rem;'
         })
@@ -264,7 +294,7 @@ class RegistrarTutorForm(forms.Form):
             'max_length': 'El código postal no puede tener más de 10 caracteres',
         },
         widget=forms.TextInput(attrs={
-            'placeholder': 'Opcional',
+            'placeholder': 'Ingrese código postal',
             'class': 'form-control',
             'style': 'border-radius: 5px; border: 1px solid #ddd; padding: 10px 12px; font-size: 0.65rem;'
         })

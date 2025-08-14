@@ -30,6 +30,7 @@ class Tutor(models.Model):
         celular: Número de teléfono móvil
         calle: Nombre de la calle
         numero: Número de la dirección
+        departamento: Número o letra del departamento
         codigo_postal: Código postal
         complemento: Información adicional de la dirección
         foto: URL o datos de la foto del tutor
@@ -61,6 +62,7 @@ class Tutor(models.Model):
     # Dirección
     calle = models.CharField(max_length=100, blank=True, null=True)
     numero = models.CharField(max_length=10, blank=True, null=True)
+    departamento = models.CharField(max_length=10, blank=True, null=True)
     codigo_postal = models.CharField(max_length=10, blank=True, null=True)
     complemento = models.CharField(max_length=100, blank=True, null=True)
     

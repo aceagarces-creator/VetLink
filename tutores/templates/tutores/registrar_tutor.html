@@ -72,91 +72,126 @@
             <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 100%;">ANTECEDENTES DEL TUTOR(A)</h5>
             <div class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 auto; width: 100%;">
                 <div class="card-body" style="padding: 12px 25px 12px 25px;">
-                    <!-- Primera fila - RUT, Nombres, Apellido Paterno -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
-                        <div>
-                            <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.nro_documento.label }}</label>
-                            {{ form.nro_documento }}
-                            {% if form.nro_documento.errors %}
-                                <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
-                                    {% for error in form.nro_documento.errors %}{{ error }}{% endfor %}
-                                </div>
-                            {% endif %}
-                            <!-- Mensaje de validación de RUT -->
-                            <div id="rutValidationMessage" class="rut-validation-message"></div>
-                        </div>
-                        <div>
-                            <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.nombres.label }}</label>
-                            {{ form.nombres }}
-                            {% if form.nombres.errors %}
-                                <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
-                                    {% for error in form.nombres.errors %}{{ error }}{% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div>
-                            <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.apellido_paterno.label }}</label>
-                            {{ form.apellido_paterno }}
-                            {% if form.apellido_paterno.errors %}
-                                <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
-                                    {% for error in form.apellido_paterno.errors %}{{ error }}{% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    <!-- Segunda fila - Apellido Materno, Correo Electrónico, Celular -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
-                        <div>
-                            <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.apellido_materno.label }}</label>
-                            {{ form.apellido_materno }}
-                            {% if form.apellido_materno.errors %}
-                                <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
-                                    {% for error in form.apellido_materno.errors %}{{ error }}{% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div>
-                            <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.email.label }}</label>
-                            {{ form.email }}
-                            {% if form.email.errors %}
-                                <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
-                                    {% for error in form.email.errors %}{{ error }}{% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div>
-                            <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.celular.label }}</label>
-                            {{ form.celular }}
-                            {% if form.celular.errors %}
-                                <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
-                                    {% for error in form.celular.errors %}{{ error }}{% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    <!-- Tercera fila - Teléfono, Fecha de Nacimiento -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 10px;">
-                        <div>
-                            <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.telefono.label }}</label>
-                            {{ form.telefono }}
-                            {% if form.telefono.errors %}
-                                <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
-                                    {% for error in form.telefono.errors %}{{ error }}{% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div>
-                            <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.fecha_nacimiento.label }}</label>
-                            {{ form.fecha_nacimiento }}
-                            {% if form.fecha_nacimiento.errors %}
-                                <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
-                                    {% for error in form.fecha_nacimiento.errors %}{{ error }}{% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
+                                         <!-- Primera fila - RUT, Vacío, Vacío -->
+                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
+                         <div>
+                             <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.nro_documento.label }}</label>
+                             {{ form.nro_documento }}
+                             {% if form.nro_documento.errors %}
+                                 <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
+                                     {% for error in form.nro_documento.errors %}{{ error }}{% endfor %}
+                                 </div>
+                             {% endif %}
+                             <!-- Mensaje de validación de RUT -->
+                             <div id="rutValidationMessage" class="rut-validation-message"></div>
+                         </div>
+                         <div>
+                             <!-- Campo vacío -->
+                         </div>
+                         <div>
+                             <!-- Campo vacío -->
+                         </div>
+                     </div>
+                     
+                     <!-- Segunda fila - Nombres, Apellido Paterno, Apellido Materno -->
+                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
+                         <div>
+                             <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.nombres.label }}</label>
+                             {{ form.nombres }}
+                             {% if form.nombres.errors %}
+                                 <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
+                                     {% for error in form.nombres.errors %}{{ error }}{% endfor %}
+                                 </div>
+                             {% endif %}
+                         </div>
+                         <div>
+                             <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.apellido_paterno.label }}</label>
+                             {{ form.apellido_paterno }}
+                             {% if form.apellido_paterno.errors %}
+                                 <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
+                                     {% for error in form.apellido_paterno.errors %}{{ error }}{% endfor %}
+                                 </div>
+                             {% endif %}
+                         </div>
+                         <div>
+                             <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.apellido_materno.label }}</label>
+                             {{ form.apellido_materno }}
+                             {% if form.apellido_materno.errors %}
+                                 <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
+                                     {% for error in form.apellido_materno.errors %}{{ error }}{% endfor %}
+                                 </div>
+                             {% endif %}
+                         </div>
+                     </div>
+                     
+                     <!-- Tercera fila - Fecha de Nacimiento, Correo Electrónico, Celular -->
+                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
+                         <div>
+                             <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.fecha_nacimiento.label }}</label>
+                             {{ form.fecha_nacimiento }}
+                             {% if form.fecha_nacimiento.errors %}
+                                 <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
+                                     {% for error in form.fecha_nacimiento.errors %}{{ error }}{% endfor %}
+                                 </div>
+                             {% endif %}
+                         </div>
+                         <div>
+                             <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.email.label }}</label>
+                             {{ form.email }}
+                             {% if form.email.errors %}
+                                 <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
+                                     {% for error in form.email.errors %}{{ error }}{% endfor %}
+                                 </div>
+                             {% endif %}
+                         </div>
+                         <div>
+                             <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.celular.label }}</label>
+                             {{ form.celular }}
+                             {% if form.celular.errors %}
+                                 <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
+                                     {% for error in form.celular.errors %}{{ error }}{% endfor %}
+                                 </div>
+                             {% endif %}
+                         </div>
+                     </div>
+                     
+                     <!-- Cuarta fila - Teléfono, Nacionalidad, Botón Segunda Nacionalidad -->
+                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
+                         <div>
+                             <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.telefono.label }}</label>
+                             {{ form.telefono }}
+                             {% if form.telefono.errors %}
+                                 <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
+                                     {% for error in form.telefono.errors %}{{ error }}{% endfor %}
+                                 </div>
+                             {% endif %}
+                         </div>
+                                                   <div>
+                              <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.nacionalidad.label }}</label>
+                              {{ form.nacionalidad }}
+                              {% if form.nacionalidad.errors %}
+                                  <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
+                                      {% for error in form.nacionalidad.errors %}{{ error }}{% endfor %}
+                                  </div>
+                              {% endif %}
+                          </div>
+                                                   <div id="segunda-nacionalidad-container" style="display: flex; align-items: flex-start; justify-content: center; padding-top: 25px;">
+                              <button type="button" id="btn-segunda-nacionalidad" class="btn btn-sm" style="background-color: #e6a700; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; white-space: nowrap; text-decoration: none; display: inline-block; width: 80%;">
+                                  Segunda Nacionalidad
+                              </button>
+                          </div>
+                          
+                          <!-- Campo de segunda nacionalidad (inicialmente oculto) -->
+                          <div id="segunda-nacionalidad-field" style="display: none;">
+                              <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Segunda Nacionalidad</label>
+                              <select name="segunda_nacionalidad" class="form-control" style="border-radius: 5px; border: 1px solid #ddd; padding: 10px 12px; font-size: 0.65rem;">
+                                  <option value="">Seleccione Segunda Nacionalidad</option>
+                                  {% for nacionalidad in nacionalidades %}
+                                      <option value="{{ nacionalidad.id_nacionalidad }}">{{ nacionalidad.nacionalidad }}</option>
+                                  {% endfor %}
+                              </select>
+                          </div>
+                     </div>
                 </div>
             </div>
             
@@ -195,8 +230,8 @@
                         </div>
                     </div>
                     
-                    <!-- Segunda fila - Calle, Número -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 10px;">
+                    <!-- Segunda fila - Calle, Número, Depto -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
                         <div>
                             <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.calle.label }}</label>
                             {{ form.calle }}
@@ -215,11 +250,15 @@
                                 </div>
                             {% endif %}
                         </div>
+                        <div>
+                            <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Depto</label>
+                            <input type="text" name="depto" id="depto-input" class="form-control" placeholder="Ingrese departamento" value="{{ form.depto.value|default:'' }}" style="border-radius: 5px; border: 1px solid #ddd; padding: 10px 12px; font-size: 0.65rem;">
+                        </div>
                     </div>
                     
                     <!-- Tercera fila - Complemento, Código Postal -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 10px;">
-                        <div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
+                        <div style="grid-column: 1 / 3;">
                             <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.complemento.label }}</label>
                             {{ form.complemento }}
                             {% if form.complemento.errors %}
@@ -228,7 +267,7 @@
                                 </div>
                             {% endif %}
                         </div>
-                        <div>
+                        <div style="grid-column: 3 / 4;">
                             <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.codigo_postal.label }}</label>
                             {{ form.codigo_postal }}
                             {% if form.codigo_postal.errors %}
@@ -241,13 +280,40 @@
                 </div>
             </div>
             
-            <!-- Buttons -->
-            <div style="text-align: center; margin-top: 1.5rem;">
-                <button type="submit" id="btn-registrar-tutor" class="btn btn-primary" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;">
-                    {% if tutor_guardado %}Actualizar Tutor(a){% else %}Registrar Tutor(a){% endif %}
-                </button>
-            </div>
-        </form>
+                     <!-- Buttons -->
+         <div style="text-align: center; margin-top: 1.5rem;">
+             <button type="submit" id="btn-registrar-tutor" class="btn btn-primary" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+                 {% if tutor_guardado %}Actualizar Tutor(a){% else %}Registrar Tutor(a){% endif %}
+             </button>
+         </div>
+     </form>
+     
+     <!-- Modal para errores de validación -->
+     <div id="modal-errores" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center;">
+         <div class="modal-content" style="background-color: #fefefe; margin: auto; padding: 0; border-radius: 12px; width: 95%; max-width: 550px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); animation: modalFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); overflow: hidden;">
+             <div class="modal-header" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; position: relative;">
+                 <h3 style="margin: 0; color: #ffffff; font-size: 1.1rem; display: flex; align-items: center; gap: 10px;">
+                     <i class="fas fa-exclamation-triangle"></i> Campos Obligatorios Requeridos
+                 </h3>
+                 <span class="close-modal" style="color: white; font-size: 24px; font-weight: 300; cursor: pointer; line-height: 1; transition: all 0.2s ease; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.1);">&times;</span>
+             </div>
+             <div class="modal-body" style="padding: 25px; max-height: 70vh; overflow-y: auto; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);">
+                 <div style="text-align: center; padding: 20px;">
+                     <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #dc3545; margin-bottom: 15px;"></i>
+                     <p style="color: #721c24; font-size: 1.1rem; margin: 0 0 20px 0;">Por favor, complete los siguientes campos obligatorios:</p>
+                     <ul id="lista-errores" style="margin: 0; padding-left: 20px; color: #721c24; font-size: 0.9rem; text-align: left; display: inline-block;">
+                         <!-- Los errores se insertarán aquí dinámicamente -->
+                     </ul>
+                 </div>
+                 <p style="margin: 20px 0 0 0; color: #666; font-size: 0.8rem; font-style: italic; text-align: center;">Los campos obligatorios están marcados con (*)</p>
+             </div>
+             <div class="modal-footer" style="padding: 20px 25px; border-top: 1px solid #e9ecef; text-align: right; background-color: #f8f9fa; position: relative;">
+                 <button type="button" class="btn-cerrar-modal" style="background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);">
+                     <i class="fas fa-times"></i> Cerrar
+                 </button>
+             </div>
+         </div>
+     </div>
     </div>
 </div>
 
@@ -314,26 +380,100 @@
         box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
     }
     
-    /* Estilo para el input cuando el RUT es válido */
-    input[name="nro_documento"].rut-success {
-        border-color: #28a745 !important;
-        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
-    }
+         /* Estilo para el input cuando el RUT es válido */
+     input[name="nro_documento"].rut-success {
+         border-color: #28a745 !important;
+         box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
+     }
+     
+     /* Estilos para campos con error */
+     .campo-error {
+         color: #dc3545;
+         font-size: 0.6rem;
+         margin-top: 2px;
+         display: none;
+     }
+     
+     /* Estilos para campos con error en el formulario */
+     input.error, select.error, textarea.error {
+         border-color: #dc3545 !important;
+         box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25) !important;
+     }
+     
+     /* Estilos para el modal */
+     .modal {
+         animation: modalFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+     }
+     
+     .modal-content {
+         animation: modalFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+     }
+     
+     @keyframes modalFadeIn {
+         from {
+             opacity: 0;
+             transform: translateY(-30px) scale(0.9);
+         }
+         to {
+             opacity: 1;
+             transform: translateY(0) scale(1);
+         }
+     }
+     
+     .close-modal:hover {
+         background: rgba(255,255,255,0.2) !important;
+         transform: scale(1.1);
+     }
+     
+     .btn-cerrar-modal:hover {
+         background: linear-gradient(135deg, #5a6268 0%, #495057 100%) !important;
+         transform: translateY(-2px);
+         box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4) !important;
+     }
+     
+     /* Deshabilitar tooltips de validación HTML5 nativa */
+     input:invalid,
+     select:invalid,
+     textarea:invalid {
+         box-shadow: none !important;
+     }
+     
+     /* Ocultar tooltips de validación nativa */
+     input::-webkit-validation-bubble-message,
+     select::-webkit-validation-bubble-message,
+     textarea::-webkit-validation-bubble-message {
+         display: none !important;
+         opacity: 0 !important;
+         visibility: hidden !important;
+     }
+     
+     /* Para Firefox */
+     input:-moz-ui-invalid,
+     select:-moz-ui-invalid,
+     textarea:-moz-ui-invalid {
+         box-shadow: none !important;
+     }
+     
+     /* Para IE/Edge */
+     input:invalid,
+     select:invalid,
+     textarea:invalid {
+         -ms-box-shadow: none !important;
+     }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Variables globales para el estado del RUT
+    let rutDuplicado = false;
+    let rutActual = '';
+    
     const regionSelect = document.getElementById('id_region');
     const provinciaSelect = document.getElementById('id_provincia');
     const comunaSelect = document.getElementById('id_comuna');
     
     let selectedProvincia = null;
     let selectedComuna = null;
-
-    document.querySelector('form').addEventListener('submit', function() {
-        selectedProvincia = provinciaSelect.value;
-        selectedComuna = comunaSelect.value;
-    });
 
     regionSelect.addEventListener('change', function() {
         const regionId = this.value;
@@ -348,8 +488,8 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.json())
             .then(data => {
-                provinciaSelect.innerHTML = '<option value="">Seleccione una provincia</option>';
-                comunaSelect.innerHTML = '<option value="">Seleccione una comuna</option>';
+                provinciaSelect.innerHTML = '<option value="">Seleccione Provincia</option>';
+                comunaSelect.innerHTML = '<option value="">Seleccione Comuna</option>';
                 data.provincias.forEach(provincia => {
                     const option = document.createElement('option');
                     option.value = provincia.id_provincia;
@@ -362,8 +502,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         } else {
-            provinciaSelect.innerHTML = '<option value="">Seleccione una provincia</option>';
-            comunaSelect.innerHTML = '<option value="">Seleccione una comuna</option>';
+            provinciaSelect.innerHTML = '<option value="">Seleccione Provincia</option>';
+            comunaSelect.innerHTML = '<option value="">Seleccione Comuna</option>';
         }
     });
     
@@ -380,7 +520,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.json())
             .then(data => {
-                comunaSelect.innerHTML = '<option value="">Seleccione una comuna</option>';
+                comunaSelect.innerHTML = '<option value="">Seleccione Comuna</option>';
                 data.comunas.forEach(comuna => {
                     const option = document.createElement('option');
                     option.value = comuna.id_comuna;
@@ -393,16 +533,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         } else {
-            comunaSelect.innerHTML = '<option value="">Seleccione una comuna</option>';
+            comunaSelect.innerHTML = '<option value="">Seleccione Comuna</option>';
         }
     });
     
     // Validación específica para el campo RUT del tutor
-    const rutInput = document.querySelector('input[name="nro_documento"]');
+    const rutInputById = document.getElementById('id_nro_documento');
     let timeoutId = null;
     
-    if (rutInput) {
-        rutInput.addEventListener('input', function(e) {
+    // Validación para campos de celular y teléfono (solo números)
+    const celularInput = document.querySelector('input[name="celular"]');
+    const telefonoInput = document.querySelector('input[name="telefono"]');
+    
+    if (rutInputById) {
+        
+        rutInputById.addEventListener('input', function(e) {
             let value = this.value;
             
             // Solo permitir números, guión y K/k
@@ -430,11 +575,11 @@ document.addEventListener('DOMContentLoaded', function() {
             clearTimeout(timeoutId);
             timeoutId = setTimeout(() => {
                 validarRutEnTiempoReal(value);
-            }, 1000); // Esperar 1 segundo después de que el usuario deje de escribir
+            }, 1000);
         });
         
         // Prevenir pegado de caracteres no válidos
-        rutInput.addEventListener('paste', function(e) {
+        rutInputById.addEventListener('paste', function(e) {
             e.preventDefault();
             let pastedText = (e.clipboardData || window.clipboardData).getData('text');
             
@@ -450,6 +595,584 @@ document.addEventListener('DOMContentLoaded', function() {
             this.setSelectionRange(start + pastedText.length, start + pastedText.length);
         });
     }
+        
+
+    
+        // Función para validar campos de celular y teléfono (solo números)
+    function validarCampoNumerico(input) {
+        if (input) {
+            input.addEventListener('input', function(e) {
+                // Remover cualquier carácter que no sea número
+                let value = this.value.replace(/[^0-9]/g, '');
+                
+                // Limitar a 10 caracteres
+                if (value.length > 10) {
+                    value = value.substring(0, 10);
+                }
+                
+                this.value = value;
+            });
+            
+            // Prevenir pegar texto que contenga caracteres no numéricos
+            input.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                let numericOnly = pastedText.replace(/[^0-9]/g, '');
+                
+                // Limitar a 10 caracteres
+                if (numericOnly.length > 10) {
+                    numericOnly = numericOnly.substring(0, 10);
+                }
+                
+                this.value = numericOnly;
+            });
+            
+            // Prevenir arrastrar y soltar texto que contenga caracteres no numéricos
+            input.addEventListener('drop', function(e) {
+                e.preventDefault();
+                const droppedText = e.dataTransfer.getData('text');
+                let numericOnly = droppedText.replace(/[^0-9]/g, '');
+                
+                // Limitar a 10 caracteres
+                if (numericOnly.length > 10) {
+                    numericOnly = numericOnly.substring(0, 10);
+                }
+                
+                this.value = numericOnly;
+            });
+        }
+    }
+    
+        // Aplicar validación a los campos de celular y teléfono
+    validarCampoNumerico(celularInput);
+    validarCampoNumerico(telefonoInput);
+     
+    // Validación para campos de número y depto (números, letras A-Z y guión)
+    const numeroInput = document.querySelector('input[name="numero"]');
+    const deptoInput = document.getElementById('depto-input');
+    
+    // Función para validar campos de número y depto
+    function validarCampoNumeroDepto(input) {
+         if (input) {
+             input.addEventListener('input', function(e) {
+                 // Remover cualquier carácter que no sea número, letra A-Z o guión
+                 let value = this.value.replace(/[^0-9A-Za-z-]/g, '');
+                 
+                 // Convertir letras a mayúsculas
+                 value = value.toUpperCase();
+                 
+                 // Limitar a 10 caracteres
+                 if (value.length > 10) {
+                     value = value.substring(0, 10);
+                 }
+                 
+                 this.value = value;
+             });
+             
+             // Prevenir pegar texto que contenga caracteres no válidos
+             input.addEventListener('paste', function(e) {
+                 e.preventDefault();
+                 const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                 let validOnly = pastedText.replace(/[^0-9A-Za-z-]/g, '');
+                 
+                 // Convertir letras a mayúsculas
+                 validOnly = validOnly.toUpperCase();
+                 
+                 // Limitar a 10 caracteres
+                 if (validOnly.length > 10) {
+                     validOnly = validOnly.substring(0, 10);
+                 }
+                 
+                 this.value = validOnly;
+             });
+             
+             // Prevenir arrastrar y soltar texto que contenga caracteres no válidos
+             input.addEventListener('drop', function(e) {
+                 e.preventDefault();
+                 const droppedText = e.dataTransfer.getData('text');
+                 let validOnly = droppedText.replace(/[^0-9A-Za-z-]/g, '');
+                 
+                 // Convertir letras a mayúsculas
+                 validOnly = validOnly.toUpperCase();
+                 
+                 // Limitar a 10 caracteres
+                 if (validOnly.length > 10) {
+                     validOnly = validOnly.substring(0, 10);
+                 }
+                 
+                 this.value = validOnly;
+             });
+         }
+     }
+     
+    // Aplicar validación a los campos de número y depto
+    validarCampoNumeroDepto(numeroInput);
+    validarCampoNumeroDepto(deptoInput);
+    
+    // Validación para campos de calle y complemento (números, letras A-Z, guión, coma, punto)
+    const calleInput = document.querySelector('input[name="calle"]');
+    const complementoInput = document.querySelector('input[name="complemento"]');
+    
+    // Función para validar campos de calle y complemento
+    function validarCampoCalleComplemento(input) {
+         if (input) {
+             input.addEventListener('input', function(e) {
+                 // Remover cualquier carácter que no sea número, letra A-Z, guión, coma, punto o espacio
+                 let value = this.value.replace(/[^0-9A-Za-z\-,.\s]/g, '');
+                 
+                 // Convertir letras a mayúsculas
+                 value = value.toUpperCase();
+                 
+                 // Limitar a 100 caracteres
+                 if (value.length > 100) {
+                     value = value.substring(0, 100);
+                 }
+                 
+                 this.value = value;
+             });
+             
+             // Prevenir pegar texto que contenga caracteres no válidos
+             input.addEventListener('paste', function(e) {
+                 e.preventDefault();
+                 const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                 let validOnly = pastedText.replace(/[^0-9A-Za-z\-,.\s]/g, '');
+                 
+                 // Convertir letras a mayúsculas
+                 validOnly = validOnly.toUpperCase();
+                 
+                 // Limitar a 100 caracteres
+                 if (validOnly.length > 100) {
+                     validOnly = validOnly.substring(0, 100);
+                 }
+                 
+                 this.value = validOnly;
+             });
+             
+             // Prevenir arrastrar y soltar texto que contenga caracteres no válidos
+             input.addEventListener('drop', function(e) {
+                 e.preventDefault();
+                 const droppedText = e.dataTransfer.getData('text');
+                 let validOnly = droppedText.replace(/[^0-9A-Za-z\-,.\s]/g, '');
+                 
+                 // Convertir letras a mayúsculas
+                 validOnly = validOnly.toUpperCase();
+                 
+                 // Limitar a 100 caracteres
+                 if (validOnly.length > 100) {
+                     validOnly = validOnly.substring(0, 100);
+                 }
+                 
+                 this.value = validOnly;
+             });
+         }
+     }
+     
+     // Validación para campo de código postal (solo números, máximo 10 caracteres)
+     const codigoPostalInput = document.querySelector('input[name="codigo_postal"]');
+     
+     // Función para validar campo de código postal
+     function validarCampoCodigoPostal(input) {
+         if (input) {
+             input.addEventListener('input', function(e) {
+                 // Remover cualquier carácter que no sea número
+                 let value = this.value.replace(/[^0-9]/g, '');
+                 
+                 // Limitar a 10 caracteres
+                 if (value.length > 10) {
+                     value = value.substring(0, 10);
+                 }
+                 
+                 this.value = value;
+             });
+             
+             // Prevenir pegar texto que contenga caracteres no numéricos
+             input.addEventListener('paste', function(e) {
+                 e.preventDefault();
+                 const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                 let numericOnly = pastedText.replace(/[^0-9]/g, '');
+                 
+                 // Limitar a 10 caracteres
+                 if (numericOnly.length > 10) {
+                     numericOnly = numericOnly.substring(0, 10);
+                 }
+                 
+                 this.value = numericOnly;
+             });
+             
+             // Prevenir arrastrar y soltar texto que contenga caracteres no numéricos
+             input.addEventListener('drop', function(e) {
+                 e.preventDefault();
+                 const droppedText = e.dataTransfer.getData('text');
+                 let numericOnly = droppedText.replace(/[^0-9]/g, '');
+                 
+                 // Limitar a 10 caracteres
+                 if (numericOnly.length > 10) {
+                     numericOnly = numericOnly.substring(0, 10);
+                 }
+                 
+                 this.value = numericOnly;
+             });
+         }
+     }
+     
+    // Aplicar validación a los campos de calle, complemento y código postal
+    validarCampoCalleComplemento(calleInput);
+    validarCampoCalleComplemento(complementoInput);
+    validarCampoCodigoPostal(codigoPostalInput);
+    
+    // Validación para campos de nombres y apellidos (letras A-Z, espacios, guión, apóstrofe, comillas, punto)
+    const nombresInput = document.querySelector('input[name="nombres"]');
+    const apellidoPaternoInput = document.querySelector('input[name="apellido_paterno"]');
+    const apellidoMaternoInput = document.querySelector('input[name="apellido_materno"]');
+    
+    // Función para validar campos de nombres y apellidos
+    function validarCampoNombres(input) {
+         if (input) {
+             input.addEventListener('input', function(e) {
+                 // Remover cualquier carácter que no sea letra A-Z, espacio, guión, apóstrofe, comillas o punto
+                 let value = this.value.replace(/[^A-Za-z\s\-'\"\.]/g, '');
+                 
+                 // Convertir letras a mayúsculas
+                 value = value.toUpperCase();
+                 
+                 // Limitar a 100 caracteres
+                 if (value.length > 100) {
+                     value = value.substring(0, 100);
+                 }
+                 
+                 this.value = value;
+             });
+             
+             // Prevenir pegar texto que contenga caracteres no válidos
+             input.addEventListener('paste', function(e) {
+                 e.preventDefault();
+                 const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                 let validOnly = pastedText.replace(/[^A-Za-z\s\-'\"\.]/g, '');
+                 
+                 // Convertir letras a mayúsculas
+                 validOnly = validOnly.toUpperCase();
+                 
+                 // Limitar a 100 caracteres
+                 if (validOnly.length > 100) {
+                     validOnly = validOnly.substring(0, 100);
+                 }
+                 
+                 this.value = validOnly;
+             });
+             
+             // Prevenir arrastrar y soltar texto que contenga caracteres no válidos
+             input.addEventListener('drop', function(e) {
+                 e.preventDefault();
+                 const droppedText = e.dataTransfer.getData('text');
+                 let validOnly = droppedText.replace(/[^A-Za-z\s\-'\"\.]/g, '');
+                 
+                 // Convertir letras a mayúsculas
+                 validOnly = validOnly.toUpperCase();
+                 
+                 // Limitar a 100 caracteres
+                 if (validOnly.length > 100) {
+                     validOnly = validOnly.substring(0, 100);
+                 }
+                 
+                 this.value = validOnly;
+             });
+         }
+     }
+     
+    // Aplicar validación a los campos de nombres y apellidos
+    validarCampoNombres(nombresInput);
+    validarCampoNombres(apellidoPaternoInput);
+    validarCampoNombres(apellidoMaternoInput);
+    
+    // Validación para campo de correo electrónico (números, letras A-Z, @, ., _, -)
+    const emailInput = document.querySelector('input[name="email"]');
+    
+    // Función para validar campo de correo electrónico
+    function validarCampoEmail(input) {
+         if (input) {
+                     input.addEventListener('input', function(e) {
+            // Remover cualquier carácter que no sea número, letra A-Z, @, ., _ o -
+            let value = this.value.replace(/[^0-9A-Za-z@._-]/g, '');
+            
+            // Convertir a mayúsculas
+            value = value.toUpperCase();
+            
+            // Limitar a 100 caracteres
+            if (value.length > 100) {
+                value = value.substring(0, 100);
+            }
+            
+            this.value = value;
+        });
+             
+             // Prevenir pegar texto que contenga caracteres no válidos
+                     input.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            let validOnly = pastedText.replace(/[^0-9A-Za-z@._-]/g, '');
+            
+            // Convertir a mayúsculas
+            validOnly = validOnly.toUpperCase();
+            
+            // Limitar a 100 caracteres
+            if (validOnly.length > 100) {
+                validOnly = validOnly.substring(0, 100);
+            }
+            
+            this.value = validOnly;
+        });
+             
+             // Prevenir arrastrar y soltar texto que contenga caracteres no válidos
+                     input.addEventListener('drop', function(e) {
+            e.preventDefault();
+            const droppedText = e.dataTransfer.getData('text');
+            let validOnly = droppedText.replace(/[^0-9A-Za-z@._-]/g, '');
+            
+            // Convertir a mayúsculas
+            validOnly = validOnly.toUpperCase();
+            
+            // Limitar a 100 caracteres
+            if (validOnly.length > 100) {
+                validOnly = validOnly.substring(0, 100);
+            }
+            
+            this.value = validOnly;
+        });
+         }
+     }
+     
+    // Aplicar validación al campo de correo electrónico
+    validarCampoEmail(emailInput);
+    
+    // Validación antes de enviar el formulario
+    const formTutor = document.querySelector('form[method="post"]');
+    const btnRegistrar = document.getElementById('btn-registrar-tutor');
+     
+     if (formTutor && btnRegistrar) {
+         btnRegistrar.addEventListener('click', function(e) {
+             e.preventDefault(); // Prevenir envío inmediato
+             
+             // Limpiar errores previos
+             limpiarTodosLosErrores();
+             
+             let hayErrores = false;
+             let camposConError = [];
+             
+             // Validar RUT
+             const rutInput = document.querySelector('input[name="nro_documento"]');
+             if (!rutInput || !rutInput.value.trim()) {
+                 if (rutInput) mostrarErrorCampo(rutInput, 'El RUT es obligatorio');
+                 hayErrores = true;
+                 camposConError.push('RUT');
+             }
+             
+             // Validar Nombres
+             const nombresInput = document.querySelector('input[name="nombres"]');
+             if (!nombresInput || !nombresInput.value.trim()) {
+                 if (nombresInput) mostrarErrorCampo(nombresInput, 'Los nombres son obligatorios');
+                 hayErrores = true;
+                 camposConError.push('Nombres');
+             }
+             
+             // Validar Apellido Paterno
+             const apellidoPaternoInput = document.querySelector('input[name="apellido_paterno"]');
+             if (!apellidoPaternoInput || !apellidoPaternoInput.value.trim()) {
+                 if (apellidoPaternoInput) mostrarErrorCampo(apellidoPaternoInput, 'El apellido paterno es obligatorio');
+                 hayErrores = true;
+                 camposConError.push('Apellido Paterno');
+             }
+             
+             // Validar Correo Electrónico
+             const emailInput = document.querySelector('input[name="email"]');
+             if (!emailInput || !emailInput.value.trim()) {
+                 if (emailInput) mostrarErrorCampo(emailInput, 'El correo electrónico es obligatorio');
+                 hayErrores = true;
+                 camposConError.push('Correo Electrónico');
+             } else if (!isValidEmail(emailInput.value.trim())) {
+                 mostrarErrorCampo(emailInput, 'Ingrese un correo electrónico válido');
+                 hayErrores = true;
+                 camposConError.push('Correo Electrónico');
+             }
+             
+             // Validar Celular
+             const celularInput = document.querySelector('input[name="celular"]');
+             if (!celularInput || !celularInput.value.trim()) {
+                 if (celularInput) mostrarErrorCampo(celularInput, 'El celular es obligatorio');
+                 hayErrores = true;
+                 camposConError.push('Celular');
+             }
+             
+             // Validar Fecha de Nacimiento
+             const fechaInput = document.querySelector('input[name="fecha_nacimiento"]');
+             if (!fechaInput || !fechaInput.value) {
+                 if (fechaInput) mostrarErrorCampo(fechaInput, 'La fecha de nacimiento es obligatoria');
+                 hayErrores = true;
+                 camposConError.push('Fecha de Nacimiento');
+             }
+             
+             // Validar Región
+             if (!regionSelect || !regionSelect.value) {
+                 if (regionSelect) mostrarErrorCampo(regionSelect, 'Debe seleccionar una región');
+                 hayErrores = true;
+                 camposConError.push('Región');
+             }
+             
+             // Validar Provincia
+             if (!provinciaSelect || !provinciaSelect.value) {
+                 if (provinciaSelect) mostrarErrorCampo(provinciaSelect, 'Debe seleccionar una provincia');
+                 hayErrores = true;
+                 camposConError.push('Provincia');
+             }
+             
+             // Validar Comuna
+             if (!comunaSelect || !comunaSelect.value) {
+                 if (comunaSelect) mostrarErrorCampo(comunaSelect, 'Debe seleccionar una comuna');
+                 hayErrores = true;
+                 camposConError.push('Comuna');
+             }
+             
+             // Validar Calle
+             const calleInput = document.querySelector('input[name="calle"]');
+             if (!calleInput || !calleInput.value.trim()) {
+                 if (calleInput) mostrarErrorCampo(calleInput, 'La calle es obligatoria');
+                 hayErrores = true;
+                 camposConError.push('Calle');
+             }
+             
+             // Validar Número
+             const numeroInput = document.querySelector('input[name="numero"]');
+             if (!numeroInput || !numeroInput.value.trim()) {
+                 if (numeroInput) mostrarErrorCampo(numeroInput, 'El número es obligatorio');
+                 hayErrores = true;
+                 camposConError.push('Número');
+             }
+             
+             if (hayErrores) {
+                 // Mostrar modal con los campos faltantes
+                 mostrarModalErrores(camposConError);
+                 
+                 // Hacer scroll hacia el primer campo con error
+                 const primerError = document.querySelector('.campo-error[style*="display: block"]');
+                 if (primerError) {
+                     primerError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                 }
+             } else {
+                 // Guardar valores de provincia y comuna antes de enviar
+                 selectedProvincia = provinciaSelect.value;
+                 selectedComuna = comunaSelect.value;
+                 
+                 // Si no hay errores, enviar el formulario
+                 formTutor.submit();
+             }
+         });
+     }
+     
+     // Función para validar formato de email
+     function isValidEmail(email) {
+         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+         return emailRegex.test(email);
+     }
+     
+     // Función para limpiar todos los errores
+     function limpiarTodosLosErrores() {
+         const campos = document.querySelectorAll('input, select, textarea');
+         campos.forEach(campo => {
+             limpiarErrorCampo(campo);
+         });
+     }
+     
+     // Función para mostrar error en campos
+     function mostrarErrorCampo(element, message) {
+         element.style.borderColor = '#dc3545';
+         element.style.boxShadow = '0 0 0 2px rgba(220, 53, 69, 0.25)';
+         element.classList.add('error');
+         
+         // Buscar mensaje de error existente
+         let errorDiv = element.parentNode.querySelector('.campo-error');
+         if (!errorDiv) {
+             errorDiv = document.createElement('div');
+             errorDiv.className = 'campo-error';
+             errorDiv.style.cssText = 'color: #dc3545; font-size: 0.6rem; margin-top: 2px; display: block;';
+             element.parentNode.appendChild(errorDiv);
+         }
+         errorDiv.textContent = message;
+         errorDiv.style.display = 'block';
+     }
+     
+     // Función para limpiar error en campos
+     function limpiarErrorCampo(element) {
+         element.style.borderColor = '#ddd';
+         element.style.boxShadow = 'none';
+         element.classList.remove('error');
+         
+         // Buscar y ocultar mensaje de error
+         const errorDiv = element.parentNode.querySelector('.campo-error');
+         if (errorDiv) {
+             errorDiv.style.display = 'none';
+         }
+     }
+     
+     // Función para mostrar modal de errores
+     function mostrarModalErrores(camposConError) {
+         const modal = document.getElementById('modal-errores');
+         const listaErrores = document.getElementById('lista-errores');
+         
+         // Limpiar lista anterior
+         listaErrores.innerHTML = '';
+         
+         // Agregar cada campo con error a la lista
+         camposConError.forEach(campo => {
+             const li = document.createElement('li');
+             li.textContent = campo;
+             li.style.marginBottom = '5px';
+             listaErrores.appendChild(li);
+         });
+         
+         // Mostrar modal
+         modal.style.display = 'flex';
+     }
+     
+     // Eventos para cerrar modal
+     const modal = document.getElementById('modal-errores');
+     const closeBtn = document.querySelector('.close-modal');
+     const cerrarBtn = document.querySelector('.btn-cerrar-modal');
+     
+     // Cerrar con el botón X
+     if (closeBtn) {
+         closeBtn.addEventListener('click', cerrarModal);
+     }
+     
+     // Cerrar con el botón "Cerrar"
+     if (cerrarBtn) {
+         cerrarBtn.addEventListener('click', cerrarModal);
+     }
+     
+     // Cerrar haciendo clic fuera del modal
+     if (modal) {
+         modal.addEventListener('click', function(e) {
+             if (e.target === modal) {
+                 cerrarModal();
+             }
+         });
+     }
+     
+     // Cerrar con la tecla Escape
+     document.addEventListener('keydown', function(e) {
+         if (e.key === 'Escape' && modal && modal.style.display === 'flex') {
+             cerrarModal();
+         }
+     });
+     
+     // Función para cerrar modal
+     function cerrarModal() {
+         const modal = document.getElementById('modal-errores');
+         modal.style.display = 'none';
+     }
+     
+     // Prevenir tooltips de validación HTML5 nativa
+     document.addEventListener('invalid', function(e) {
+         e.preventDefault();
+     }, true);
     
     // Función para validar RUT en tiempo real
     function validarRutEnTiempoReal(rut) {
@@ -461,11 +1184,13 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        
         fetch('/tutores/validar-rut/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                'X-CSRFToken': csrfToken
             },
             body: JSON.stringify({ rut: rut })
         })
@@ -498,35 +1223,7 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.style.display = 'flex';
     }
     
-    // Variables globales para el estado del RUT
-    let rutDuplicado = false;
-    let rutActual = '';
-    
-    // Función para habilitar/deshabilitar el botón de registro
-    function habilitarBotonRegistro(habilitar) {
-        const btnRegistrar = document.getElementById('btn-registrar-tutor');
-        if (btnRegistrar) {
-            btnRegistrar.disabled = !habilitar;
-        }
-    }
-    
-    // Función para mostrar mensaje de error del RUT
-    function mostrarErrorRut(mensaje) {
-        const inputElement = document.querySelector('input[name="nro_documento"]');
-        const messageDiv = document.getElementById('rutValidationMessage');
-        
-        if (inputElement && messageDiv) {
-            messageDiv.className = 'rut-validation-message error';
-            messageDiv.innerHTML = '❌ ' + mensaje;
-            messageDiv.style.display = 'block';
-            
-            inputElement.classList.remove('rut-success');
-            inputElement.classList.add('rut-error');
-            
-            rutDuplicado = true;
-            habilitarBotonRegistro(false);
-        }
-    }
+
     
     // Función para limpiar el estado de error del RUT
     function limpiarErrorRut() {
@@ -541,7 +1238,6 @@ document.addEventListener('DOMContentLoaded', function() {
             inputElement.classList.remove('rut-error', 'rut-success');
             
             rutDuplicado = false;
-            habilitarBotonRegistro(true);
         }
     }
     
@@ -550,37 +1246,33 @@ document.addEventListener('DOMContentLoaded', function() {
         const modal = document.getElementById('rutDuplicadoModal');
         if (modal) {
             modal.style.display = 'none';
-            // Mostrar error en el campo RUT
-            mostrarErrorRut('Este RUT ya está registrado. Revise o ingrese otro.');
         }
     }
     
-    // Función para cerrar el modal de éxito
-    window.cerrarModalExito = function() {
-        const exitoModal = document.getElementById('exitoModal');
-        if (exitoModal) {
-            exitoModal.style.display = 'none';
-        }
-    }
+         // Función para cerrar el modal de éxito
+     window.cerrarModalExito = function() {
+         const exitoModal = document.getElementById('exitoModal');
+         if (exitoModal) {
+             exitoModal.style.display = 'none';
+         }
+     }
+     
+     // Funcionalidad para el botón de segunda nacionalidad
+     const btnSegundaNacionalidad = document.getElementById('btn-segunda-nacionalidad');
+     const segundaNacionalidadContainer = document.getElementById('segunda-nacionalidad-container');
+     const segundaNacionalidadField = document.getElementById('segunda-nacionalidad-field');
+     
+     if (btnSegundaNacionalidad) {
+         btnSegundaNacionalidad.addEventListener('click', function() {
+             // Ocultar el botón
+             segundaNacionalidadContainer.style.display = 'none';
+             // Mostrar el campo de segunda nacionalidad
+             segundaNacionalidadField.style.display = 'block';
+         });
+     }
 });
 </script>
 
-<style>
-/* Animación para el modal */
-@keyframes modalFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-50px) scale(0.9);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
 
-.modal {
-    animation: modalFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-</style>
 
 {% endblock %} 

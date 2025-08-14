@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from core.models import Tutor, Mascota
+from core.models import Tutor, Mascota, Nacionalidad, TutorNacionalidad
 from .forms import BuscarTutorForm, RegistrarTutorForm
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -108,6 +108,7 @@ def registrar_tutor_view(request):
                     tutor_existente.fecha_nacimiento = form.cleaned_data['fecha_nacimiento']
                     tutor_existente.calle = form.cleaned_data['calle']
                     tutor_existente.numero = form.cleaned_data['numero']
+                    tutor_existente.departamento = request.POST.get('depto', '')  # Campo departamento del formulario
                     tutor_existente.codigo_postal = form.cleaned_data['codigo_postal'] or ''
                     tutor_existente.complemento = form.cleaned_data['complemento'] or ''
                     tutor_existente.id_comuna = form.cleaned_data['comuna']
@@ -139,6 +140,7 @@ def registrar_tutor_view(request):
                         fecha_nacimiento=form.cleaned_data['fecha_nacimiento'],
                         calle=form.cleaned_data['calle'],
                         numero=form.cleaned_data['numero'],
+                        departamento=request.POST.get('depto', ''),  # Campo departamento del formulario
                         codigo_postal=form.cleaned_data['codigo_postal'] or '',
                         complemento=form.cleaned_data['complemento'] or '',
                         foto='',  # Campo vacío por defecto
@@ -147,6 +149,37 @@ def registrar_tutor_view(request):
                     )
                     
                     logger.info(f"Tutor creado exitosamente: {tutor}")
+                    
+                    # Manejar nacionalidades
+                    nacionalidad_principal = request.POST.get('nacionalidad')
+                    nacionalidad_secundaria = request.POST.get('segunda_nacionalidad')
+                    
+                    # Guardar nacionalidad principal si existe
+                    if nacionalidad_principal:
+                        try:
+                            nacionalidad_obj = Nacionalidad.objects.get(id_nacionalidad=nacionalidad_principal)
+                            TutorNacionalidad.objects.create(
+                                id_tutor=tutor,
+                                id_nacionalidad=nacionalidad_obj,
+                                fecha_registro=datetime.now()
+                            )
+                            logger.info(f"Nacionalidad principal guardada: {nacionalidad_obj.nacionalidad}")
+                        except Nacionalidad.DoesNotExist:
+                            logger.error(f"Nacionalidad con ID {nacionalidad_principal} no encontrada")
+                    
+                    # Guardar nacionalidad secundaria si existe
+                    if nacionalidad_secundaria:
+                        try:
+                            nacionalidad_obj = Nacionalidad.objects.get(id_nacionalidad=nacionalidad_secundaria)
+                            TutorNacionalidad.objects.create(
+                                id_tutor=tutor,
+                                id_nacionalidad=nacionalidad_obj,
+                                fecha_registro=datetime.now()
+                            )
+                            logger.info(f"Nacionalidad secundaria guardada: {nacionalidad_obj.nacionalidad}")
+                        except Nacionalidad.DoesNotExist:
+                            logger.error(f"Nacionalidad con ID {nacionalidad_secundaria} no encontrada")
+                    
                     tutor_guardado = tutor
                     mensaje_exito = f"El tutor '{tutor.nombres} {tutor.apellido_paterno}' ha sido registrado exitosamente"
                     
@@ -166,11 +199,13 @@ def registrar_tutor_view(request):
                     'celular': tutor_guardado.celular,
                     'telefono': tutor_guardado.telefono,
                     'fecha_nacimiento': tutor_guardado.fecha_nacimiento,
+                    'nacionalidad': None,  # Por ahora no se maneja la nacionalidad
                     'region': tutor_guardado.id_comuna.id_provincia.id_region,
                     'provincia': tutor_guardado.id_comuna.id_provincia,
                     'comuna': tutor_guardado.id_comuna,
                     'calle': tutor_guardado.calle,
                     'numero': tutor_guardado.numero,
+                    'depto': tutor_guardado.departamento,
                     'complemento': tutor_guardado.complemento,
                     'codigo_postal': tutor_guardado.codigo_postal,
                 }
@@ -203,11 +238,15 @@ def registrar_tutor_view(request):
     
     logger.info(f"Tutor guardado: {tutor_guardado}")
     
+    # Obtener todas las nacionalidades para el dropdown de segunda nacionalidad
+    nacionalidades = Nacionalidad.objects.all()
+    
     return render(request, 'tutores/registrar_tutor.html', {
         'form': form,
         'tutor_guardado': tutor_guardado,
         'modo_edicion': modo_edicion,
-        'mensaje_exito': mensaje_exito
+        'mensaje_exito': mensaje_exito,
+        'nacionalidades': nacionalidades
     })
 
 @csrf_exempt
@@ -229,10 +268,13 @@ def validar_rut_tutor(request):
     """
     Vista AJAX para validar si un RUT ya existe en el sistema.
     """
+    logger.info(f"Validación RUT - Método: {request.method}")  # Debug
     if request.method == 'POST':
         try:
+            logger.info(f"Validación RUT - Body: {request.body}")  # Debug
             data = json.loads(request.body)
             rut = data.get('rut', '').strip()
+            logger.info(f"Validación RUT - RUT recibido: {rut}")  # Debug
             
             if not rut:
                 return JsonResponse({
