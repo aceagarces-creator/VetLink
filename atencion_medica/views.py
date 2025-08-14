@@ -88,6 +88,27 @@ def registrar_atencion_unificada_view(request):
     logger.info(f"Servicios encontrados para clínica {clinica_id}: {[s.nombre for s in servicios]}")
     logger.info(f"Servicios detalle encontrados para clínica {clinica_id}: {[sd.nombre for sd in servicios_detalle]}")
     
+    # Verificar si hay un parámetro nro_chip en GET (redirección desde Consultar Tutor)
+    nro_chip_get = request.GET.get('nro_chip')
+    if nro_chip_get:
+        logger.info(f"Parámetro nro_chip recibido por GET: {nro_chip_get}")
+        try:
+            # Buscar mascota por número de chip
+            mascota_encontrada = Mascota.objects.select_related(
+                'id_tutor',
+                'id_especie',
+                'id_raza'
+            ).get(nro_chip=nro_chip_get)
+            
+            logger.info(f"Mascota encontrada por parámetro GET: {mascota_encontrada}")
+            
+            # Configurar el formulario de búsqueda con el chip precargado
+            buscar_form = BuscarMascotaAtencionForm(initial={'nro_chip': nro_chip_get})
+            
+        except Mascota.DoesNotExist:
+            mensaje_error = f"No se encontró una mascota con el número de chip: {nro_chip_get}"
+            logger.info(f"Mascota no encontrada con chip por GET: {nro_chip_get}")
+    
     if request.method == 'POST':
         logger.info("=== DETECTADO POST REQUEST ===")
         logger.info(f"Keys en POST: {list(request.POST.keys())}")
