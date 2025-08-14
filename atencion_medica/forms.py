@@ -17,10 +17,22 @@ class BuscarMascotaAtencionForm(forms.Form):
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Ingrese el número de chip de la mascota',
-            'style': 'font-size: 0.8rem; padding: 8px 12px; border-radius: 4px; border: 1px solid #ddd;'
+            'style': 'font-size: 0.8rem; padding: 8px 12px; border-radius: 4px; border: 1px solid #ddd;',
+            'pattern': '[0-9]*',
+            'inputmode': 'numeric',
+            'oninput': 'this.value = this.value.replace(/[^0-9]/g, "")'
         }),
         help_text='Ingrese el número de chip de la mascota para registrar una atención médica'
     )
+
+    def clean_nro_chip(self):
+        """
+        Validación personalizada para asegurar que solo contenga números.
+        """
+        nro_chip = self.cleaned_data.get('nro_chip')
+        if nro_chip and not nro_chip.isdigit():
+            raise forms.ValidationError('El número de chip solo puede contener números.')
+        return nro_chip
 
 
 class AtencionMedicaForm(forms.ModelForm):

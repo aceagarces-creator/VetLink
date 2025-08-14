@@ -21,6 +21,16 @@
     </div>
     {% endif %}
 
+    <!-- Mensajes de Django -->
+    {% if messages %}
+        {% for message in messages %}
+            <div style="background-color: {% if message.tags == 'success' %}#d4edda; color: #155724; border: 1px solid #c3e6cb;{% elif message.tags == 'error' %}#f8d7da; color: #721c24; border: 1px solid #f5c6cb;{% else %}#d1ecf1; color: #0c5460; border: 1px solid #bee5eb;{% endif %} padding: 12px; border-radius: 4px; margin-bottom: 20px;">
+                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %}" style="margin-right: 8px;"></i>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
     <!-- SECCIÓN DE BÚSQUEDA DE MASCOTA -->
     <div style="display: flex; justify-content: center; margin-bottom: 30px;">
         <form method="post" class="mb-4" style="display: flex; align-items: center; gap: 15px; max-width: 600px;">
@@ -53,10 +63,17 @@
 
     <!-- SECCIÓN DE DATOS DE LA MASCOTA ENCONTRADA -->
     {% if mascota_encontrada %}
-                   <!-- Título "REGISTRO DE ATENCIÓN MÉDICA" movido fuera del contenedor -->
-             <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 80%; margin-left: auto; margin-right: auto;">REGISTRO DE ATENCIÓN MÉDICA</h5>
+        <!-- Formulario principal para registrar atención médica -->
+        <form method="post" id="form-atencion-medica" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            
+            <!-- Campo oculto para el número de chip -->
+            <input type="hidden" name="nro_chip_busqueda" value="{{ mascota_encontrada.nro_chip }}">
+            
+            <!-- Título "REGISTRO DE ATENCIÓN MÉDICA" movido fuera del contenedor -->
+            <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 80%; margin-left: auto; margin-right: auto;">REGISTRO DE ATENCIÓN MÉDICA</h5>
      
-                       <div class="paciente-info" style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 25px; margin-bottom: 20px;">
+            <div class="paciente-info" style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 25px; margin-bottom: 20px;">
            
                                                                            <!-- PRIMERA FILA: Clínica (columna 1) + Médico tratante (columna 2) + Fecha de atención (columna 3) -->
                                       <div class="grid-3">
@@ -128,12 +145,18 @@
                             <option value="">Seleccione un servicio primero</option>
                         </select>
                     </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               <div>
-                             <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Peso (kg)</label>
-                             <input type="number" name="peso" step="0.1" min="0" style="width: 30%; padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; color: #333; box-sizing: border-box; font-size: 0.65rem; margin-right: 2px;">
-                             <label style="display: inline-block; font-weight: bold; color: #666; font-size: 0.65rem; margin-left: 2px; margin-right: 2px;">Temp (°C)</label>
-                             <input type="number" name="temperatura" step="0.1" min="0" style="width: 30%; padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              <div>
+                         <div style="display: flex; gap: 10px;">
+                             <div style="flex: 1;">
+                                 <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Peso (kg)</label>
+                                 <input type="number" name="peso" step="0.1" min="0" style="width: 100%; padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                             </div>
+                             <div style="flex: 1;">
+                                 <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Temperatura (°C)</label>
+                                 <input type="number" name="temperatura" step="0.1" min="0" style="width: 100%; padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                             </div>
                          </div>
+                     </div>
                 </div>
               
                                                         
@@ -220,15 +243,51 @@
                        <!-- Mensaje de límite alcanzado -->
                        <div id="mensaje-limite" style="color: #dc3545; font-size: 0.65rem; text-align: center; margin-top: 5px; display: none;">
                            Máximo 5 documentos permitidos
-                       </div>
-                   </div>
-               </div>
+                                               </div>
+                                    </div>
+             </div>
+           
+             </div>
+             
+                           <!-- Botón Registrar Atención -->
+              <div style="text-align: center; margin-top: 30px;">
+                  <button type="submit" name="registrar_atencion" id="btn-registrar-atencion" class="btn btn-primary" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+                      Registrar Atención
+                  </button>
+              </div>
+         </form>
          
-                             
-          
-            </div>
-    {% endif %}
-</div>
+         <!-- Modal para errores de validación -->
+         <div id="modal-errores" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center;">
+             <div class="modal-content" style="background-color: #fefefe; margin: auto; padding: 0; border-radius: 12px; width: 95%; max-width: 550px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); animation: modalFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); overflow: hidden;">
+                 <div class="modal-header" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; position: relative;">
+                     <h3 style="margin: 0; color: #ffffff; font-size: 1.1rem; display: flex; align-items: center; gap: 10px;">
+                         <i class="fas fa-exclamation-triangle"></i> Campos Obligatorios Requeridos
+                     </h3>
+                     <span class="close-modal" style="color: white; font-size: 24px; font-weight: 300; cursor: pointer; line-height: 1; transition: all 0.2s ease; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.1);">&times;</span>
+                 </div>
+                 <div class="modal-body" style="padding: 25px; max-height: 70vh; overflow-y: auto; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);">
+                     <div style="text-align: center; padding: 20px;">
+                         <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #dc3545; margin-bottom: 15px;"></i>
+                         <p style="color: #721c24; font-size: 1.1rem; margin: 0 0 20px 0;">Por favor, complete los siguientes campos obligatorios:</p>
+                         <ul id="lista-errores" style="margin: 0; padding-left: 20px; color: #721c24; font-size: 0.9rem; text-align: left; display: inline-block;">
+                             <!-- Los errores se insertarán aquí dinámicamente -->
+                         </ul>
+                     </div>
+                     <p style="margin: 20px 0 0 0; color: #666; font-size: 0.8rem; font-style: italic; text-align: center;">Los campos obligatorios están marcados con (*)</p>
+                 </div>
+                 <div class="modal-footer" style="padding: 20px 25px; border-top: 1px solid #e9ecef; text-align: right; background-color: #f8f9fa; position: relative;">
+                     <button type="button" class="btn-cerrar-modal" style="background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);">
+                         <i class="fas fa-times"></i> Cerrar
+                     </button>
+                 </div>
+             </div>
+         </div>
+                               
+             
+              
+     {% endif %}
+ </div>
 
 <script>
 // Funcionalidad para el buscador de mascota y documentos adjuntos
@@ -236,6 +295,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const chipInput = document.querySelector('input[name="nro_chip"]');
     const btnBuscar = document.getElementById('btn-buscar');
     const btnNuevaBusqueda = document.getElementById('btn-nueva-busqueda');
+    
+    // Validación para que el campo de microchip solo acepte números
+    if (chipInput) {
+        chipInput.addEventListener('input', function(e) {
+            // Remover cualquier carácter que no sea número
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+        
+        // Prevenir pegar texto que contenga caracteres no numéricos
+        chipInput.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            const numericOnly = pastedText.replace(/[^0-9]/g, '');
+            this.value = numericOnly;
+        });
+        
+        // Prevenir arrastrar y soltar texto que contenga caracteres no numéricos
+        chipInput.addEventListener('drop', function(e) {
+            e.preventDefault();
+            const droppedText = e.dataTransfer.getData('text');
+            const numericOnly = droppedText.replace(/[^0-9]/g, '');
+            this.value = numericOnly;
+        });
+    }
     
     // Si hay una mascota encontrada, deshabilitar solo el input y el botón Buscar
     {% if mascota_encontrada %}
@@ -245,14 +328,74 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     {% endif %}
     
-    // Evento para el botón "Realizar nueva búsqueda"
-    if (btnNuevaBusqueda) {
-        btnNuevaBusqueda.addEventListener('click', function() {
-            // Redirigir a la página inicial del formulario
-            window.location.href = '/atencion-medica/registrar/';
-        });
-    }
-    
+         // Evento para el botón "Realizar nueva búsqueda"
+     if (btnNuevaBusqueda) {
+         btnNuevaBusqueda.addEventListener('click', function() {
+             // Redirigir a la página inicial del formulario
+             window.location.href = '/atencion-medica/registrar/';
+         });
+     }
+     
+     // Eventos para cerrar modal
+     const modal = document.getElementById('modal-errores');
+     const closeBtn = document.querySelector('.close-modal');
+     const cerrarBtn = document.querySelector('.btn-cerrar-modal');
+     
+     // Cerrar con el botón X
+     if (closeBtn) {
+         closeBtn.addEventListener('click', cerrarModal);
+     }
+     
+     // Cerrar con el botón "Cerrar"
+     if (cerrarBtn) {
+         cerrarBtn.addEventListener('click', cerrarModal);
+     }
+     
+     // Cerrar haciendo clic fuera del modal
+     if (modal) {
+         modal.addEventListener('click', function(e) {
+             if (e.target === modal) {
+                 cerrarModal();
+             }
+         });
+     }
+     
+     // Cerrar con la tecla Escape
+     document.addEventListener('keydown', function(e) {
+         if (e.key === 'Escape' && modal && modal.style.display === 'block') {
+             cerrarModal();
+         }
+     });
+     
+     // Prevenir tooltips de validación HTML5 nativa
+     document.addEventListener('invalid', function(e) {
+         e.preventDefault();
+     }, true);
+     
+     // Prevenir tooltips de validación en campos específicos
+     const camposDocumentos = document.querySelectorAll('.documento-row input, .documento-row select');
+     camposDocumentos.forEach(campo => {
+         campo.addEventListener('invalid', function(e) {
+             e.preventDefault();
+         });
+     });
+     
+     // Deshabilitar validación HTML5 nativa en campos de documentos
+     function deshabilitarValidacionNativa() {
+         const camposDoc = document.querySelectorAll('.documento-row input, .documento-row select');
+         camposDoc.forEach(campo => {
+             campo.removeAttribute('required');
+             campo.removeAttribute('pattern');
+             campo.removeAttribute('minlength');
+             campo.removeAttribute('maxlength');
+         });
+     }
+     
+     // Ejecutar al cargar la página
+     deshabilitarValidacionNativa();
+     
+
+     
          // Ocultar campos de documentos si no hay archivo seleccionado
      const fileInputs = document.querySelectorAll('input[type="file"]');
      const tipoSelects = document.querySelectorAll('select[name^="tipo_documento"]');
@@ -400,14 +543,14 @@ document.addEventListener('DOMContentLoaded', function() {
                  const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
                  
                  if (!allowedTypes.includes(file.type)) {
-                     mostrarError(this, 'Solo se permiten archivos PDF, JPG, JPEG y PNG');
+                     mostrarErrorCampo(this, 'Solo se permiten archivos PDF, JPG, JPEG y PNG');
                      this.value = '';
                      return;
                  }
 
                  // Validar tamaño (máximo 5MB)
                  if (file.size > 5 * 1024 * 1024) {
-                     mostrarError(this, 'El archivo no puede superar 5MB');
+                     mostrarErrorCampo(this, 'El archivo no puede superar 5MB');
                      this.value = '';
                      return;
                  }
@@ -416,43 +559,37 @@ document.addEventListener('DOMContentLoaded', function() {
                  tipoSelect.style.backgroundColor = '#fff';
                  nombreInput.style.backgroundColor = '#fff';
                  
-                 // Hacer campos obligatorios
-                 tipoSelect.required = true;
-                 nombreInput.required = true;
-                 
-                 limpiarError(this);
-                 limpiarError(tipoSelect);
-                 limpiarError(nombreInput);
+                 limpiarErrorCampo(this);
+                 limpiarErrorCampo(tipoSelect);
+                 limpiarErrorCampo(nombreInput);
              } else {
                  // Restaurar estado inicial
                  tipoSelect.style.backgroundColor = '#f8f9fa';
                  nombreInput.style.backgroundColor = '#f8f9fa';
-                 tipoSelect.required = false;
-                 nombreInput.required = false;
                  
-                 limpiarError(this);
-                 limpiarError(tipoSelect);
-                 limpiarError(nombreInput);
+                 limpiarErrorCampo(this);
+                 limpiarErrorCampo(tipoSelect);
+                 limpiarErrorCampo(nombreInput);
              }
          });
 
          // Evento para cambio de tipo de documento
          tipoSelect.addEventListener('change', function() {
              if (fileInput.files.length > 0 && !this.value) {
-                 mostrarError(this, 'Tipo de documento es obligatorio cuando hay un archivo');
+                 mostrarErrorCampo(this, 'Tipo de documento es obligatorio cuando hay un archivo');
              } else {
-                 limpiarError(this);
+                 limpiarErrorCampo(this);
              }
          });
 
-                   // Evento para cambio de nombre de documento
-          nombreInput.addEventListener('input', function() {
-              if (fileInput.files.length > 0 && !this.value.trim()) {
-                  mostrarError(this, 'Nombre del documento es obligatorio cuando hay un archivo');
-              } else {
-                  limpiarError(this);
-              }
-          });
+                    // Evento para cambio de nombre de documento
+           nombreInput.addEventListener('input', function() {
+               if (fileInput.files.length > 0 && !this.value.trim()) {
+                   mostrarErrorCampo(this, 'Nombre del documento es obligatorio cuando hay un archivo');
+               } else {
+                   limpiarErrorCampo(this);
+               }
+           });
 
           // Evento para el botón eliminar
           const btnEliminar = row.querySelector('.btn-eliminar-documento');
@@ -461,21 +598,6 @@ document.addEventListener('DOMContentLoaded', function() {
                   eliminarFilaDocumento(row);
               });
           }
-      }
-
-     // Función para mostrar error
-     function mostrarError(element, message) {
-         const errorDiv = element.parentNode.querySelector('.error-message');
-         errorDiv.textContent = message;
-         errorDiv.style.display = 'block';
-         element.style.borderColor = '#dc3545';
-     }
-
-           // Función para limpiar error
-      function limpiarError(element) {
-          const errorDiv = element.parentNode.querySelector('.error-message');
-          errorDiv.style.display = 'none';
-          element.style.borderColor = '#ccc';
       }
 
       // Función para eliminar fila de documento
@@ -534,12 +656,10 @@ document.addEventListener('DOMContentLoaded', function() {
                       nombreInput.value = '';
                       tipoSelect.style.backgroundColor = '#f8f9fa';
                       nombreInput.style.backgroundColor = '#f8f9fa';
-                      tipoSelect.required = false;
-                      nombreInput.required = false;
                       
-                      limpiarError(fileInput);
-                      limpiarError(tipoSelect);
-                      limpiarError(nombreInput);
+                      limpiarErrorCampo(fileInput);
+                      limpiarErrorCampo(tipoSelect);
+                      limpiarErrorCampo(nombreInput);
                   }
               });
           }
@@ -550,33 +670,169 @@ document.addEventListener('DOMContentLoaded', function() {
          btnAgregarDocumento.addEventListener('click', agregarFilaDocumento);
      }
 
-     // Validación antes de enviar el formulario
-     document.querySelector('form').addEventListener('submit', function(e) {
-         const filas = document.querySelectorAll('.documento-row');
-         let hayErrores = false;
+           // Validación antes de enviar el formulario de atención médica
+      const formAtencion = document.getElementById('form-atencion-medica');
+      if (formAtencion) {
+          formAtencion.addEventListener('submit', function(e) {
+              e.preventDefault(); // Prevenir envío inmediato
+              
+              // Limpiar errores previos
+              limpiarTodosLosErrores();
+              
+              let hayErrores = false;
+              let camposConError = [];
+              
+              // Validar Servicio
+              const servicioSelect = document.getElementById('id_servicio');
+              if (!servicioSelect || !servicioSelect.value) {
+                  if (servicioSelect) mostrarErrorCampo(servicioSelect, 'El servicio es obligatorio');
+                  hayErrores = true;
+                  camposConError.push('Servicio');
+              }
+              
+              // Validar Detalle Servicio
+              const detalleSelect = document.getElementById('id_servicio_detalle');
+              if (!detalleSelect || !detalleSelect.value) {
+                  if (detalleSelect) mostrarErrorCampo(detalleSelect, 'El detalle de servicio es obligatorio');
+                  hayErrores = true;
+                  camposConError.push('Detalle Servicio');
+              }
+              
+              // Validar Motivo Consulta
+              const motivoTextarea = document.querySelector('textarea[name="detalle_atencion"]');
+              if (!motivoTextarea || !motivoTextarea.value.trim()) {
+                  if (motivoTextarea) mostrarErrorCampo(motivoTextarea, 'El motivo de consulta es obligatorio');
+                  hayErrores = true;
+                  camposConError.push('Motivo Consulta');
+              } else if (motivoTextarea.value.trim().length < 30) {
+                  mostrarErrorCampo(motivoTextarea, 'El motivo de consulta debe tener al menos 30 caracteres');
+                  hayErrores = true;
+                  camposConError.push('Motivo Consulta');
+              }
+              
+              // Validar documentos adjuntos
+              const filas = document.querySelectorAll('.documento-row');
+              let hayErroresDocumentos = false;
+              filas.forEach(fila => {
+                  const fileInput = fila.querySelector('input[type="file"]');
+                  const tipoSelect = fila.querySelector('select');
+                  const nombreInput = fila.querySelector('input[type="text"]');
 
-         filas.forEach(fila => {
-             const fileInput = fila.querySelector('input[type="file"]');
-             const tipoSelect = fila.querySelector('select');
-             const nombreInput = fila.querySelector('input[type="text"]');
-
-             if (fileInput.files.length > 0) {
-                 if (!tipoSelect.value) {
-                     mostrarError(tipoSelect, 'Tipo de documento es obligatorio');
-                     hayErrores = true;
-                 }
-                 if (!nombreInput.value.trim()) {
-                     mostrarError(nombreInput, 'Nombre del documento es obligatorio');
-                     hayErrores = true;
-                 }
-             }
-         });
-
-         if (hayErrores) {
-             e.preventDefault();
-             alert('Por favor, complete todos los campos obligatorios para los documentos adjuntos.');
-         }
-     });
+                  if (fileInput && fileInput.files.length > 0) {
+                      if (!tipoSelect.value) {
+                          mostrarErrorCampo(tipoSelect, 'Tipo de documento es obligatorio');
+                          hayErrores = true;
+                          hayErroresDocumentos = true;
+                      }
+                      if (!nombreInput.value.trim()) {
+                          mostrarErrorCampo(nombreInput, 'Nombre del documento es obligatorio');
+                          hayErrores = true;
+                          hayErroresDocumentos = true;
+                      }
+                  }
+              });
+              
+              // Agregar línea de documentos adjuntos si hay errores en documentos
+              if (hayErroresDocumentos) {
+                  camposConError.push('Información complementaria documentos adjuntos');
+              }
+              
+                             if (hayErrores) {
+                   // Mostrar modal con los campos faltantes
+                   mostrarModalErrores(camposConError);
+                   
+                   // Hacer scroll hacia el primer campo con error
+                   const primerError = document.querySelector('.campo-error[style*="display: block"]');
+                   if (primerError) {
+                       primerError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                   }
+               } else {
+                   // Si no hay errores, enviar el formulario
+                   // Crear un campo oculto para registrar_atencion si no existe
+                   let registrarField = document.querySelector('input[name="registrar_atencion"]');
+                   if (!registrarField) {
+                       registrarField = document.createElement('input');
+                       registrarField.type = 'hidden';
+                       registrarField.name = 'registrar_atencion';
+                       registrarField.value = '';
+                       this.appendChild(registrarField);
+                   }
+                   this.submit();
+               }
+          });
+      }
+      
+      // Función para limpiar todos los errores
+      function limpiarTodosLosErrores() {
+          // Limpiar errores de campos principales
+          const camposPrincipales = document.querySelectorAll('#id_servicio, #id_servicio_detalle, textarea[name="detalle_atencion"]');
+          camposPrincipales.forEach(campo => {
+              limpiarErrorCampo(campo);
+          });
+          
+          // Limpiar errores de documentos
+          const camposDocumentos = document.querySelectorAll('.documento-row input, .documento-row select');
+          camposDocumentos.forEach(campo => {
+              limpiarErrorCampo(campo);
+          });
+      }
+      
+      // Función para mostrar error en campos del formulario principal
+      function mostrarErrorCampo(element, message) {
+          element.style.borderColor = '#dc3545';
+          element.style.boxShadow = '0 0 0 2px rgba(220, 53, 69, 0.25)';
+          
+          // Buscar mensaje de error existente (puede ser .campo-error o .error-message)
+          let errorDiv = element.parentNode.querySelector('.campo-error') || element.parentNode.querySelector('.error-message');
+          if (!errorDiv) {
+              errorDiv = document.createElement('div');
+              errorDiv.className = 'campo-error';
+              errorDiv.style.cssText = 'color: #dc3545; font-size: 0.6rem; margin-top: 2px; display: block;';
+              element.parentNode.appendChild(errorDiv);
+          }
+          errorDiv.textContent = message;
+          errorDiv.style.display = 'block';
+      }
+      
+             // Función para limpiar error en campos del formulario principal
+       function limpiarErrorCampo(element) {
+           element.style.borderColor = '#ccc';
+           element.style.boxShadow = 'none';
+           
+           // Buscar y ocultar mensaje de error (puede ser .campo-error o .error-message)
+           const errorDiv = element.parentNode.querySelector('.campo-error') || element.parentNode.querySelector('.error-message');
+           if (errorDiv) {
+               errorDiv.style.display = 'none';
+           }
+       }
+       
+       // Función para mostrar modal de errores
+       function mostrarModalErrores(camposConError) {
+           const modal = document.getElementById('modal-errores');
+           const listaErrores = document.getElementById('lista-errores');
+           
+           // Limpiar lista anterior
+           listaErrores.innerHTML = '';
+           
+           // Agregar cada campo con error a la lista
+           camposConError.forEach(campo => {
+               const li = document.createElement('li');
+               li.textContent = campo;
+               li.style.marginBottom = '5px';
+               listaErrores.appendChild(li);
+           });
+           
+           // Mostrar modal
+           modal.style.display = 'flex'; // Usar flex para centrar contenido
+       }
+       
+       // Función para cerrar modal
+       function cerrarModal() {
+           const modal = document.getElementById('modal-errores');
+           modal.style.display = 'none';
+       }
+       
+       
 });
 </script>
 
@@ -765,10 +1021,130 @@ document.addEventListener('DOMContentLoaded', function() {
           box-shadow: 0 2px 4px rgba(0,0,0,0.2);
       }
       
-      .btn-eliminar-documento:active {
-          transform: scale(0.95);
-      }
-      
+             .btn-eliminar-documento:active {
+           transform: scale(0.95);
+       }
+       
+       /* Estilos para el botón Registrar Atención */
+       #btn-registrar-atencion {
+           transition: all 0.3s ease;
+       }
+       
+       #btn-registrar-atencion:hover {
+           background-color: #0056b3 !important;
+           transform: translateY(-1px);
+           box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+       }
+       
+       #btn-registrar-atencion:active {
+           transform: translateY(0);
+           box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+       }
+       
+               #btn-registrar-atencion:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        /* Estilos para campos con error */
+        .campo-error {
+            color: #dc3545;
+            font-size: 0.6rem;
+            margin-top: 2px;
+            display: none;
+        }
+        
+                 /* Estilos para campos con error en el formulario principal */
+         select.error, textarea.error {
+             border-color: #dc3545 !important;
+             box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25) !important;
+         }
+         
+         /* Estilos para el modal */
+         .modal {
+             animation: modalFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+         }
+         
+         .modal-content {
+             animation: modalFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+         }
+         
+         @keyframes modalFadeIn {
+             from {
+                 opacity: 0;
+                 transform: translateY(-30px) scale(0.9);
+             }
+             to {
+                 opacity: 1;
+                 transform: translateY(0) scale(1);
+             }
+         }
+         
+         .close-modal:hover {
+             background: rgba(255,255,255,0.2) !important;
+             transform: scale(1.1);
+         }
+         
+         .btn-cerrar-modal:hover {
+             background: linear-gradient(135deg, #5a6268 0%, #495057 100%) !important;
+             transform: translateY(-2px);
+             box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4) !important;
+         }
 
-</style>
+          /* Deshabilitar tooltips de validación HTML5 nativa */
+          input:invalid,
+          select:invalid,
+          textarea:invalid {
+              box-shadow: none !important;
+          }
+          
+          /* Ocultar tooltips de validación nativa */
+          input::-webkit-validation-bubble-message,
+          select::-webkit-validation-bubble-message,
+          textarea::-webkit-validation-bubble-message {
+              display: none !important;
+              opacity: 0 !important;
+              visibility: hidden !important;
+          }
+          
+          /* Para Firefox */
+          input:-moz-ui-invalid,
+          select:-moz-ui-invalid,
+          textarea:-moz-ui-invalid {
+              box-shadow: none !important;
+          }
+          
+          /* Para IE/Edge */
+          input:invalid,
+          select:invalid,
+          textarea:invalid {
+              -ms-box-shadow: none !important;
+          }
+          
+          /* Deshabilitar tooltips de validación en todos los navegadores */
+          input::-webkit-validation-bubble-message,
+          select::-webkit-validation-bubble-message,
+          textarea::-webkit-validation-bubble-message {
+              display: none !important;
+              opacity: 0 !important;
+              visibility: hidden !important;
+          }
+          
+          /* Para Firefox */
+          input:-moz-ui-invalid,
+          select:-moz-ui-invalid,
+          textarea:-moz-ui-invalid {
+              box-shadow: none !important;
+          }
+          
+          /* Para Safari */
+          input:invalid,
+          select:invalid,
+          textarea:invalid {
+              -webkit-appearance: none;
+              -moz-appearance: none;
+              appearance: none;
+          }
+
+   </style>
 {% endblock %}
