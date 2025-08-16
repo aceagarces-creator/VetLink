@@ -359,9 +359,19 @@ class RegistrarTutorForm(forms.Form):
 
     def clean_numero(self):
         numero = self.cleaned_data['numero']
-        if not numero.isdigit():
-            raise forms.ValidationError('El número debe contener solo números')
-        return numero
+        # Permitir números, letras, guiones y barras, convertir a mayúsculas
+        if not re.match(r'^[0-9A-Z\-/]*$', numero.upper()):
+            raise forms.ValidationError('El número solo puede contener números, letras, guiones y barras')
+        return numero.upper()
+
+    def clean_depto(self):
+        depto = self.cleaned_data.get('depto', '')
+        if depto:
+            # Permitir números, letras, guiones y barras, convertir a mayúsculas
+            if not re.match(r'^[0-9A-Z\-/]*$', depto.upper()):
+                raise forms.ValidationError('El departamento solo puede contener números, letras, guiones y barras')
+            return depto.upper()
+        return depto
 
     def clean_fecha_nacimiento(self):
         fecha = self.cleaned_data['fecha_nacimiento']

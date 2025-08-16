@@ -176,7 +176,7 @@
                               {% endif %}
                           </div>
                                                    <div id="segunda-nacionalidad-container" style="display: flex; align-items: flex-start; justify-content: center; padding-top: 25px;">
-                              <button type="button" id="btn-segunda-nacionalidad" class="btn btn-sm" style="background-color: #e6a700; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; white-space: nowrap; text-decoration: none; display: inline-block; width: 80%;">
+                              <button type="button" id="btn-segunda-nacionalidad" class="btn btn-sm" style="background-color: #e6a700; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; white-space: nowrap; text-decoration: none; display: inline-block; width: 80%; cursor: pointer; transition: all 0.3s ease;">
                                   Segunda Nacionalidad
                               </button>
                           </div>
@@ -282,7 +282,7 @@
             
                      <!-- Buttons -->
          <div style="text-align: center; margin-top: 1.5rem;">
-             <button type="submit" id="btn-registrar-tutor" class="btn btn-primary" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+             <button type="submit" id="btn-registrar-tutor" class="btn btn-primary" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.3s ease;">
                  {% if tutor_guardado %}Actualizar Tutor(a){% else %}Registrar Tutor(a){% endif %}
              </button>
          </div>
@@ -418,6 +418,17 @@
              opacity: 1;
              transform: translateY(0) scale(1);
          }
+     }
+     
+     /* Efectos hover para botones específicos */
+     #btn-segunda-nacionalidad:hover {
+         transform: translateY(-1px);
+         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+     }
+     
+     #btn-registrar-tutor:hover {
+         transform: translateY(-1px);
+         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
      }
      
      .close-modal:hover {
@@ -655,52 +666,74 @@ document.addEventListener('DOMContentLoaded', function() {
     function validarCampoNumeroDepto(input) {
          if (input) {
              input.addEventListener('input', function(e) {
-                 // Remover cualquier carácter que no sea número, letra A-Z o guión
-                 let value = this.value.replace(/[^0-9A-Za-z-]/g, '');
-                 
-                 // Convertir letras a mayúsculas
-                 value = value.toUpperCase();
-                 
-                 // Limitar a 10 caracteres
-                 if (value.length > 10) {
-                     value = value.substring(0, 10);
+                 // Para el campo número: números, letras A-Z, guión y barra
+                 if (this.name === 'numero') {
+                     let value = this.value.replace(/[^0-9A-Za-z-\/]/g, '');
+                     value = value.toUpperCase();
+                     if (value.length > 10) {
+                         value = value.substring(0, 10);
+                     }
+                     this.value = value;
                  }
-                 
-                 this.value = value;
+                 // Para el campo depto: números, letras A-Z, guión y barra
+                 else if (this.name === 'depto') {
+                     let value = this.value.replace(/[^0-9A-Za-z-\/]/g, '');
+                     value = value.toUpperCase();
+                     if (value.length > 10) {
+                         value = value.substring(0, 10);
+                     }
+                     this.value = value;
+                 }
              });
              
              // Prevenir pegar texto que contenga caracteres no válidos
              input.addEventListener('paste', function(e) {
                  e.preventDefault();
                  const pastedText = (e.clipboardData || window.clipboardData).getData('text');
-                 let validOnly = pastedText.replace(/[^0-9A-Za-z-]/g, '');
                  
-                 // Convertir letras a mayúsculas
-                 validOnly = validOnly.toUpperCase();
-                 
-                 // Limitar a 10 caracteres
-                 if (validOnly.length > 10) {
-                     validOnly = validOnly.substring(0, 10);
+                 // Para el campo número: números, letras A-Z, guión y barra
+                 if (this.name === 'numero') {
+                     let validOnly = pastedText.replace(/[^0-9A-Za-z-\/]/g, '');
+                     validOnly = validOnly.toUpperCase();
+                     if (validOnly.length > 10) {
+                         validOnly = validOnly.substring(0, 10);
+                     }
+                     this.value = validOnly;
                  }
-                 
-                 this.value = validOnly;
+                 // Para el campo depto: números, letras A-Z, guión y barra
+                 else if (this.name === 'depto') {
+                     let validOnly = pastedText.replace(/[^0-9A-Za-z-\/]/g, '');
+                     validOnly = validOnly.toUpperCase();
+                     if (validOnly.length > 10) {
+                         validOnly = validOnly.substring(0, 10);
+                     }
+                     this.value = validOnly;
+                 }
              });
              
              // Prevenir arrastrar y soltar texto que contenga caracteres no válidos
              input.addEventListener('drop', function(e) {
                  e.preventDefault();
                  const droppedText = e.dataTransfer.getData('text');
-                 let validOnly = droppedText.replace(/[^0-9A-Za-z-]/g, '');
                  
-                 // Convertir letras a mayúsculas
-                 validOnly = validOnly.toUpperCase();
-                 
-                 // Limitar a 10 caracteres
-                 if (validOnly.length > 10) {
-                     validOnly = validOnly.substring(0, 10);
+                 // Para el campo número: números, letras A-Z, guión y barra
+                 if (this.name === 'numero') {
+                     let validOnly = droppedText.replace(/[^0-9A-Za-z-\/]/g, '');
+                     validOnly = validOnly.toUpperCase();
+                     if (validOnly.length > 10) {
+                         validOnly = validOnly.substring(0, 10);
+                     }
+                     this.value = validOnly;
                  }
-                 
-                 this.value = validOnly;
+                 // Para el campo depto: números, letras A-Z, guión y barra
+                 else if (this.name === 'depto') {
+                     let validOnly = droppedText.replace(/[^0-9A-Za-z-\/]/g, '');
+                     validOnly = validOnly.toUpperCase();
+                     if (validOnly.length > 10) {
+                         validOnly = validOnly.substring(0, 10);
+                     }
+                     this.value = validOnly;
+                 }
              });
          }
      }
