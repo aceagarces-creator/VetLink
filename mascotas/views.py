@@ -328,6 +328,9 @@ def ficha_clinica_view(request):
     historial_atenciones = []
     mensaje = None
     
+    # Verificar si hay parámetro nro_chip en GET (para redirección desde otros formularios)
+    nro_chip_get = request.GET.get('nro_chip')
+    
     if request.method == 'POST':
         form = BuscarFichaClinicaForm(request.POST)
         
@@ -341,7 +344,20 @@ def ficha_clinica_view(request):
             except Mascota.DoesNotExist:
                 mensaje = f"No se encontraron registros para este número de chip: {nro_chip}"
     else:
-        form = BuscarFichaClinicaForm()
+        # Si hay nro_chip en GET, precargar la búsqueda
+        if nro_chip_get:
+            try:
+                mascota_encontrada = Mascota.objects.get(nro_chip=nro_chip_get)
+                historial_atenciones = AtencionClinica.objects.filter(
+                    id_mascota=mascota_encontrada
+                ).order_by('-fecha_atencion')
+                # Crear formulario con el nro_chip precargado
+                form = BuscarFichaClinicaForm(initial={'nro_chip': nro_chip_get})
+            except Mascota.DoesNotExist:
+                mensaje = f"No se encontraron registros para este número de chip: {nro_chip_get}"
+                form = BuscarFichaClinicaForm()
+        else:
+            form = BuscarFichaClinicaForm()
     
     return render(request, 'mascotas/ficha_clinica.html', {
         'form': form,

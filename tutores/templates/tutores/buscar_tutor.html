@@ -10,12 +10,12 @@
             Ingrese el Rut del tutor(*)
         </label>
         {{ form.nro_documento }}
-        <button type="submit" class="btn btn-primary" id="btn-buscar" style="padding: 8px 16px; border-radius: 4px; background-color: #007bff; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+        <button type="submit" class="btn btn-primary" id="btn-buscar" style="padding: 8px 16px; border-radius: 4px; background-color: #007bff; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer;">
             Buscar
         </button>
         {% if tutor %}
-        <button type="button" class="btn btn-success" id="btn-nueva-busqueda" style="padding: 8px 16px; border-radius: 4px; background-color: #28a745; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px;">
-            Realizar nueva búsqueda
+        <button type="button" class="btn btn-success" id="btn-nueva-busqueda" style="padding: 8px 16px; border-radius: 4px; background-color: #28a745; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer;">
+            Realizar Nueva Búsqueda
         </button>
         {% endif %}
     </form>
@@ -88,9 +88,9 @@
                         <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem;">{{ mascota.id_raza.nombre }}</td>
                         <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center; vertical-align: middle;">
                             <div style="display: flex; gap: 5px; flex-wrap: nowrap; justify-content: center; align-items: center;">
-                                <a href="/mascotas/ficha-clinica/?nro_chip={{ mascota.nro_chip }}" class="btn btn-sm" style="background-color: #e6a700; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; white-space: nowrap; text-decoration: none; display: inline-block;">
-                                    Ver Ficha Clínica
-                                </a>
+                                                                 <a href="/mascotas/ficha-clinica/?nro_chip={{ mascota.nro_chip }}" class="btn btn-sm" style="background-color: #e6a700; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; white-space: nowrap; text-decoration: none; display: inline-block;">
+                                     Ver Ficha Médica
+                                 </a>
                                 <a href="{% url 'atencion_medica:registrar_atencion' %}?nro_chip={{ mascota.nro_chip }}" class="btn btn-sm" style="background-color: #28a745; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; white-space: nowrap; text-decoration: none; display: inline-block;">
                                     Registrar Atención
                                 </a>
