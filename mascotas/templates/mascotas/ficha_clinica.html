@@ -16,12 +16,12 @@
             {{ form.nro_chip.label }}
         </label>
         {{ form.nro_chip }}
-        <button type="submit" name="buscar_mascota" class="btn btn-primary" id="btn-buscar" style="padding: 8px 16px; border-radius: 4px; background-color: #007bff; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+        <button type="submit" name="buscar_mascota" class="btn btn-primary" id="btn-buscar" style="padding: 8px 16px; border-radius: 4px; background-color: #007bff; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer;">
             Buscar
         </button>
         {% if mascota_encontrada %}
-        <button type="button" class="btn btn-success" id="btn-nueva-busqueda" style="padding: 8px 16px; border-radius: 4px; background-color: #28a745; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px;">
-            Realizar nueva búsqueda
+        <button type="button" class="btn btn-success" id="btn-nueva-busqueda" style="padding: 8px 16px; border-radius: 4px; background-color: #28a745; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer;">
+            Realizar Nueva Búsqueda
         </button>
         {% endif %}
     </form>
@@ -203,7 +203,7 @@
                     <button type="button" id="consentimiento-link-{{ mascota_encontrada.id_mascota }}" 
                             onclick="manejarConsentimiento({{ mascota_encontrada.id_mascota }})" 
                             class="btn btn-sm" 
-                            style="background-color: #e6a700; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; white-space: nowrap; text-decoration: none; display: inline-block;">
+                            style="background-color: #e6a700; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; white-space: nowrap; text-decoration: none; display: inline-block; cursor: pointer;">
                         {% if mascota_encontrada.consentimiento %}
                             Visualizar Documento
                         {% else %}
@@ -272,7 +272,7 @@
         
         <!-- Botón "Registrar Nueva Atención" centrado -->
         <div style="text-align: center; margin-top: 1.5rem;">
-            <button class="btn btn-primary" disabled style="background-color: #6c757d; border: none; padding: 8px 16px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+            <button class="btn btn-primary" onclick="registrarNuevaAtencion()" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer;">
                 <i class="fas fa-stethoscope"></i> Registrar Nueva Atención
             </button>
         </div>
@@ -281,7 +281,7 @@
         
         <!-- Botón "Registrar Nueva Atención" centrado -->
         <div style="text-align: center; margin-top: 1.5rem;">
-            <button class="btn btn-primary" disabled style="background-color: #6c757d; border: none; padding: 8px 16px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+            <button class="btn btn-primary" onclick="registrarNuevaAtencion()" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer;">
                 <i class="fas fa-stethoscope"></i> Registrar Nueva Atención
             </button>
         </div>
@@ -313,7 +313,7 @@
             </div>
         </div>
                  <div class="modal-footer" style="padding: 20px 25px; border-top: 1px solid #e9ecef; text-align: right; background-color: #f8f9fa; position: relative;">
-             <button type="button" class="btn btn-secondary" onclick="cerrarModalVerConsentimiento()" style="background-color: #6c757d; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+             <button type="button" class="btn btn-secondary" onclick="cerrarModalVerConsentimiento()" style="background-color: #6c757d; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer;">
                  <i class="fas fa-times"></i> Cerrar
              </button>
          </div>
@@ -779,6 +779,18 @@
              cerrarModalSubirConsentimiento();
          }
      });
+     
+     // Función para registrar nueva atención médica
+     function registrarNuevaAtencion() {
+         {% if mascota_encontrada %}
+             // Redirigir al formulario de atención médica con el número de chip precargado
+             const nroChip = '{{ mascota_encontrada.nro_chip }}';
+             window.location.href = '/atencion-medica/registrar-atencion/?nro_chip=' + encodeURIComponent(nroChip);
+         {% else %}
+             // Si no hay mascota encontrada, redirigir al formulario sin parámetros
+             window.location.href = '/atencion-medica/registrar-atencion/';
+         {% endif %}
+     }
  </script>
 
 {% endblock %}

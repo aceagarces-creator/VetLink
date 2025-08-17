@@ -13,12 +13,7 @@
         {{ error }}
     </div>
 {% else %}
-    <!-- Botón Volver a Ficha Clínica -->
-    <div style="text-align: center; margin-bottom: 20px;">
-        <a href="/mascotas/ficha-clinica/?nro_chip={{ atencion.id_mascota.nro_chip }}" class="btn btn-secondary" style="background-color: #6c757d; border: none; padding: 8px 16px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 12px; text-decoration: none; display: inline-block;">
-            <i class="fas fa-arrow-left"></i> Volver a Ficha Clínica
-        </a>
-    </div>
+
 
     <!-- Título "Antecedentes del Tutor(a)" -->
     <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 80%; margin-left: auto; margin-right: auto;">ANTECEDENTES DEL TUTOR(A)</h5>
@@ -26,35 +21,34 @@
     <!-- Bloque "Antecedentes del Tutor/a" -->
     <div class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 auto; width: 80%;">
         <div class="card-body" style="padding: 12px 25px;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">RUT</label>
-                    <input type="text" value="{{ atencion.id_mascota.id_tutor.nro_documento }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Nombres</label>
-                    <input type="text" value="{{ atencion.id_mascota.id_tutor.nombres }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Apellido Paterno</label>
-                    <input type="text" value="{{ atencion.id_mascota.id_tutor.apellido_paterno }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 10px;">
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Apellido Materno</label>
-                    <input type="text" value="{{ atencion.id_mascota.id_tutor.apellido_materno|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Correo Electrónico</label>
-                    <input type="email" value="{{ atencion.id_mascota.id_tutor.email|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Celular</label>
-                    <input type="text" value="{{ atencion.id_mascota.id_tutor.celular|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-            </div>
+                         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Nombres</label>
+                     <input type="text" value="{{ atencion.id_mascota.id_tutor.nombres }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Apellido Paterno</label>
+                     <input type="text" value="{{ atencion.id_mascota.id_tutor.apellido_paterno }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Apellido Materno</label>
+                     <input type="text" value="{{ atencion.id_mascota.id_tutor.apellido_materno|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+             </div>
+             
+             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 10px;">
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Correo Electrónico</label>
+                     <input type="email" value="{{ atencion.id_mascota.id_tutor.email|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Celular</label>
+                     <input type="text" value="{{ atencion.id_mascota.id_tutor.celular|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+                 <div>
+                     <!-- Campo vacío -->
+                 </div>
+             </div>
         </div>
     </div>
     
@@ -64,191 +58,167 @@
     <!-- Bloque "Datos de la Mascota" -->
     <div class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 auto; width: 80%;">
         <div class="card-body" style="padding: 12px 25px;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Nombre</label>
-                    <input type="text" value="{{ atencion.id_mascota.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Especie</label>
-                    <input type="text" value="{{ atencion.id_mascota.id_especie.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Raza</label>
-                    <input type="text" value="{{ atencion.id_mascota.id_raza.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 10px;">
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Número de Chip</label>
-                    <input type="text" value="{{ atencion.id_mascota.nro_chip }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Sexo</label>
-                    <input type="text" value="{{ atencion.id_mascota.sexo }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Fecha de Nacimiento</label>
-                    <input type="text" value="{{ atencion.id_mascota.fecha_nacimiento|date:'d/m/Y' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-            </div>
+                         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Microchip</label>
+                     <input type="text" value="{{ atencion.id_mascota.nro_chip }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Nombre</label>
+                     <input type="text" value="{{ atencion.id_mascota.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Especie</label>
+                     <input type="text" value="{{ atencion.id_mascota.id_especie.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+             </div>
+             
+             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 10px;">
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Raza</label>
+                     <input type="text" value="{{ atencion.id_mascota.id_raza.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Fecha de Nacimiento</label>
+                     <input type="text" value="{{ atencion.id_mascota.fecha_nacimiento|date:'d/m/Y' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Sexo</label>
+                     <input type="text" value="{{ atencion.id_mascota.sexo }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+             </div>
         </div>
     </div>
 
-    <!-- Título "Información de la Atención" -->
-    <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 80%; margin-left: auto; margin-right: auto; margin-top: 20px;">INFORMACIÓN DE LA ATENCIÓN</h5>
+         <!-- Título "Información de la Atención" -->
+     <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 80%; margin-left: auto; margin-right: auto; margin-top: 20px;">INFORMACIÓN DE LA ATENCIÓN</h5>
+     
+     <!-- Bloque "Información de la Atención" -->
+     <div class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 auto; width: 80%;">
+         <div class="card-body" style="padding: 12px 25px;">
+             <!-- Primera fila: Fecha de Atención, Clínica, Veterinario -->
+             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Fecha de Atención</label>
+                     <input type="text" value="{{ atencion.fecha_atencion|date:'d/m/Y H:i' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Clínica</label>
+                     <input type="text" value="{{ atencion.id_clinica.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Veterinario</label>
+                     <input type="text" value="{{ atencion.id_personal.nombres }} {{ atencion.id_personal.apellido_paterno }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+             </div>
+             
+                           <!-- Segunda fila: Servicio, Detalle del Servicio, Peso y Temperatura -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 10px;">
+                  <div>
+                      <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Servicio</label>
+                      <input type="text" value="{{ atencion.id_servicio_detalle.id_servicio.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                  </div>
+                  <div>
+                      <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Detalle del Servicio</label>
+                      <input type="text" value="{{ atencion.id_servicio_detalle.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                  </div>
+                  <div>
+                      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                          <div>
+                              <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Peso (kg)</label>
+                              <input type="text" value="{{ atencion.peso_kg|default:'No registrado' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                          </div>
+                          <div>
+                              <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Temperatura (°C)</label>
+                              <input type="text" value="{{ atencion.temperatura_c|default:'No registrada' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                          </div>
+                      </div>
+                  </div>
+              </div>
+             
+             <!-- Tercera fila: Motivo de la Consulta (3 columnas) -->
+             <div style="margin-top: 10px;">
+                 <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Motivo de la Consulta</label>
+                 <textarea readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem; min-height: 60px; resize: vertical;">{{ atencion.motivo|default:'No especificado' }}</textarea>
+             </div>
+             
+             <!-- Cuarta fila: Diagnóstico (3 columnas) -->
+             <div style="margin-top: 10px;">
+                 <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Diagnóstico</label>
+                 <textarea readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem; min-height: 80px; resize: vertical;">{{ atencion.diagnostico|default:'No especificado' }}</textarea>
+             </div>
+             
+             <!-- Quinta fila: Tratamiento (3 columnas) -->
+             <div style="margin-top: 10px;">
+                 <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Tratamiento</label>
+                 <textarea readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem; min-height: 80px; resize: vertical;">{{ atencion.tratamiento|default:'No especificado' }}</textarea>
+             </div>
+         </div>
+     </div>
+
     
-    <!-- Bloque "Información de la Atención" -->
-    <div class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 auto; width: 80%;">
-        <div class="card-body" style="padding: 12px 25px;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Fecha de Atención</label>
-                    <input type="text" value="{{ atencion.fecha_atencion|date:'d/m/Y H:i' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Clínica</label>
-                    <input type="text" value="{{ atencion.id_clinica.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Veterinario</label>
-                    <input type="text" value="{{ atencion.id_personal.nombres }} {{ atencion.id_personal.apellido_paterno }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 10px;">
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Servicio</label>
-                    <input type="text" value="{{ atencion.id_servicio_detalle.id_servicio.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Detalle del Servicio</label>
-                    <input type="text" value="{{ atencion.id_servicio_detalle.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-            </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 10px;">
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Peso (kg)</label>
-                    <input type="text" value="{{ atencion.peso_kg|default:'No registrado' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Temperatura (°C)</label>
-                    <input type="text" value="{{ atencion.temperatura_c|default:'No registrada' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                </div>
-            </div>
-        </div>
-    </div>
+         <!-- Título "Documentos Adjuntos" -->
+     <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 80%; margin-left: auto; margin-right: auto; margin-top: 20px;">DOCUMENTOS ADJUNTOS</h5>
+     
+     {% if documentos %}
+         <!-- Tabla de Documentos -->
+         <div style="width: 80%; margin-left: auto; margin-right: auto;">
+             <table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd; background-color: #fff;">
+                 <thead style="background-color: #f8f9fa;">
+                     <tr>
+                         <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: left;">Tipo de Documento</th>
+                         <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: left;">Nombre de Documento</th>
+                         <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: center;">Acciones</th>
+                     </tr>
+                 </thead>
+                 <tbody>
+                     {% for documento in documentos %}
+                     <tr>
+                         <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem;">{{ documento.tipo_documento|default:'No especificado' }}</td>
+                         <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem;">{{ documento.nombre_archivo|default:'Sin nombre' }}</td>
+                                                   <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center; vertical-align: middle;">
+                              <button type="button" onclick="manejarDocumentoAtencion({{ documento.id_documento }})" class="btn btn-sm" style="background-color: #e6a700; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; white-space: nowrap; cursor: pointer;">
+                                  <i class="fas fa-eye"></i> Ver Documento
+                              </button>
+                          </td>
+                     </tr>
+                     {% endfor %}
+                 </tbody>
+             </table>
+         </div>
+     {% else %}
+         <p style="color: #666; margin-bottom: 30px; font-size: 0.65rem; width: 80%; margin-left: auto; margin-right: auto; text-align: center;">No hay documentos adjuntos para esta atención.</p>
+     {% endif %}
 
-    <!-- Título "Información Clínica" -->
-    <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 80%; margin-left: auto; margin-right: auto; margin-top: 20px;">INFORMACIÓN CLÍNICA</h5>
-    
-    <!-- Bloque "Información Clínica" -->
-    <div class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 auto; width: 80%;">
-        <div class="card-body" style="padding: 12px 25px;">
-            <div style="margin-bottom: 15px;">
-                <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Motivo de la Consulta</label>
-                <textarea readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem; min-height: 60px; resize: vertical;">{{ atencion.motivo|default:'No especificado' }}</textarea>
-            </div>
-            
-            <div style="margin-bottom: 15px;">
-                <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Detalle Clínico</label>
-                <textarea readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem; min-height: 80px; resize: vertical;">{{ atencion.detalle_clinico|default:'No especificado' }}</textarea>
-            </div>
-            
-            <div style="margin-bottom: 15px;">
-                <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Diagnóstico</label>
-                <textarea readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem; min-height: 80px; resize: vertical;">{{ atencion.diagnostico|default:'No especificado' }}</textarea>
-            </div>
-            
-            <div>
-                <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Tratamiento</label>
-                <textarea readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem; min-height: 80px; resize: vertical;">{{ atencion.tratamiento|default:'No especificado' }}</textarea>
-            </div>
-        </div>
-    </div>
-
-    <!-- Título "Insumos Utilizados" -->
-    <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 80%; margin-left: auto; margin-right: auto; margin-top: 20px;">INSUMOS UTILIZADOS</h5>
-    
-    {% if insumos %}
-        <!-- Tabla de Insumos -->
-        <div style="width: 80%; margin-left: auto; margin-right: auto;">
-            <table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd; background-color: #fff;">
-                <thead style="background-color: #f8f9fa;">
-                    <tr>
-                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: left;">Insumo</th>
-                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: center;">Cantidad</th>
-                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: center;">Dosis</th>
-                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: left;">Vía de Administración</th>
-                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: center;">Costo</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for insumo in insumos %}
-                    <tr>
-                        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem;">{{ insumo.insumo_nombre }}</td>
-                        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem; text-align: center;">{{ insumo.cantidad_utilizada|default:'N/A' }}</td>
-                        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem; text-align: center;">{{ insumo.dosis|default:'N/A' }}</td>
-                        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem;">{{ insumo.via_administracion|default:'N/A' }}</td>
-                        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem; text-align: center;">{{ insumo.costo_asociado|default:'N/A' }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% else %}
-        <p style="color: #666; margin-bottom: 30px; font-size: 0.65rem; width: 80%; margin-left: auto; margin-right: auto; text-align: center;">No hay insumos registrados para esta atención.</p>
-    {% endif %}
-
-    <!-- Título "Documentos Adjuntos" -->
-    <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 80%; margin-left: auto; margin-right: auto; margin-top: 20px;">DOCUMENTOS ADJUNTOS</h5>
-    
-    {% if documentos %}
-        <!-- Tabla de Documentos -->
-        <div style="width: 80%; margin-left: auto; margin-right: auto;">
-            <table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd; background-color: #fff;">
-                <thead style="background-color: #f8f9fa;">
-                    <tr>
-                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: left;">Nombre</th>
-                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: left;">Tipo</th>
-                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: center;">Fecha</th>
-                        <th style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 0.65rem; text-align: center;">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for documento in documentos %}
-                    <tr>
-                        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem;">{{ documento.nombre_archivo|default:'Sin nombre' }}</td>
-                        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem;">{{ documento.tipo_documento|default:'No especificado' }}</td>
-                        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem; text-align: center;">{{ documento.fecha_subida|date:'d/m/Y'|default:'N/A' }}</td>
-                        <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center; vertical-align: middle;">
-                            <div style="display: flex; gap: 5px; justify-content: center;">
-                                <a href="/mascotas/documento-atencion/ver/{{ documento.id_documento }}/" target="_blank" class="btn btn-sm" style="background-color: #007bff; color: #FFFFFF; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: bold; white-space: nowrap; text-decoration: none; display: inline-block;">
-                                    <i class="fas fa-eye"></i> Ver
-                                </a>
-                                <a href="/mascotas/documento-atencion/descargar/{{ documento.id_documento }}/" class="btn btn-sm" style="background-color: #28a745; color: #FFFFFF; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: bold; white-space: nowrap; text-decoration: none; display: inline-block;">
-                                    <i class="fas fa-download"></i> Descargar
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% else %}
-        <p style="color: #666; margin-bottom: 30px; font-size: 0.65rem; width: 80%; margin-left: auto; margin-right: auto; text-align: center;">No hay documentos adjuntos para esta atención.</p>
-    {% endif %}
-
-    <!-- Botón Volver a Ficha Clínica (al final) -->
-    <div style="text-align: center; margin-top: 2rem; margin-bottom: 2rem;">
-        <a href="/mascotas/ficha-clinica/?nro_chip={{ atencion.id_mascota.nro_chip }}" class="btn btn-secondary" style="background-color: #6c757d; border: none; padding: 12px 24px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 14px; text-decoration: none; display: inline-block;">
-            <i class="fas fa-arrow-left"></i> Volver a Ficha Clínica
-        </a>
-    </div>
-{% endif %}
+         <!-- Botón Volver a Ficha Clínica (al final) -->
+     <div style="text-align: center; margin-top: 1.5rem;">
+                  <a href="/mascotas/ficha-clinica/?nro_chip={{ atencion.id_mascota.nro_chip }}" class="btn btn-primary" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 12px; text-decoration: none; display: inline-block; cursor: pointer; transition: all 0.3s ease;">
+             <i class="fas fa-arrow-left"></i> Volver a Ficha Clínica
+         </a>
+     </div>
+ {% endif %}
+ 
+ <!-- Modal para visualizar documentos de atención -->
+ <div id="modalDocumentoAtencion" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4);">
+     <div style="background-color: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+             <h3 style="margin: 0; color: #333; font-size: 1.2rem;">Documento de Atención</h3>
+             <button type="button" onclick="cerrarModalDocumentoAtencion()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #aaa;">&times;</button>
+         </div>
+         <div id="contenidoDocumentoAtencion" style="text-align: center;">
+             <!-- El contenido del documento se cargará aquí -->
+         </div>
+         <div style="text-align: center; margin-top: 20px;">
+             <button type="button" onclick="descargarDocumentoAtencion()" class="btn btn-success" style="background-color: #28a745; border: none; padding: 8px 16px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer; margin-right: 10px;">
+                 <i class="fas fa-download"></i> Descargar
+             </button>
+             <button type="button" onclick="cerrarModalDocumentoAtencion()" class="btn btn-secondary" style="background-color: #6c757d; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer;">
+                 <i class="fas fa-times"></i> Cerrar
+             </button>
+         </div>
+     </div>
+ </div>
 
 <style>
     /* Estilos para mejorar la presentación */
@@ -270,13 +240,85 @@
         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
     
-    /* Estilos para las tablas */
-    table {
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    
-    table tbody tr:hover {
-        background-color: #f8f9fa;
-    }
-</style>
-{% endblock %}
+         /* Estilos para las tablas */
+     table {
+         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+     }
+     
+     table tbody tr:hover {
+         background-color: #f8f9fa;
+     }
+     
+           /* Estilo específico para el botón "Volver a Ficha Clínica" con efectos hover */
+      .btn-primary:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      }
+ </style>
+ 
+ <script>
+     // Variable global para almacenar el ID del documento actual
+     let documentoAtencionActual = null;
+     
+     // Función para manejar la visualización de documentos de atención
+     function manejarDocumentoAtencion(documentoId) {
+         documentoAtencionActual = documentoId;
+         
+         // Mostrar el modal
+         document.getElementById('modalDocumentoAtencion').style.display = 'block';
+         
+         // Cargar el contenido del documento
+         fetch(`/mascotas/documento-atencion/ver/${documentoId}/`)
+             .then(response => {
+                 if (response.ok) {
+                     return response.blob();
+                 }
+                 throw new Error('Error al cargar el documento');
+             })
+             .then(blob => {
+                 const url = URL.createObjectURL(blob);
+                 const contenidoDiv = document.getElementById('contenidoDocumentoAtencion');
+                 
+                 // Limpiar contenido anterior
+                 contenidoDiv.innerHTML = '';
+                 
+                 // Crear iframe para mostrar el documento
+                 const iframe = document.createElement('iframe');
+                 iframe.src = url;
+                 iframe.style.width = '100%';
+                 iframe.style.height = '400px';
+                 iframe.style.border = 'none';
+                 iframe.style.borderRadius = '4px';
+                 
+                 contenidoDiv.appendChild(iframe);
+             })
+             .catch(error => {
+                 console.error('Error:', error);
+                 document.getElementById('contenidoDocumentoAtencion').innerHTML = 
+                     '<p style="color: #721c24; background-color: #f8d7da; padding: 10px; border-radius: 4px;">Error al cargar el documento. Por favor, inténtelo de nuevo.</p>';
+             });
+     }
+     
+     // Función para cerrar el modal de documento de atención
+     function cerrarModalDocumentoAtencion() {
+         document.getElementById('modalDocumentoAtencion').style.display = 'none';
+         document.getElementById('contenidoDocumentoAtencion').innerHTML = '';
+         documentoAtencionActual = null;
+     }
+     
+     // Función para descargar el documento de atención
+     function descargarDocumentoAtencion() {
+         if (documentoAtencionActual) {
+             window.open(`/mascotas/documento-atencion/descargar/${documentoAtencionActual}/`, '_blank');
+         }
+     }
+     
+     // Cerrar modal al hacer clic fuera de él
+     window.onclick = function(event) {
+         const modal = document.getElementById('modalDocumentoAtencion');
+         if (event.target === modal) {
+             cerrarModalDocumentoAtencion();
+         }
+     }
+ </script>
+ {% endblock %}
