@@ -28,6 +28,7 @@ VetLink es una aplicación web diseñada específicamente para clínicas veterin
 - Fichas clínicas detalladas
 - Historial médico completo
 - Seguimiento de tratamientos
+- Registro de consentimiento de interoperabilidad
 
 ### 🏢 Gestión Clínica
 - Administración de clínicas veterinarias
