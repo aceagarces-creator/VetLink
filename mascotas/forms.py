@@ -23,7 +23,7 @@ class BuscarTutorMascotaForm(forms.Form):
             'class': 'form-control',
             'placeholder': 'Ej: 15468064-0',
             'style': 'max-width: 250px;',
-            'pattern': '[0-9Kk-]*',
+            'pattern': '[0-9Kk\-]*',
             'oninput': 'this.value = this.value.replace(/[^0-9Kk-]/g, "").replace(/k/g, "K");'
         }),
         help_text='Ingrese el RUT con formato: 15468064-0 (7-8 dígitos, guión y dígito verificador)'

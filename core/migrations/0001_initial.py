@@ -169,7 +169,7 @@ class Migration(migrations.Migration):
                 ('sexo', models.CharField(blank=True, max_length=10, null=True)),
                 ('color', models.CharField(blank=True, max_length=50, null=True)),
                 ('patron', models.CharField(blank=True, max_length=50, null=True)),
-                ('estado_reproductivo', models.CharField(blank=True, max_length=50, null=True)),
+                ('estado_reproductivo', models.BooleanField(blank=True, null=True)),
                 ('modo_obtencion', models.CharField(blank=True, max_length=50, null=True)),
                 ('razon_tenencia', models.CharField(blank=True, max_length=50, null=True)),
                 ('estado_vital', models.CharField(blank=True, max_length=50, null=True)),

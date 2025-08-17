@@ -6,13 +6,9 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 {% endblock %}
 
-
-
 {% block content %}
-<!-- Título principal con espacio superior reducido y en mayúsculas -->
 <h1 style="text-align: center; font-weight: bold; margin-top: 0.1rem; margin-bottom: 20px; color: #333; font-size: 1.3rem; text-transform: uppercase;">Registrar Nueva Mascota</h1>
 
-<!-- Modal para mostrar éxito de registro de mascota -->
 {% if mensaje_exito %}
 <div id="exitoModal" class="modal" style="display: flex; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center;">
     <div class="modal-content" style="background-color: #fefefe; margin: auto; padding: 0; border-radius: 12px; width: 95%; max-width: 550px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); animation: modalFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); overflow: hidden;">
@@ -39,7 +35,6 @@
 </div>
 {% endif %}
 
-<!-- Formulario de búsqueda reorganizado horizontalmente -->
 <div style="display: flex; justify-content: center; margin-bottom: 15px;">
     <form method="post" class="mb-4 buscar-tutor-form" style="display: flex; align-items: center; gap: 15px; max-width: 600px;">
         {% csrf_token %}
@@ -48,7 +43,6 @@
         </label>
         <div style="position: relative;">
             {{ buscar_tutor_form.rut_tutor }}
-            <!-- Contenedor para mensaje de validación del RUT -->
             <div id="rut-validation-message" style="display: none; margin-top: 5px; padding: 8px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: 500; align-items: center; gap: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"></div>
         </div>
         <button type="submit" name="buscar_tutor" class="btn btn-primary" id="btn-buscar-tutor" style="padding: 8px 16px; border-radius: 4px; background-color: #007bff; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px;">
@@ -62,7 +56,6 @@
     </form>
 </div>
 
-<!-- Mensaje de error centrado bajo la línea de búsqueda -->
 {% if buscar_tutor_form.rut_tutor.errors %}
     <div style="display: flex; justify-content: center; margin-bottom: 10px;">
         <div style="color: #dc3545; font-size: 0.65rem; text-align: center;">
@@ -81,15 +74,11 @@
     </div>
 {% endif %}
 
-<!-- Datos del tutor encontrado -->
 {% if tutor_encontrado %}
-    <!-- Título "Antecedentes del Tutor/a" movido fuera del contenedor -->
     <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 80%; margin-left: auto; margin-right: auto;">ANTECEDENTES DEL TUTOR(A)</h5>
     
-    <!-- Bloque "Antecedentes del Tutor/a" con ancho ajustado al 80% -->
     <div class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 auto; width: 80%;">
         <div class="card-body" style="padding: 12px 25px 12px 25px;">
-            <!-- Primera fila de campos -->
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
                 <div>
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Nombres</label>
@@ -105,7 +94,6 @@
                 </div>
             </div>
             
-            <!-- Segunda fila de campos -->
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
                 <div>
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Correo</label>
@@ -116,18 +104,14 @@
                     <input type="text" value="{{ tutor_encontrado.celular|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
                 </div>
                 <div>
-                    <!-- Campo vacío para mantener alineación -->
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Sección: Registrar Mascota -->
     {% if tutor_encontrado %}
-    <!-- Título "Datos de la Mascota" movido fuera del contenedor y alineado con "Antecedentes del Tutor/a" -->
     <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 80%; margin-left: auto; margin-right: auto;">INGRESE LOS DATOS DE LA MASCOTA</h5>
     
-    <!-- Bloque "Datos de la Mascota" con el mismo estilo visual que "Antecedentes del Tutor/a" -->
     <div class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 auto; width: 80%;">
         <div class="card-body" style="padding: 12px 25px 12px 25px;">
             
@@ -135,10 +119,9 @@
                 {% csrf_token %}
                 <input type="hidden" name="tutor_id" value="{{ tutor_encontrado.id_tutor }}">
                 
-                <!-- Primera fila - Microchip, Nombre, Especie -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
                     <div>
-                        <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Microchip</label>
+                        <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Microchip (*)</label>
                         {{ registrar_mascota_form.nro_chip }}
                         {% if registrar_mascota_form.nro_chip.errors %}
                             <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
@@ -166,7 +149,6 @@
                     </div>
                 </div>
                 
-                <!-- Segunda fila - Raza, Color, Patrón -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
                     <div>
                         <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ registrar_mascota_form.raza.label }}</label>
@@ -197,7 +179,6 @@
                        </div>
                 </div>
                 
-                <!-- Tercera fila - Fecha de Nacimiento, Sexo, Estado Reproductivo -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
                     <div>
                         <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ registrar_mascota_form.fecha_nacimiento.label }}</label>
@@ -237,7 +218,6 @@
                     </div>
                 </div>
                 
-                <!-- Cuarta fila - Modo de Obtención, Razón de Tenencia, Vacío -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
                     <div>
                         <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ registrar_mascota_form.modo_obtencion.label }}</label>
@@ -258,11 +238,9 @@
                         {% endif %}
                     </div>
                     <div>
-                        <!-- Columna vacía para mantener alineación -->
                     </div>
                 </div>
                 
-                <!-- Quinta fila - Notas Adicionales (ancho completo) -->
                 <div style="margin-bottom: 10px;">
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ registrar_mascota_form.notas_adicionales.label }}</label>
                     {{ registrar_mascota_form.notas_adicionales }}
@@ -273,72 +251,65 @@
                     {% endif %}
                 </div>
                 
-                <!-- Errores generales del formulario -->
-                {% if registrar_mascota_form.non_field_errors %}
-                    <div style="color: #dc3545; font-size: 0.6rem; margin-bottom: 15px; text-align: center;">
-                        {% for error in registrar_mascota_form.non_field_errors %}{{ error }}{% endfor %}
-                    </div>
-                {% endif %}
-            </form>
-        </div>
-    </div>
-    
-    <!-- Título "AUTORIZACIÓN PARA COMPARTIR ANTECEDENTES MÉDICOS" -->
-    <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 80%; margin-left: auto; margin-right: auto; margin-top: 20px;">AUTORIZACIÓN PARA COMPARTIR ANTECEDENTES MÉDICOS</h5>
-    
-    <!-- Card de Autorización -->
-    <div class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 auto; width: 80%;">
-        <div class="card-body" style="padding: 12px 25px 12px 25px;">
-            <!-- Primera fila: Consentimiento, Adjuntar documento, Eliminar documento -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Registra consentimiento?</label>
-                    <div style="display: flex; align-items: center; gap: 20px;">
-                        <div style="display: flex; align-items: center; gap: 5px;">
-                            <input type="radio" name="consentimiento_interoperabilidad" value="si" id="consentimiento_si" disabled style="margin: 0; accent-color: #007bff;">
-                            <span style="font-size: 0.65rem; color: #333;">Sí</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 5px;">
-                            <input type="radio" name="consentimiento_interoperabilidad" value="no" id="consentimiento_no" checked disabled style="margin: 0; accent-color: #007bff;">
-                            <span style="font-size: 0.65rem; color: #333;">No</span>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Adjuntar documento</label>
-                    <input type="file" name="documento_consentimiento" id="documento_consentimiento" accept=".pdf,.jpg,.jpeg,.png" style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: white; color: #333; box-sizing: border-box; font-size: 0.7rem;">
-                    <div style="color: #6c757d; font-size: 0.6rem; margin-top: 3px;">
-                        Formatos aceptados: PDF, JPG, JPEG, PNG
-                    </div>
-                </div>
-                <div style="display: flex; align-items: center; height: 100%;">
-                    <button type="button" id="eliminar_documento" style="display: none; background-color: #e6a700; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; white-space: nowrap; text-decoration: none; cursor: pointer;">
-                        <i class="fas fa-trash"></i> Eliminar documento
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Banda informativa -->
-            <div style="margin-top: 15px; padding: 10px 15px; background-color: #e7f3ff; border-left: 4px solid #007bff; border-radius: 4px;">
-                <p style="margin: 0; color: #0056b3; font-size: 0.65rem; font-style: italic; line-height: 1.4;">
-                    <strong>Recuerde: </strong> Informar al tutor que este consentimiento autoriza compartir todos los antecedentes médicos de su mascota para cualquier atención que reciba, tanto en esta clínica como en cualquier otra que forme parte de la plataforma VetLink.
-                </p>
-            </div>
-        </div>
-    </div>
-    <!-- Botón de registro -->
-    <div style="text-align: center; margin-top: 2rem; margin-bottom: 2rem;">
-        <button type="submit" name="registrar_mascota" style="background-color: #007bff; border: none; padding: 12px 24px; border-radius: 4px; color: white; font-weight: bold; font-size: 14px; cursor: pointer; transition: background-color 0.3s ease;">
-            Registrar Mascota
-        </button>
-    </div>
-    </form>
+                                 {% if registrar_mascota_form.non_field_errors %}
+                     <div style="color: #dc3545; font-size: 0.6rem; margin-bottom: 15px; text-align: center;">
+                         {% for error in registrar_mascota_form.non_field_errors %}{{ error }}{% endfor %}
+                     </div>
+                 {% endif %}
+                 
+                 <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 100%; margin-left: auto; margin-right: auto; margin-top: 20px;">AUTORIZACIÓN PARA COMPARTIR ANTECEDENTES MÉDICOS</h5>
+                 
+                 <div class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 auto; width: 100%;">
+                     <div class="card-body" style="padding: 12px 25px 12px 25px;">
+                         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
+                             <div>
+                                 <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Registra consentimiento?</label>
+                                 <div style="display: flex; align-items: center; gap: 20px;">
+                                     <div style="display: flex; align-items: center; gap: 5px;">
+                                         <input type="radio" name="consentimiento_interoperabilidad" value="si" id="consentimiento_si" disabled style="margin: 0; accent-color: #007bff;">
+                                         <span style="font-size: 0.65rem; color: #333;">Sí</span>
+                                     </div>
+                                     <div style="display: flex; align-items: center; gap: 5px;">
+                                         <input type="radio" name="consentimiento_interoperabilidad" value="no" id="consentimiento_no" checked disabled style="margin: 0; accent-color: #007bff;">
+                                         <span style="font-size: 0.65rem; color: #333;">No</span>
+                                     </div>
+                                 </div>
+                             </div>
+                             <div>
+                                 <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Adjuntar documento</label>
+                                 <input type="file" name="documento_consentimiento" id="documento_consentimiento" accept=".pdf,.jpg,.jpeg,.png" style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: white; color: #333; box-sizing: border-box; font-size: 0.7rem;">
+                                 <div style="color: #6c757d; font-size: 0.6rem; margin-top: 3px;">
+                                     Formatos aceptados: PDF, JPG, JPEG, PNG
+                                 </div>
+                             </div>
+                             <div style="display: flex; align-items: center; height: 100%;">
+                                                                   <button type="button" id="eliminar_documento" style="display: none; background-color: #e6a700; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; white-space: nowrap; text-decoration: none; cursor: pointer; transition: all 0.3s ease;">
+                                      <i class="fas fa-trash"></i> Eliminar documento
+                                  </button>
+                             </div>
+                         </div>
+                         
+                         <div style="margin-top: 15px; padding: 10px 15px; background-color: #e7f3ff; border-left: 4px solid #007bff; border-radius: 4px;">
+                             <p style="margin: 0; color: #0056b3; font-size: 0.65rem; font-style: italic; line-height: 1.4;">
+                                 <strong>Recuerde: </strong> Informar al tutor que este consentimiento autoriza compartir todos los antecedentes médicos de su mascota para cualquier atención que reciba, tanto en esta clínica como en cualquier otra que forme parte de la plataforma VetLink.
+                             </p>
+                         </div>
+                     </div>
+                 </div>
+                 
+                 <div style="text-align: center; margin-top: 2rem; margin-bottom: 2rem;">
+                     <button type="submit" name="registrar_mascota" style="background-color: #007bff; border: none; padding: 12px 24px; border-radius: 4px; color: white; font-weight: bold; font-size: 14px; cursor: pointer; transition: background-color 0.3s ease;">
+                         Registrar Mascota
+                     </button>
+                 </div>
+             </form>
+         </div>
+     </div>
         </div>
     </div>
     {% endif %}
 {% endif %}
 
-<!-- Modal para mostrar información de chip duplicado -->
 <div id="chipModal" class="modal" style="display: none;">
     <div class="modal-content">
         <div class="modal-header">
@@ -358,13 +329,39 @@
     </div>
 </div>
 
+<div id="modal-errores" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center;">
+    <div class="modal-content" style="background-color: #fefefe; margin: auto; padding: 0; border-radius: 12px; width: 95%; max-width: 550px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); animation: modalFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); overflow: hidden;">
+        <div class="modal-header" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; position: relative;">
+            <h3 style="margin: 0; color: #ffffff; font-size: 1.1rem; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-exclamation-triangle"></i> Campos Obligatorios Requeridos
+            </h3>
+            <span class="close-modal" style="color: white; font-size: 24px; font-weight: 300; cursor: pointer; line-height: 1; transition: all 0.2s ease; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.1);">&times;</span>
+        </div>
+        <div class="modal-body" style="padding: 25px; max-height: 70vh; overflow-y: auto; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);">
+            <div style="text-align: center; padding: 20px;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #dc3545; margin-bottom: 15px;"></i>
+                <p style="color: #721c24; font-size: 1.1rem; margin: 0 0 20px 0;">Por favor, complete los siguientes campos obligatorios:</p>
+                <ul id="lista-errores" style="margin: 0; padding-left: 20px; color: #721c24; font-size: 0.9rem; text-align: left; display: inline-block;">
+                    <!-- Los errores se insertarán aquí dinámicamente -->
+                </ul>
+            </div>
+            <p style="margin: 20px 0 0 0; color: #666; font-size: 0.8rem; font-style: italic; text-align: center;">Los campos obligatorios están marcados con (*)</p>
+        </div>
+        <div class="modal-footer" style="padding: 20px 25px; border-top: 1px solid #e9ecef; text-align: right; background-color: #f8f9fa; position: relative;">
+            <button type="button" class="btn-cerrar-modal" style="background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);">
+                <i class="fas fa-times"></i> Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
 <style>
     /* Estilos adicionales para mejorar la apariencia */
     .container {
         font-family: Arial, sans-serif;
     }
     
-    /* Estilo para el campo de entrada del formulario */
+    /* Estilos base para campos del formulario */
     input[type="text"], input[type="email"], select, textarea {
         border-radius: 5px;
         border: 1px solid #ddd !important;
@@ -372,33 +369,14 @@
         font-size: 0.65rem;
         box-sizing: border-box;
         width: 100%;
-        height: 42px; /* Misma altura que los campos de Antecedentes del Tutor/a */
+        height: 42px;
     }
     
-    /* Estilo específico para campos del formulario de mascota */
+    /* Estilos específicos para campos del formulario de mascota */
     .card-body input[type="text"], 
     .card-body input[type="email"], 
     .card-body select, 
-    .card-body textarea {
-        padding: 0px 12px !important;
-        height: 42px !important;
-        border: 1px solid #ddd !important;
-    }
-    
-    /* Estilos más específicos para forzar el padding reducido */
-    .card-body input[type="text"] {
-        padding: 0px 12px !important;
-        height: 42px !important;
-        border: 1px solid #ddd !important;
-    }
-    
-    .card-body input[type="email"] {
-        padding: 0px 12px !important;
-        height: 42px !important;
-        border: 1px solid #ddd !important;
-    }
-    
-    .card-body select {
+    .card-body input[type="date"] {
         padding: 0px 12px !important;
         height: 42px !important;
         border: 1px solid #ddd !important;
@@ -408,12 +386,6 @@
         padding: 5px 12px !important;
         height: 60px !important;
         min-height: 60px !important;
-        border: 1px solid #ddd !important;
-    }
-    
-    .card-body input[type="date"] {
-        padding: 0px 12px !important;
-        height: 42px !important;
         border: 1px solid #ddd !important;
     }
     
@@ -486,32 +458,11 @@
         max-width: 115px !important;
     }
     
-    /* Estilo específico para textarea de notas adicionales */
-    textarea {
-        height: 60px;
-        resize: vertical;
-        min-height: 60px;
-    }
-    
-    /* Estilo para campos de fecha */
-    input[type="date"] {
-        height: 42px;
-        padding: 0px 12px;
-        font-size: 0.65rem;
-        border: 1px solid #ddd !important;
-    }
-    
-    /* Estilo para campos de archivo */
-    input[type="file"] {
-        height: 42px;
-        padding: 5px 12px;
-        font-size: 0.65rem;
-        border: 1px solid #ddd !important;
-        border-radius: 5px;
-        background-color: #fff;
-    }
 
-/* Estilos para el modal */
+    
+
+
+/* Estilos del modal */
 .modal {
     position: fixed;
     z-index: 1000;
@@ -648,11 +599,17 @@
     box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
 }
 
-/* Estilo específico para el botón "Registrar Mascota" con efectos hover */
-button[name="registrar_mascota"]:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
+ /* Estilo específico para el botón "Registrar Mascota" con efectos hover */
+ button[name="registrar_mascota"]:hover {
+     transform: translateY(-1px);
+     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+ }
+ 
+ /* Estilo específico para el botón "Eliminar Documento" con efectos hover */
+ #eliminar_documento:hover {
+     transform: translateY(-1px);
+     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+ }
 
 /* Estilos para la información de la mascota */
 .mascota-info {
@@ -866,10 +823,66 @@ input[name="rut_tutor"].rut-success {
     border-color: #28a745 !important;
     box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
 }
+
+/* Estilos para campos con error */
+.campo-error {
+    color: #dc3545;
+    font-size: 0.6rem;
+    margin-top: 2px;
+    display: none;
+}
+
+/* Estilos para campos con error */
+input.error, select.error, textarea.error {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25) !important;
+}
+
+/* Estilos para Select2 con error */
+.select2-container .select2-selection.error,
+select.error + .select2-container .select2-selection {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25) !important;
+}
+
+
+
+.close-modal:hover {
+    background: rgba(255,255,255,0.2) !important;
+    transform: scale(1.1);
+}
+
+.btn-cerrar-modal:hover {
+    background: linear-gradient(135deg, #5a6268 0%, #495057 100%) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4) !important;
+}
+
+/* Deshabilitar tooltips de validación HTML5 nativa */
+input:invalid,
+select:invalid,
+textarea:invalid {
+    box-shadow: none !important;
+}
+
+/* Ocultar tooltips de validación nativa */
+input::-webkit-validation-bubble-message,
+select::-webkit-validation-bubble-message,
+textarea::-webkit-validation-bubble-message {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+/* Para Firefox */
+input:-moz-ui-invalid,
+select:-moz-ui-invalid,
+textarea:-moz-ui-invalid {
+    box-shadow: none !important;
+}
 </style>
 
 <script>
-// Todo el JavaScript consolidado en un solo event listener
 document.addEventListener('DOMContentLoaded', function() {
     // Dropdown dependiente: Razas según Especie
     const especieSelect = document.getElementById('id_especie');
@@ -879,13 +892,11 @@ document.addEventListener('DOMContentLoaded', function() {
         especieSelect.addEventListener('change', function() {
             const especieId = this.value;
             
-            // Limpiar opciones de raza
-            razaSelect.innerHTML = '<option value="">Cargando razas...</option>';
-            razaSelect.disabled = true;
+                         razaSelect.innerHTML = '<option value="">Cargando razas...</option>';
+             razaSelect.disabled = true;
             
-            if (especieId) {
-                // Cargar razas por AJAX
-                fetch('/mascotas/cargar-razas/', {
+                     if (especieId) {
+             fetch('/mascotas/cargar-razas/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -908,8 +919,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
                         razaSelect.disabled = false;
                         
-                        // Reinicializar Select2 para el campo raza
-                        if ($('#id_raza').data('select2')) {
+                                     if ($('#id_raza').data('select2')) {
                             $('#id_raza').select2('destroy');
                         }
                         $('#id_raza').select2({
@@ -934,7 +944,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-         // Validación específica para el campo RUT del tutor
      const rutInput = document.querySelector('input[name="rut_tutor"]');
      const btnBuscarTutor = document.getElementById('btn-buscar-tutor');
      const rutValidationMessage = document.getElementById('rut-validation-message');
@@ -945,13 +954,9 @@ document.addEventListener('DOMContentLoaded', function() {
          rutInput.addEventListener('input', function(e) {
              let value = this.value;
              
-             // Solo permitir números, guión y K/k
-             value = value.replace(/[^0-9Kk-]/g, '');
-             
-             // Convertir k minúscula a K mayúscula
+             value = value.replace(/[^0-9Kk\-]/g, '');
              value = value.replace(/k/g, 'K');
              
-             // Asegurar que solo haya un guión
              const parts = value.split('-');
              if (parts.length > 2) {
                  value = parts[0] + '-' + parts.slice(1).join('');
@@ -959,38 +964,30 @@ document.addEventListener('DOMContentLoaded', function() {
              
              this.value = value;
              
-             // Limpiar timeout anterior
              clearTimeout(rutTimeoutId);
              
-             // Limpiar mensajes anteriores
              if (rutValidationMessage) {
                  rutValidationMessage.style.display = 'none';
                  rutValidationMessage.className = 'rut-validation-message';
                  rutValidationMessage.innerHTML = '';
              }
              
-             // Resetear estado de RUT válido
              rutValido = false;
              habilitarBotonBuscar(false);
              
-             // Solo validar si hay un valor
              if (value.length > 0) {
-                 // Esperar 500ms después de que el usuario deje de escribir
                  rutTimeoutId = setTimeout(() => {
                      validarRut(value, this);
                  }, 500);
              }
          });
          
-         // Prevenir pegado de caracteres no válidos
          rutInput.addEventListener('paste', function(e) {
              e.preventDefault();
              let pastedText = (e.clipboardData || window.clipboardData).getData('text');
              
-             // Limpiar texto pegado
-             pastedText = pastedText.replace(/[^0-9Kk-]/g, '').replace(/k/g, 'K');
+             pastedText = pastedText.replace(/[^0-9Kk\-]/g, '').replace(/k/g, 'K');
              
-             // Insertar en la posición del cursor
              const start = this.selectionStart;
              const end = this.selectionEnd;
              const currentValue = this.value;
@@ -1000,7 +997,6 @@ document.addEventListener('DOMContentLoaded', function() {
          });
      }
      
-     // Función para habilitar/deshabilitar el botón de búsqueda
      function habilitarBotonBuscar(habilitado) {
          if (btnBuscarTutor) {
              if (habilitado) {
@@ -1017,25 +1013,20 @@ document.addEventListener('DOMContentLoaded', function() {
          }
      }
      
-     // Función para validar RUT chileno
      function validarRut(rut, inputElement) {
-         // Limpiar mensajes anteriores
          if (rutValidationMessage) {
              rutValidationMessage.style.display = 'none';
              rutValidationMessage.className = 'rut-validation-message';
          }
          
-         // Validar formato básico
          if (!/^\d{7,8}-[0-9K]$/.test(rut)) {
              mostrarMensajeRut('error', '❌ Formato de RUT inválido. Use: 12345678-9', inputElement);
              return;
          }
          
-         // Extraer número y dígito verificador
          const numero = rut.split('-')[0];
          const dv = rut.split('-')[1];
          
-         // Calcular dígito verificador
          let suma = 0;
          let multiplicador = 2;
          
@@ -1053,7 +1044,6 @@ document.addEventListener('DOMContentLoaded', function() {
              dvCalculado = dvCalculado.toString();
          }
          
-         // Validar dígito verificador
          if (dv.toUpperCase() === dvCalculado) {
              mostrarMensajeRut('success', '✅ RUT válido', inputElement);
              rutValido = true;
@@ -1065,7 +1055,6 @@ document.addEventListener('DOMContentLoaded', function() {
          }
      }
      
-     // Función para mostrar mensaje de validación del RUT
      function mostrarMensajeRut(tipo, mensaje, inputElement) {
          if (rutValidationMessage) {
              rutValidationMessage.className = `rut-validation-message ${tipo}`;
@@ -1088,7 +1077,6 @@ document.addEventListener('DOMContentLoaded', function() {
          }
      }
      
-     // Prevenir envío del formulario si el RUT no es válido
      const buscarTutorForm = document.querySelector('.buscar-tutor-form');
      if (buscarTutorForm) {
          buscarTutorForm.addEventListener('submit', function(e) {
@@ -1100,10 +1088,8 @@ document.addEventListener('DOMContentLoaded', function() {
          });
      }
      
-     // Inicializar botón de búsqueda como deshabilitado
      habilitarBotonBuscar(false);
     
-    // Aplicar estilos específicos a los campos del formulario de mascota
     const mascotaFormControls = document.querySelectorAll('.card-body input, .card-body select, .card-body textarea');
     mascotaFormControls.forEach(control => {
         if (!control.hasAttribute('readonly')) {
@@ -1117,7 +1103,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Estilo específico para textarea en el formulario de mascota
     const mascotaTextareas = document.querySelectorAll('.card-body textarea');
     mascotaTextareas.forEach(textarea => {
         textarea.style.setProperty('height', '60px', 'important');
@@ -1127,7 +1112,6 @@ document.addEventListener('DOMContentLoaded', function() {
         textarea.style.setProperty('border', '1px solid #ddd', 'important');
     });
     
-    // Estilo específico para campos de archivo en el formulario de mascota
     const mascotaFileInputs = document.querySelectorAll('.card-body input[type="file"]');
     mascotaFileInputs.forEach(fileInput => {
         fileInput.style.setProperty('height', '42px', 'important');
@@ -1138,7 +1122,6 @@ document.addEventListener('DOMContentLoaded', function() {
         fileInput.style.setProperty('background-color', '#fff', 'important');
     });
     
-    // Estilo específico para campos de fecha en el formulario de mascota
     const mascotaDateInputs = document.querySelectorAll('.card-body input[type="date"]');
     mascotaDateInputs.forEach(dateInput => {
         dateInput.style.setProperty('height', '42px', 'important');
@@ -1147,7 +1130,6 @@ document.addEventListener('DOMContentLoaded', function() {
         dateInput.style.setProperty('border', '1px solid #ddd', 'important');
     });
     
-    // Estilo específico para selects en el formulario de mascota (excluyendo Select2)
     const mascotaSelects = document.querySelectorAll('.card-body select:not(.select2-enabled)');
     mascotaSelects.forEach(select => {
         select.style.setProperty('height', '42px', 'important');
@@ -1156,7 +1138,6 @@ document.addEventListener('DOMContentLoaded', function() {
         select.style.setProperty('border', '1px solid #ddd', 'important');
     });
     
-    // Aplicar estilos generales a otros campos (como el de búsqueda de RUT)
     const generalFormControls = document.querySelectorAll('input, select, textarea');
     generalFormControls.forEach(control => {
         if (!control.hasAttribute('readonly') && !control.closest('.card-body')) {
@@ -1170,12 +1151,111 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Validación en tiempo real del número de chip
-    const chipInput = document.querySelector('input[name="nro_chip"]');
-    const mascotaForm = document.querySelector('form[enctype="multipart/form-data"]');
-    const registrarButton = document.querySelector('button[name="registrar_mascota"]');
-    let timeoutId;
-    let chipDuplicado = false; // Variable para rastrear si el chip está duplicado
+     const chipInput = document.querySelector('input[name="nro_chip"]');
+     const mascotaForm = document.querySelector('form[enctype="multipart/form-data"]');
+     const registrarButton = document.querySelector('button[name="registrar_mascota"]');
+     let timeoutId;
+     let chipDuplicado = false;
+     
+     const nombreInput = document.querySelector('input[name="nombre"]');
+     if (nombreInput) {
+         function validarCampoNombre(input) {
+             if (input) {
+                 input.addEventListener('input', function(e) {
+                     let value = this.value.replace(/[^0-9A-Za-z\s\-\.\/]/g, '');
+                     value = value.toUpperCase();
+                     if (value.length > 100) {
+                         value = value.substring(0, 100);
+                     }
+                     this.value = value;
+                 });
+                 
+                 input.addEventListener('paste', function(e) {
+                     e.preventDefault();
+                     let pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                     pastedText = pastedText.replace(/[^0-9A-Za-z\s\-\.\/]/g, '').toUpperCase();
+                     if (pastedText.length > 100) {
+                         pastedText = pastedText.substring(0, 100);
+                     }
+                     
+                     const start = this.selectionStart;
+                     const end = this.selectionEnd;
+                     const currentValue = this.value;
+                     
+                     this.value = currentValue.substring(0, start) + pastedText + currentValue.substring(end);
+                     this.setSelectionRange(start + pastedText.length, start + pastedText.length);
+                 });
+                 
+                 input.addEventListener('drop', function(e) {
+                     e.preventDefault();
+                     let droppedText = e.dataTransfer.getData('text');
+                     droppedText = droppedText.replace(/[^0-9A-Za-z\s\-\.\/]/g, '').toUpperCase();
+                     if (droppedText.length > 100) {
+                         droppedText = droppedText.substring(0, 100);
+                     }
+                     
+                     const start = this.selectionStart;
+                     const end = this.selectionEnd;
+                     const currentValue = this.value;
+                     
+                     this.value = currentValue.substring(0, start) + droppedText + currentValue.substring(end);
+                     this.setSelectionRange(start + droppedText.length, start + droppedText.length);
+                 });
+             }
+         }
+         
+         validarCampoNombre(nombreInput);
+     }
+     
+     const notasInput = document.querySelector('textarea[name="notas_adicionales"]');
+     if (notasInput) {
+         function validarCampoNotas(input) {
+             if (input) {
+                 input.addEventListener('input', function(e) {
+                     let value = this.value.replace(/[^0-9A-Za-z\s\-\.\/,]/g, '');
+                     value = value.toUpperCase();
+                     if (value.length > 500) {
+                         value = value.substring(0, 500);
+                     }
+                     this.value = value;
+                 });
+                 
+                 input.addEventListener('paste', function(e) {
+                     e.preventDefault();
+                     let pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                     pastedText = pastedText.replace(/[^0-9A-Za-z\s\-\.\/,]/g, '').toUpperCase();
+                     if (pastedText.length > 500) {
+                         pastedText = pastedText.substring(0, 500);
+                     }
+                     
+                     const start = this.selectionStart;
+                     const end = this.selectionEnd;
+                     const currentValue = this.value;
+                     
+                     this.value = currentValue.substring(0, start) + pastedText + currentValue.substring(end);
+                     this.setSelectionRange(start + pastedText.length, start + pastedText.length);
+                 });
+                 
+                 input.addEventListener('drop', function(e) {
+                     e.preventDefault();
+                     let droppedText = e.dataTransfer.getData('text');
+                     droppedText = droppedText.replace(/[^0-9A-Za-z\s\-\.\/,]/g, '').toUpperCase();
+                     if (droppedText.length > 500) {
+                         droppedText = droppedText.substring(0, 500);
+                     }
+                     
+                     const start = this.selectionStart;
+                     const end = this.selectionEnd;
+                     const currentValue = this.value;
+                     
+                     this.value = currentValue.substring(0, start) + droppedText + currentValue.substring(end);
+                     this.setSelectionRange(start + droppedText.length, start + droppedText.length);
+                 });
+             }
+         }
+         
+         validarCampoNotas(notasInput);
+     }
     
     if (chipInput) {
         chipInput.addEventListener('input', function() {
@@ -1204,7 +1284,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Función para habilitar/deshabilitar el botón de registro
     function habilitarBotonRegistro(habilitado) {
         if (registrarButton) {
             if (habilitado) {
@@ -1221,7 +1300,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Prevenir envío del formulario si hay chip duplicado
     if (mascotaForm) {
         mascotaForm.addEventListener('submit', function(e) {
             if (chipDuplicado) {
@@ -1335,19 +1413,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Función para cerrar el modal
     window.closeModal = function() {
         const modal = document.getElementById('chipModal');
         modal.style.display = 'none';
     }
 
-    // Función para registrar atencion medica (por ahora sin funcionalidad)
     window.registrarAtencionMedica = function() {
-        // Por ahora no tiene funcionalidad
-        alert('Funcionalidad de Registrar Atención Médica será implementada próximamente.');
+        {% if mascota_guardada %}
+            // Redirigir al formulario de atención médica con el número de chip precargado
+            const nroChip = '{{ mascota_guardada.nro_chip }}';
+            window.location.href = '/atencion-medica/registrar/?nro_chip=' + encodeURIComponent(nroChip);
+        {% else %}
+            // Si no hay mascota guardada, redirigir al formulario sin parámetros
+            window.location.href = '/atencion-medica/registrar/';
+        {% endif %}
     }
 
-    // Función para cerrar el modal de éxito
     window.cerrarModalExito = function() {
         const exitoModal = document.getElementById('exitoModal');
         if (exitoModal) {
@@ -1355,11 +1436,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-         // Funcionalidad para deshabilitar formulario de búsqueda de tutor cuando ya hay un tutor encontrado
      const inputRutTutor = document.getElementById('{{ buscar_tutor_form.rut_tutor.id_for_label }}');
      const btnNuevaBusquedaTutor = document.getElementById('btn-nueva-busqueda-tutor');
      
-     // Si hay un tutor encontrado, deshabilitar solo el input y el botón Buscar
      {% if tutor_encontrado %}
      if (inputRutTutor && btnBuscarTutor) {
          inputRutTutor.disabled = true;
@@ -1369,15 +1448,13 @@ document.addEventListener('DOMContentLoaded', function() {
      }
      {% endif %}
     
-    // Evento para el botón "Realizar una nueva búsqueda"
-    if (btnNuevaBusquedaTutor) {
+         if (btnNuevaBusquedaTutor) {
         btnNuevaBusquedaTutor.addEventListener('click', function() {
             // Redirigir a la página inicial del formulario
             window.location.href = '/mascotas/registrar/';
         });
     }
     
-    // Funcionalidad para el documento de consentimiento
     const documentoConsentimiento = document.getElementById('documento_consentimiento');
     const consentimientoSi = document.getElementById('consentimiento_si');
     const consentimientoNo = document.getElementById('consentimiento_no');
@@ -1422,6 +1499,184 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.display = 'none';
         });
     }
+    
+    const formMascota = document.querySelector('form[enctype="multipart/form-data"]');
+    const btnRegistrarMascota = document.querySelector('button[name="registrar_mascota"]');
+    
+    if (formMascota && btnRegistrarMascota) {
+        btnRegistrarMascota.addEventListener('click', function(e) {
+            e.preventDefault(); // Prevenir envío inmediato
+            
+            limpiarTodosLosErrores();
+            
+            let hayErrores = false;
+            let camposConError = [];
+            
+            const chipInput = document.querySelector('input[name="nro_chip"]');
+            if (!chipInput || !chipInput.value.trim()) {
+                if (chipInput) mostrarErrorCampo(chipInput, 'El microchip es obligatorio');
+                hayErrores = true;
+                camposConError.push('Microchip');
+            }
+            
+            const nombreInput = document.querySelector('input[name="nombre"]');
+            if (!nombreInput || !nombreInput.value.trim()) {
+                if (nombreInput) mostrarErrorCampo(nombreInput, 'El nombre es obligatorio');
+                hayErrores = true;
+                camposConError.push('Nombre');
+            }
+            
+            const especieSelect = document.querySelector('select[name="especie"]');
+            if (!especieSelect || !especieSelect.value) {
+                if (especieSelect) mostrarErrorCampo(especieSelect, 'Debe seleccionar una especie');
+                hayErrores = true;
+                camposConError.push('Especie');
+            }
+            
+            const razaSelect = document.querySelector('select[name="raza"]');
+            if (!razaSelect || !razaSelect.value) {
+                if (razaSelect) mostrarErrorCampo(razaSelect, 'Debe seleccionar una raza');
+                hayErrores = true;
+                camposConError.push('Raza');
+            }
+            
+            const sexoSelect = document.querySelector('select[name="sexo"]');
+            if (!sexoSelect || !sexoSelect.value) {
+                if (sexoSelect) mostrarErrorCampo(sexoSelect, 'Debe seleccionar el sexo');
+                hayErrores = true;
+                camposConError.push('Sexo');
+            }
+            
+            if (chipDuplicado) {
+                alert('No se puede registrar la mascota. El número de chip ya existe en el sistema.');
+                return;
+            }
+            
+            if (hayErrores) {
+                mostrarModalErrores(camposConError);
+                
+                const primerError = document.querySelector('.campo-error[style*="display: block"]');
+                if (primerError) {
+                    primerError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            } else {
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'registrar_mascota';
+                hiddenInput.value = '';
+                formMascota.appendChild(hiddenInput);
+                
+                formMascota.submit();
+            }
+        });
+    }
+    
+    function limpiarTodosLosErrores() {
+        const campos = document.querySelectorAll('input, select, textarea');
+        campos.forEach(campo => {
+            limpiarErrorCampo(campo);
+        });
+    }
+    
+    function mostrarErrorCampo(element, message) {
+        if (element.tagName === 'SELECT' && typeof $ !== 'undefined' && $(element).data('select2')) {
+            const select2Container = $(element).next('.select2-container');
+            if (select2Container.length > 0) {
+                select2Container.find('.select2-selection').css({
+                    'border-color': '#dc3545',
+                    'box-shadow': '0 0 0 2px rgba(220, 53, 69, 0.25)'
+                });
+            }
+        } else {
+            element.style.setProperty('border-color', '#dc3545', 'important');
+            element.style.setProperty('box-shadow', '0 0 0 2px rgba(220, 53, 69, 0.25)', 'important');
+        }
+        
+        element.classList.add('error');
+        
+        let errorDiv = element.parentNode.querySelector('.campo-error');
+        if (!errorDiv) {
+            errorDiv = document.createElement('div');
+            errorDiv.className = 'campo-error';
+            errorDiv.style.cssText = 'color: #dc3545; font-size: 0.6rem; margin-top: 2px; display: block;';
+            element.parentNode.appendChild(errorDiv);
+        }
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+    }
+    
+    function limpiarErrorCampo(element) {
+        if (element.tagName === 'SELECT' && typeof $ !== 'undefined' && $(element).data('select2')) {
+            const select2Container = $(element).next('.select2-container');
+            if (select2Container.length > 0) {
+                select2Container.find('.select2-selection').css({
+                    'border-color': '#ddd',
+                    'box-shadow': 'none'
+                });
+            }
+        } else {
+            element.style.setProperty('border-color', '#ddd', 'important');
+            element.style.setProperty('box-shadow', 'none', 'important');
+        }
+        
+        element.classList.remove('error');
+        
+        const errorDiv = element.parentNode.querySelector('.campo-error');
+        if (errorDiv) {
+            errorDiv.style.display = 'none';
+        }
+    }
+    
+    function mostrarModalErrores(camposConError) {
+        const modal = document.getElementById('modal-errores');
+        const listaErrores = document.getElementById('lista-errores');
+        
+        listaErrores.innerHTML = '';
+        
+        camposConError.forEach(campo => {
+            const li = document.createElement('li');
+            li.textContent = campo;
+            li.style.marginBottom = '5px';
+            listaErrores.appendChild(li);
+        });
+        
+        modal.style.display = 'flex';
+    }
+    
+    const modalErrores = document.getElementById('modal-errores');
+    const closeBtn = document.querySelector('.close-modal');
+    const cerrarBtn = document.querySelector('.btn-cerrar-modal');
+    
+    if (closeBtn) {
+        closeBtn.addEventListener('click', cerrarModalErrores);
+    }
+    
+    if (cerrarBtn) {
+        cerrarBtn.addEventListener('click', cerrarModalErrores);
+    }
+    
+    if (modalErrores) {
+        modalErrores.addEventListener('click', function(e) {
+            if (e.target === modalErrores) {
+                cerrarModalErrores();
+            }
+        });
+    }
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modalErrores && modalErrores.style.display === 'flex') {
+            cerrarModalErrores();
+        }
+    });
+    
+    function cerrarModalErrores() {
+        const modal = document.getElementById('modal-errores');
+        modal.style.display = 'none';
+    }
+    
+    document.addEventListener('invalid', function(e) {
+        e.preventDefault();
+    }, true);
 });
 </script>
 {% endblock %}

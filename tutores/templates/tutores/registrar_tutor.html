@@ -562,7 +562,7 @@ document.addEventListener('DOMContentLoaded', function() {
             let value = this.value;
             
             // Solo permitir números, guión y K/k
-            value = value.replace(/[^0-9Kk-]/g, '');
+            value = value.replace(/[^0-9Kk\-]/g, '');
             
             // Convertir k minúscula a K mayúscula
             value = value.replace(/k/g, 'K');
@@ -595,7 +595,7 @@ document.addEventListener('DOMContentLoaded', function() {
             let pastedText = (e.clipboardData || window.clipboardData).getData('text');
             
             // Limpiar texto pegado
-            pastedText = pastedText.replace(/[^0-9Kk-]/g, '').replace(/k/g, 'K');
+            pastedText = pastedText.replace(/[^0-9Kk\-]/g, '').replace(/k/g, 'K');
             
             // Insertar en la posición del cursor
             const start = this.selectionStart;

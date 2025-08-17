@@ -61,7 +61,7 @@ class Mascota(models.Model):
     patron = models.CharField(max_length=50, blank=True, null=True)
     
     # Estado de la mascota
-    estado_reproductivo = models.CharField(max_length=50, blank=True, null=True)
+    estado_reproductivo = models.BooleanField(blank=True, null=True)
     
     # Información de obtención y tenencia
     modo_obtencion = models.CharField(max_length=50, blank=True, null=True)

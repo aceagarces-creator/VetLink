@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (rutInput) {
         rutInput.addEventListener('input', function(e) {
             let value = this.value;
-            value = value.replace(/[^0-9Kk-]/g, '');
+            value = value.replace(/[^0-9Kk\-]/g, '');
             value = value.replace(/k/g, 'K');
             
             const parts = value.split('-');
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
         rutInput.addEventListener('paste', function(e) {
             e.preventDefault();
             let pastedText = (e.clipboardData || window.clipboardData).getData('text');
-            pastedText = pastedText.replace(/[^0-9Kk-]/g, '').replace(/k/g, 'K');
+            pastedText = pastedText.replace(/[^0-9Kk\-]/g, '').replace(/k/g, 'K');
             
             const start = this.selectionStart;
             const end = this.selectionEnd;
