@@ -42,3 +42,4 @@ static/
 # **Ten cuidado con esta línea si quieres versionar las migraciones**
 # */migrations/
 # !*/migrations/__init__.py
+"venv/" 
