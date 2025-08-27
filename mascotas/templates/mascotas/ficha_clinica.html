@@ -730,6 +730,33 @@
           
           // Método alternativo: buscar por el valor actual si no se encontraron por label
           if (!clinicaInput) {
+              const inputs = document.querySelectorAll('input[readonly]');
+              for (let input of inputs) {
+                  if (input.value === 'No especificada') {
+                      clinicaInput = input;
+                      break;
+                  }
+              }
+              if (clinicaInput && data.clinica_consentimiento) {
+                  clinicaInput.value = data.clinica_consentimiento;
+              }
+          }
+          
+          if (!fechaInput) {
+              const inputs = document.querySelectorAll('input[readonly]');
+              for (let input of inputs) {
+                  if (input.value === 'No registrada') {
+                      fechaInput = input;
+                      break;
+                  }
+              }
+              if (fechaInput && data.fecha_consentimiento) {
+                  fechaInput.value = data.fecha_consentimiento;
+              }
+          }
+          
+          // Método alternativo: buscar por el valor actual si no se encontraron por label
+          if (!clinicaInput) {
               const clinicaInputs = document.querySelectorAll('input[readonly]');
               for (let input of clinicaInputs) {
                   if (input.value.includes('No especificada')) {

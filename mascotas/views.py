@@ -471,6 +471,14 @@ def subir_consentimiento(request, mascota_id):
         mascota.id_clinica_consentimiento_id = 1
         mascota.save()
         
+        # Obtener la descripción de la clínica
+        from core.clinicaVeterinaria_models import ClinicaVeterinaria
+        try:
+            clinica = ClinicaVeterinaria.objects.get(id_clinica=mascota.id_clinica_consentimiento_id)
+            nombre_clinica = clinica.nombre
+        except ClinicaVeterinaria.DoesNotExist:
+            nombre_clinica = 'Clínica no encontrada'
+        
         return JsonResponse({
             'success': True,
             'mensaje': 'Documento de consentimiento subido exitosamente',
@@ -478,7 +486,9 @@ def subir_consentimiento(request, mascota_id):
                 'id': mascota.id_mascota,
                 'nombre': archivo.name,
                 'url': url_relativa
-            }
+            },
+            'clinica_consentimiento': nombre_clinica,
+            'fecha_consentimiento': mascota.fecha_consentimiento.strftime('%d/%m/%Y') if mascota.fecha_consentimiento else 'No registrada'
         })
         
     except Mascota.DoesNotExist:
