@@ -28,9 +28,24 @@ def registrar_mascota_view(request):
     mascota_guardada = None
     mensaje_exito = None
     
+    # Verificar si hay parámetro tutor_id en GET (para redirección desde Consultar Tutor)
+    tutor_id_get = request.GET.get('tutor_id')
+    
     # Formularios
     buscar_tutor_form = BuscarTutorMascotaForm()
     registrar_mascota_form = RegistrarMascotaForm()
+    
+    # Si hay tutor_id en GET, precargar el tutor
+    if tutor_id_get and request.method == 'GET':
+        try:
+            tutor_encontrado = Tutor.objects.get(id_tutor=tutor_id_get)
+            logger.info(f"Tutor precargado desde GET: {tutor_encontrado}")
+            # Crear formulario con el RUT precargado
+            buscar_tutor_form = BuscarTutorMascotaForm(initial={'rut_tutor': tutor_encontrado.nro_documento})
+        except Tutor.DoesNotExist:
+            logger.error(f"Tutor con ID {tutor_id_get} no encontrado")
+        except (ValueError, TypeError):
+            logger.error(f"Tutor ID inválido: {tutor_id_get}")
     
     if request.method == 'POST':
         logger.info("Procesando POST request")
