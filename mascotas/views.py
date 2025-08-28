@@ -353,8 +353,9 @@ def ficha_clinica_view(request):
     historial_atenciones = []
     mensaje = None
     
-    # Verificar si hay parámetro nro_chip en GET (para redirección desde otros formularios)
+    # Verificar si hay parámetros en GET (para redirección desde otros formularios)
     nro_chip_get = request.GET.get('nro_chip')
+    id_mascota_get = request.GET.get('id_mascota')
     
     if request.method == 'POST':
         # Verificar si se está enviando mascota_id desde el modal
@@ -385,8 +386,24 @@ def ficha_clinica_view(request):
                 except Mascota.DoesNotExist:
                     mensaje = f"No se encontraron registros para este número de chip: {nro_chip}"
     else:
-        # Si hay nro_chip en GET, precargar la búsqueda
-        if nro_chip_get:
+        # Si hay parámetros en GET, precargar la búsqueda
+        if id_mascota_get:
+            # Priorizar búsqueda por ID de mascota
+            try:
+                mascota_encontrada = Mascota.objects.get(id_mascota=id_mascota_get)
+                historial_atenciones = AtencionClinica.objects.filter(
+                    id_mascota=mascota_encontrada
+                ).order_by('-fecha_atencion')
+                # Crear formulario vacío ya que no se usa el campo de búsqueda
+                form = BuscarFichaClinicaForm()
+            except Mascota.DoesNotExist:
+                mensaje = f"No se encontró la mascota con ID: {id_mascota_get}"
+                form = BuscarFichaClinicaForm()
+            except (ValueError, TypeError):
+                mensaje = f"ID de mascota inválido: {id_mascota_get}"
+                form = BuscarFichaClinicaForm()
+        elif nro_chip_get:
+            # Búsqueda por número de chip (mantener compatibilidad)
             try:
                 mascota_encontrada = Mascota.objects.get(nro_chip=nro_chip_get)
                 historial_atenciones = AtencionClinica.objects.filter(
