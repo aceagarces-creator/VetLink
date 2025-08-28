@@ -153,13 +153,23 @@ def registrar_mascota_view(request):
                                 estado_reproductivo_raw = registrar_mascota_form.cleaned_data['estado_reproductivo']
                                 estado_reproductivo_boolean = estado_reproductivo_raw == 'True' if estado_reproductivo_raw else False
                                 
+                                # Determinar el número de chip según el tipo de identificación
+                                tipo_identificacion = registrar_mascota_form.cleaned_data['tipo_identificacion']
+                                if tipo_identificacion == 'EXTERNO':
+                                    # Para identificación externa, el campo nro_chip queda NULL
+                                    nro_chip = None
+                                else:
+                                    # Para identificación interna, usar el valor del formulario
+                                    nro_chip = registrar_mascota_form.cleaned_data['nro_chip']
+                                
                                 # Crear la mascota
                                 mascota = Mascota.objects.create(
                                     id_tutor=tutor_encontrado,
                                     id_especie=registrar_mascota_form.cleaned_data['especie'],
                                     id_raza=registrar_mascota_form.cleaned_data['raza'],
                                     nombre=registrar_mascota_form.cleaned_data['nombre'],
-                                    nro_chip=registrar_mascota_form.cleaned_data['nro_chip'],
+                                    tipo_identificacion=tipo_identificacion,
+                                    nro_chip=nro_chip,
                                     sexo=registrar_mascota_form.cleaned_data['sexo'].upper(),
                                     color=registrar_mascota_form.cleaned_data['color'] or '',
                                     patron=registrar_mascota_form.cleaned_data['patron'] or '',
@@ -471,14 +481,6 @@ def subir_consentimiento(request, mascota_id):
         mascota.id_clinica_consentimiento_id = 1
         mascota.save()
         
-        # Obtener la descripción de la clínica
-        from core.clinicaVeterinaria_models import ClinicaVeterinaria
-        try:
-            clinica = ClinicaVeterinaria.objects.get(id_clinica=mascota.id_clinica_consentimiento_id)
-            nombre_clinica = clinica.nombre
-        except ClinicaVeterinaria.DoesNotExist:
-            nombre_clinica = 'Clínica no encontrada'
-        
         return JsonResponse({
             'success': True,
             'mensaje': 'Documento de consentimiento subido exitosamente',
@@ -486,9 +488,7 @@ def subir_consentimiento(request, mascota_id):
                 'id': mascota.id_mascota,
                 'nombre': archivo.name,
                 'url': url_relativa
-            },
-            'clinica_consentimiento': nombre_clinica,
-            'fecha_consentimiento': mascota.fecha_consentimiento.strftime('%d/%m/%Y') if mascota.fecha_consentimiento else 'No registrada'
+            }
         })
         
     except Mascota.DoesNotExist:
@@ -684,3 +684,90 @@ def ver_documento_atencion(request, documento_id):
     except Exception as e:
         logger.error(f"Error al ver documento {documento_id}: {e}")
         return HttpResponse("Error al mostrar el documento", status=500)
+
+
+@csrf_exempt
+def validar_mascota_duplicada(request):
+    """
+    Vista para validar si existe una mascota con las mismas características:
+    tutor + especie + nombre + fecha de nacimiento
+    """
+    if request.method != 'POST':
+        return JsonResponse({
+            'success': False,
+            'error': 'Método no permitido'
+        })
+    
+    try:
+        # Parsear datos JSON
+        data = json.loads(request.body)
+        tutor_id = data.get('tutor_id')
+        especie_id = data.get('especie_id')
+        nombre = data.get('nombre', '').strip()
+        sexo = data.get('sexo')
+        
+        # Validar que tengamos todos los datos necesarios
+        if not all([tutor_id, especie_id, nombre, sexo]):
+            return JsonResponse({
+                'success': False,
+                'error': 'Faltan datos requeridos para la validación'
+            })
+        
+        # Convertir IDs a enteros
+        try:
+            tutor_id = int(tutor_id)
+            especie_id = int(especie_id)
+        except (ValueError, TypeError):
+            return JsonResponse({
+                'success': False,
+                'error': 'IDs inválidos'
+            })
+        
+        # Buscar mascota con las mismas características
+        logger.info(f"Buscando mascota con: tutor_id={tutor_id}, especie_id={especie_id}, nombre='{nombre}', sexo='{sexo}'")
+        
+        mascota_existente = Mascota.objects.filter(
+            id_tutor=tutor_id,
+            id_especie=especie_id,
+            nombre__iexact=nombre,  # Búsqueda case-insensitive
+            sexo=sexo.upper()  # Convertir a mayúsculas para consistencia
+        ).first()
+        
+        logger.info(f"Mascota encontrada: {mascota_existente}")
+        
+        if mascota_existente:
+            # Obtener información de la mascota existente para mostrar en el modal
+            try:
+                mascota_info = {
+                    'nombre': mascota_existente.nombre,
+                    'tutor': f"{mascota_existente.id_tutor.nombres} {mascota_existente.id_tutor.apellido_paterno}",
+                    'especie': mascota_existente.id_especie.nombre,
+                    'sexo': mascota_existente.sexo if mascota_existente.sexo else 'No especificado'
+                }
+            except Exception as e:
+                logger.error(f"Error al obtener información de mascota existente: {e}")
+                mascota_info = None
+            
+            logger.info(f"Enviando respuesta con mascota_info: {mascota_info}")
+            return JsonResponse({
+                'success': True,
+                'mascota_existe': True,
+                'mascota_info': mascota_info
+            })
+        else:
+            return JsonResponse({
+                'success': True,
+                'mascota_existe': False
+            })
+            
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'error': 'Datos JSON inválidos'
+        })
+    except Exception as e:
+        logger.error(f"Error en validar_mascota_duplicada: {e}")
+        return JsonResponse({
+            'success': False,
+            'error': 'Error interno del servidor'
+        })

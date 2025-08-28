@@ -50,7 +50,7 @@
         </button>
         {% if tutor_encontrado %}
         <button type="button" class="btn btn-success" id="btn-nueva-busqueda-tutor" style="padding: 8px 16px; border-radius: 4px; background-color: #28a745; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px; text-transform: none;">
-            Realzar nueva búsqueda
+            Realizar Nueva Búsqueda
         </button>
         {% endif %}
     </form>
@@ -119,10 +119,34 @@
                 {% csrf_token %}
                 <input type="hidden" name="tutor_id" value="{{ tutor_encontrado.id_tutor }}">
                 
+                <!-- Nueva fila: Tipo de Identificación -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
                     <div>
-                        <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Microchip (*)</label>
-                        {{ registrar_mascota_form.nro_chip }}
+                        <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ registrar_mascota_form.tipo_identificacion.label }}</label>
+                        {{ registrar_mascota_form.tipo_identificacion }}
+                        {% if registrar_mascota_form.tipo_identificacion.errors %}
+                            <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
+                                {% for error in registrar_mascota_form.tipo_identificacion.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <!-- Columna 2 vacía -->
+                    </div>
+                    <div>
+                        <!-- Columna 3 vacía -->
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
+                    <div>
+                        <label id="label_microchip" style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Microchip (*)</label>
+                        <div id="input_microchip">
+                            {{ registrar_mascota_form.nro_chip }}
+                        </div>
+                        <div id="mensaje_externo" style="display: none; color: #6c757d; font-size: 0.65rem; font-style: italic; padding: 10px 12px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
+                            Una vez ingresado el registro, se le asignará un código de identificación
+                        </div>
                         {% if registrar_mascota_form.nro_chip.errors %}
                             <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
                                 {% for error in registrar_mascota_form.nro_chip.errors %}{{ error }}{% endfor %}
@@ -324,6 +348,28 @@
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" onclick="closeModal()">
                 Entendido
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="mascotaDuplicadaModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+            <h3 style="margin: 0; color: #ffffff; font-size: 1.1rem;">
+                <i class="fas fa-exclamation-triangle"></i> Mascota con características similares
+            </h3>
+        </div>
+        <div class="modal-body">
+            <div id="mascotaDuplicadaMessage"></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeMascotaDuplicadaModal()">
+                Cancelar
+            </button>
+            <button type="button" class="btn btn-primary" onclick="confirmarRegistroMascota()">
+                Aceptar
             </button>
         </div>
     </div>
@@ -1512,8 +1558,12 @@ document.addEventListener('DOMContentLoaded', function() {
             let hayErrores = false;
             let camposConError = [];
             
+            // Verificar el tipo de identificación
+            const tipoIdentificacionSelect = document.getElementById('id_tipo_identificacion');
+            const esExterno = tipoIdentificacionSelect && tipoIdentificacionSelect.value === 'EXTERNO';
+            
             const chipInput = document.querySelector('input[name="nro_chip"]');
-            if (!chipInput || !chipInput.value.trim()) {
+            if (!esExterno && (!chipInput || !chipInput.value.trim())) {
                 if (chipInput) mostrarErrorCampo(chipInput, 'El microchip es obligatorio');
                 hayErrores = true;
                 camposConError.push('Microchip');
@@ -1560,13 +1610,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     primerError.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             } else {
-                const hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-                hiddenInput.name = 'registrar_mascota';
-                hiddenInput.value = '';
-                formMascota.appendChild(hiddenInput);
-                
-                formMascota.submit();
+                // Validar si existe una mascota con las mismas características
+                validarMascotaDuplicada();
             }
         });
     }
@@ -1674,9 +1719,276 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.style.display = 'none';
     }
     
+    // Variables globales para la validación de mascota duplicada
+    let mascotaDuplicadaEncontrada = false;
+    let datosMascotaParaRegistro = null;
+    
+    function validarMascotaDuplicada() {
+        console.log('=== INICIANDO VALIDACIÓN DE MASCOTA DUPLICADA ===');
+        
+        // Obtener los datos del formulario
+        const tutorId = document.querySelector('input[name="tutor_id"]').value;
+        const especieId = document.querySelector('select[name="especie"]').value;
+        const nombre = document.querySelector('input[name="nombre"]').value.trim();
+        const sexo = document.querySelector('select[name="sexo"]').value;
+        
+        console.log('Datos obtenidos:', { tutorId, especieId, nombre, sexo });
+        
+        // Validar que tengamos todos los datos necesarios
+        if (!tutorId || !especieId || !nombre || !sexo) {
+            console.log('Faltan datos para validar mascota duplicada');
+            window.enviarFormularioMascota();
+            return;
+        }
+        
+        // Realizar la validación AJAX
+        const requestData = {
+            'tutor_id': tutorId,
+            'especie_id': especieId,
+            'nombre': nombre,
+            'sexo': sexo
+        };
+        
+        console.log('Enviando datos al servidor:', requestData);
+        
+        fetch('/mascotas/validar_mascota_duplicada/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Respuesta del servidor:', data);
+            
+            if (data.mascota_existe) {
+                console.log('Mascota duplicada encontrada, mostrando modal');
+                // Mostrar modal de confirmación
+                mostrarModalMascotaDuplicada(data);
+                mascotaDuplicadaEncontrada = true;
+            } else {
+                console.log('No hay mascota duplicada, procediendo con registro');
+                // No hay mascota duplicada, proceder con el registro
+                window.enviarFormularioMascota();
+            }
+        })
+        .catch(error => {
+            console.error('Error al validar mascota duplicada:', error);
+            // En caso de error, proceder con el registro
+            window.enviarFormularioMascota();
+        });
+    }
+    
+    function mostrarModalMascotaDuplicada(data) {
+        console.log('=== MOSTRANDO MODAL DE MASCOTA DUPLICADA ===');
+        console.log('Datos recibidos:', data);
+        
+        const modal = document.getElementById('mascotaDuplicadaModal');
+        const modalMessage = document.getElementById('mascotaDuplicadaMessage');
+        
+        console.log('Modal encontrado:', modal);
+        console.log('ModalMessage encontrado:', modalMessage);
+        
+        // Construir el mensaje del modal
+        let modalContent = `
+            <div style="margin-bottom: 20px;">
+                <p style="color: #721c24; font-weight: 600; margin: 0 0 15px 0; font-size: 1rem; line-height: 1.4;">
+                    ⚠️ Tenemos una mascota con las mismas características (tutor+especie+nombre+sexo) ya registrada en nuestro sistema, ¿está seguro de querer registrar la mascota de todas formas?
+                </p>
+            </div>
+        `;
+        
+        if (data.mascota_info) {
+            console.log('Información de mascota encontrada:', data.mascota_info);
+            modalContent += `
+                <div class="mascota-info" style="background-color: white; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #e9ecef; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                        <h4 style="margin: 0; color: #495057; font-size: 1rem; font-weight: 600;">Mascota Existente</h4>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0;">
+                        <div style="display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #e9ecef;">
+                            <span style="color: #007bff; font-size: 0.85rem; margin-right: 8px;">•</span>
+                            <span style="font-weight: 600; color: #495057; font-size: 0.85rem; margin-right: 15px;">Nombre:</span>
+                            <span style="color: #495057; font-size: 0.85rem; text-transform: uppercase;">${data.mascota_info.nombre}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #e9ecef;">
+                            <span style="color: #007bff; font-size: 0.85rem; margin-right: 8px;">•</span>
+                            <span style="font-weight: 600; color: #495057; font-size: 0.85rem; margin-right: 15px;">Tutor:</span>
+                            <span style="color: #495057; font-size: 0.85rem; text-transform: uppercase;">${data.mascota_info.tutor}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #e9ecef;">
+                            <span style="color: #007bff; font-size: 0.85rem; margin-right: 8px;">•</span>
+                            <span style="font-weight: 600; color: #495057; font-size: 0.85rem; margin-right: 15px;">Especie:</span>
+                            <span style="color: #495057; font-size: 0.85rem;">${data.mascota_info.especie}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; padding: 8px 0;">
+                            <span style="color: #007bff; font-size: 0.85rem; margin-right: 8px;">•</span>
+                            <span style="font-weight: 600; color: #495057; font-size: 0.85rem; margin-right: 15px;">Sexo:</span>
+                            <span style="color: #495057; font-size: 0.85rem;">${data.mascota_info.sexo || 'No especificado'}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            console.log('No se encontró información de mascota en la respuesta');
+        }
+        
+        modalMessage.innerHTML = modalContent;
+        
+        // Mostrar el modal
+        modal.style.display = 'flex';
+        console.log('Modal mostrado con display flex');
+        
+        // Ocultar el botón X para que solo se pueda cerrar con los botones
+        const closeBtn = modal.querySelector('.close');
+        if (closeBtn) {
+            closeBtn.style.display = 'none';
+            console.log('Botón X ocultado');
+        }
+        
+        console.log('=== MODAL DE MASCOTA DUPLICADA CONFIGURADO ===');
+    }
+    
+    // Funciones globales para el modal de mascota duplicada
+    window.closeMascotaDuplicadaModal = function() {
+        const modal = document.getElementById('mascotaDuplicadaModal');
+        modal.style.display = 'none';
+        mascotaDuplicadaEncontrada = false;
+    }
+    
+    window.confirmarRegistroMascota = function() {
+        closeMascotaDuplicadaModal();
+        window.enviarFormularioMascota();
+    }
+    
+    window.enviarFormularioMascota = function() {
+        const formMascota = document.querySelector('form[enctype="multipart/form-data"]');
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'registrar_mascota';
+        hiddenInput.value = '';
+        formMascota.appendChild(hiddenInput);
+        
+        formMascota.submit();
+    }
+    
+    // Event listeners para el modal de mascota duplicada
+    document.addEventListener('DOMContentLoaded', function() {
+        const mascotaDuplicadaModal = document.getElementById('mascotaDuplicadaModal');
+        const closeBtnMascotaDuplicada = mascotaDuplicadaModal ? mascotaDuplicadaModal.querySelector('.close') : null;
+        const cancelarBtnMascotaDuplicada = mascotaDuplicadaModal ? mascotaDuplicadaModal.querySelector('.btn-secondary') : null;
+        
+        // Event listener para el botón X
+        if (closeBtnMascotaDuplicada) {
+            closeBtnMascotaDuplicada.addEventListener('click', closeMascotaDuplicadaModal);
+        }
+        
+        // Event listener para el botón Cancelar
+        if (cancelarBtnMascotaDuplicada) {
+            cancelarBtnMascotaDuplicada.addEventListener('click', closeMascotaDuplicadaModal);
+        }
+        
+        // Event listener para cerrar con clic fuera del modal
+        if (mascotaDuplicadaModal) {
+            mascotaDuplicadaModal.addEventListener('click', function(e) {
+                if (e.target === mascotaDuplicadaModal) {
+                    closeMascotaDuplicadaModal();
+                }
+            });
+        }
+        
+        // Event listener para cerrar con ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && mascotaDuplicadaModal && mascotaDuplicadaModal.style.display === 'flex') {
+                closeMascotaDuplicadaModal();
+            }
+        });
+    });
+    
     document.addEventListener('invalid', function(e) {
         e.preventDefault();
     }, true);
+    
+    // Funcionalidad dinámica del campo Tipo de Identificación
+    function inicializarTipoIdentificacion() {
+        const tipoIdentificacionSelect = document.getElementById('id_tipo_identificacion');
+        const labelMicrochip = document.getElementById('label_microchip');
+        const inputMicrochip = document.getElementById('input_microchip');
+        const mensajeExterno = document.getElementById('mensaje_externo');
+        
+        if (!tipoIdentificacionSelect || !labelMicrochip || !inputMicrochip || !mensajeExterno) {
+            console.log('Elementos no encontrados, reintentando en 100ms...');
+            setTimeout(inicializarTipoIdentificacion, 100);
+            return;
+        }
+        
+        function actualizarCampoMicrochip() {
+            const valorSeleccionado = tipoIdentificacionSelect.value;
+            console.log('Valor seleccionado:', valorSeleccionado);
+            
+            if (valorSeleccionado === 'EXTERNO') {
+                // Ocultar input y mostrar mensaje
+                inputMicrochip.style.display = 'none';
+                mensajeExterno.style.display = 'block';
+                labelMicrochip.textContent = 'Código externo';
+                
+                // Deshabilitar validación del campo microchip y limpiarlo
+                const chipInput = inputMicrochip.querySelector('input');
+                if (chipInput) {
+                    chipInput.removeAttribute('required');
+                    chipInput.disabled = true;
+                    chipInput.value = ''; // Limpiar el campo
+                    
+                    // Limpiar errores previos del campo microchip
+                    limpiarErrorCampo(chipInput);
+                    
+                    // Limpiar errores específicos de validación de chip
+                    const chipValidationMessage = chipInput.parentNode.querySelector('.chip-validation-message');
+                    if (chipValidationMessage) {
+                        chipValidationMessage.remove();
+                    }
+                    
+                    // Resetear estado de chip duplicado y habilitar botón
+                    chipDuplicado = false;
+                    habilitarBotonRegistro(true);
+                    
+                    // Limpiar estilos de error del chip
+                    chipInput.style.borderColor = '#ddd';
+                    chipInput.classList.remove('chip-error', 'chip-success');
+                }
+                console.log('Campo EXTERNO activado');
+            } else {
+                // Mostrar input y ocultar mensaje
+                inputMicrochip.style.display = 'block';
+                mensajeExterno.style.display = 'none';
+                labelMicrochip.textContent = 'Microchip (*)';
+                
+                // Habilitar validación del campo microchip
+                const chipInput = inputMicrochip.querySelector('input');
+                if (chipInput) {
+                    chipInput.setAttribute('required', 'required');
+                    chipInput.disabled = false;
+                }
+                console.log('Campo INTERNO activado');
+            }
+        }
+        
+        // Ejecutar al cargar la página
+        actualizarCampoMicrochip();
+        
+        // Agregar event listener para cambios
+        tipoIdentificacionSelect.addEventListener('change', actualizarCampoMicrochip);
+        console.log('Event listener agregado para tipo de identificación');
+    }
+    
+    // Inicializar cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', inicializarTipoIdentificacion);
+    } else {
+        inicializarTipoIdentificacion();
+    }
 });
 </script>
 {% endblock %}

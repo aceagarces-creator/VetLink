@@ -77,6 +77,24 @@ class RegistrarMascotaForm(forms.Form):
     """
     
     # Datos básicos de la mascota
+    tipo_identificacion = forms.ChoiceField(
+        choices=[
+            ('INTERNO', 'INTERNO'),
+            ('EXTERNO', 'EXTERNO')
+        ],
+        label='Tipo de Identificación (*)',
+        initial='INTERNO',
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+            'style': 'width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: white; color: #333; box-sizing: border-box; font-size: 0.7rem;',
+            'id': 'id_tipo_identificacion'
+        }),
+        error_messages={
+            'required': 'Debe seleccionar un tipo de identificación.',
+            'invalid_choice': 'El tipo de identificación seleccionado no es válido.'
+        }
+    )
+    
     nombre = forms.CharField(
         max_length=100,
         label='Nombre (*)',
@@ -236,12 +254,12 @@ class RegistrarMascotaForm(forms.Form):
     nro_chip = forms.CharField(
         max_length=30,
         label='Número de Chip (*)',
+        required=False,  # No es obligatorio por defecto, se valida dinámicamente
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Ingrese el número de chip único de identificación'
         }),
         error_messages={
-            'required': 'El número de chip es obligatorio.',
             'max_length': 'El número de chip no puede tener más de 30 caracteres.'
         }
     )

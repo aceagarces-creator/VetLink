@@ -51,6 +51,7 @@ class Mascota(models.Model):
                                                  blank=True, null=True)
     
     # Datos de identificación
+    tipo_identificacion = models.CharField(max_length=10, blank=True, null=True, default='INTERNO')
     nro_chip = models.CharField(unique=True, max_length=30)
     nombre = models.CharField(max_length=100)
     
