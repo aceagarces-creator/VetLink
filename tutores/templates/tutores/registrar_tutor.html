@@ -76,7 +76,12 @@
                      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
                          <div>
                              <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">{{ form.nro_documento.label }}</label>
-                             {{ form.nro_documento }}
+                             <input type="text" name="{{ form.nro_documento.name }}" id="{{ form.nro_documento.id_for_label }}" 
+                                    value="{{ form.nro_documento.value|default:'' }}" 
+                                    placeholder="Ej: 12345678-9" required
+                                    style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.65rem; box-sizing: border-box;"
+                                    oninput="formatearRutInput(this)" onblur="validarRutCampo(this)"
+                                    onkeypress="return /[0-9kK-]/i.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'Tab'">
                              {% if form.nro_documento.errors %}
                                  <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
                                      {% for error in form.nro_documento.errors %}{{ error }}{% endfor %}
@@ -175,21 +180,21 @@
                                   </div>
                               {% endif %}
                           </div>
-                                                   <div id="segunda-nacionalidad-container" style="display: flex; align-items: flex-start; justify-content: center; padding-top: 25px;">
+                                                   <div id="segunda-nacionalidad-container" style="display: {% if tiene_segunda_nacionalidad %}none{% else %}flex{% endif %}; align-items: flex-start; justify-content: center; padding-top: 25px;">
                               <button type="button" id="btn-segunda-nacionalidad" class="btn btn-sm" style="background-color: #e6a700; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; white-space: nowrap; text-decoration: none; display: inline-block; width: 80%; cursor: pointer; transition: all 0.3s ease;">
                                   Segunda Nacionalidad
                               </button>
                           </div>
                           
-                          <!-- Campo de segunda nacionalidad (inicialmente oculto) -->
-                          <div id="segunda-nacionalidad-field" style="display: none;">
+                          <!-- Campo de segunda nacionalidad -->
+                          <div id="segunda-nacionalidad-field" style="display: {% if tiene_segunda_nacionalidad %}block{% else %}none{% endif %};">
                               <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Segunda Nacionalidad</label>
-                              <select name="segunda_nacionalidad" class="form-control" style="border-radius: 5px; border: 1px solid #ddd; padding: 10px 12px; font-size: 0.65rem;">
-                                  <option value="">Seleccione Segunda Nacionalidad</option>
-                                  {% for nacionalidad in nacionalidades %}
-                                      <option value="{{ nacionalidad.id_nacionalidad }}">{{ nacionalidad.nacionalidad }}</option>
-                                  {% endfor %}
-                              </select>
+                              {{ form.segunda_nacionalidad }}
+                              {% if form.segunda_nacionalidad.errors %}
+                                  <div style="color: #dc3545; font-size: 0.6rem; margin-top: 3px;">
+                                      {% for error in form.segunda_nacionalidad.errors %}{{ error }}{% endfor %}
+                                  </div>
+                              {% endif %}
                           </div>
                      </div>
                 </div>
@@ -285,6 +290,11 @@
              <button type="submit" id="btn-registrar-tutor" class="btn btn-primary" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.3s ease;">
                  {% if tutor_guardado %}Actualizar Tutor(a){% else %}Registrar Tutor(a){% endif %}
              </button>
+             {% if tutor_guardado %}
+             <a href="/mascotas/registrar/?tutor_id={{ tutor_guardado.id_tutor }}" class="btn btn-primary" style="margin-left: 10px; background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+                 <i class="fas fa-paw"></i> Registrar Nueva Mascota
+             </a>
+             {% endif %}
          </div>
      </form>
      
@@ -479,6 +489,20 @@ document.addEventListener('DOMContentLoaded', function() {
     let rutDuplicado = false;
     let rutActual = '';
     
+    // Inicializar validación de RUT para el formulario de registro de tutor
+    const rutInput = document.getElementById('{{ form.nro_documento.id_for_label }}');
+    if (rutInput) {
+        inicializarValidacionRutElemento(rutInput);
+        
+        // Agregar validación adicional para verificar duplicados
+        rutInput.addEventListener('blur', function() {
+            const rut = this.value.trim();
+            if (rut && validarRutConLibreria(rut)) {
+                validarRutEnTiempoReal(rut);
+            }
+        });
+    }
+    
     const regionSelect = document.getElementById('id_region');
     const provinciaSelect = document.getElementById('id_provincia');
     const comunaSelect = document.getElementById('id_comuna');
@@ -548,64 +572,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Validación específica para el campo RUT del tutor
-    const rutInputById = document.getElementById('id_nro_documento');
-    let timeoutId = null;
-    
     // Validación para campos de celular y teléfono (solo números)
     const celularInput = document.querySelector('input[name="celular"]');
     const telefonoInput = document.querySelector('input[name="telefono"]');
-    
-    if (rutInputById) {
-        
-        rutInputById.addEventListener('input', function(e) {
-            let value = this.value;
-            
-            // Solo permitir números, guión y K/k
-            value = value.replace(/[^0-9Kk\-]/g, '');
-            
-            // Convertir k minúscula a K mayúscula
-            value = value.replace(/k/g, 'K');
-            
-            // Asegurar que solo haya un guión
-            const parts = value.split('-');
-            if (parts.length > 2) {
-                value = parts[0] + '-' + parts.slice(1).join('');
-            }
-            
-            this.value = value;
-            
-            // Si el valor cambió y había un error, limpiarlo
-            if (value !== rutActual && rutDuplicado) {
-                limpiarErrorRut();
-            }
-            
-            rutActual = value;
-            
-            // Validar RUT cuando el usuario termine de escribir (debounce)
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => {
-                validarRutEnTiempoReal(value);
-            }, 1000);
-        });
-        
-        // Prevenir pegado de caracteres no válidos
-        rutInputById.addEventListener('paste', function(e) {
-            e.preventDefault();
-            let pastedText = (e.clipboardData || window.clipboardData).getData('text');
-            
-            // Limpiar texto pegado
-            pastedText = pastedText.replace(/[^0-9Kk\-]/g, '').replace(/k/g, 'K');
-            
-            // Insertar en la posición del cursor
-            const start = this.selectionStart;
-            const end = this.selectionEnd;
-            const currentValue = this.value;
-            
-            this.value = currentValue.substring(0, start) + pastedText + currentValue.substring(end);
-            this.setSelectionRange(start + pastedText.length, start + pastedText.length);
-        });
-    }
         
 
     
@@ -1207,7 +1176,7 @@ document.addEventListener('DOMContentLoaded', function() {
          e.preventDefault();
      }, true);
     
-    // Función para validar RUT en tiempo real
+    // Función para validar RUT en tiempo real (usando validación estandarizada)
     function validarRutEnTiempoReal(rut) {
         if (!rut || rut.length < 8) {
             // Si el RUT es muy corto, limpiar cualquier error previo
@@ -1217,6 +1186,12 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
+        // Primero validar con la librería estandarizada
+        if (!validarRutConLibreria(rut)) {
+            return; // La validación estandarizada ya muestra el error
+        }
+        
+        // Si el RUT es válido, verificar si ya existe en la base de datos
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         
         fetch('/tutores/validar-rut/', {
@@ -1271,6 +1246,34 @@ document.addEventListener('DOMContentLoaded', function() {
             inputElement.classList.remove('rut-error', 'rut-success');
             
             rutDuplicado = false;
+        }
+    }
+    
+    // Función específica para mostrar error de RUT en este formulario
+    function mostrarErrorRut(mensaje) {
+        const inputElement = document.querySelector('input[name="nro_documento"]');
+        const messageDiv = document.getElementById('rutValidationMessage');
+        
+        if (inputElement && messageDiv) {
+            messageDiv.textContent = mensaje;
+            messageDiv.className = 'rut-validation-message error';
+            messageDiv.style.display = 'block';
+            
+            inputElement.classList.add('rut-error');
+            inputElement.classList.remove('rut-success');
+        }
+    }
+    
+    // Función específica para ocultar error de RUT en este formulario
+    function ocultarErrorRut() {
+        const inputElement = document.querySelector('input[name="nro_documento"]');
+        const messageDiv = document.getElementById('rutValidationMessage');
+        
+        if (inputElement && messageDiv) {
+            messageDiv.style.display = 'none';
+            messageDiv.textContent = '';
+            
+            inputElement.classList.remove('rut-error');
         }
     }
     

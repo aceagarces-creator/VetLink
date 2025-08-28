@@ -116,6 +116,39 @@ def registrar_tutor_view(request):
                     tutor_existente.fecha_ultima_actualizacion = datetime.now()
                     tutor_existente.save()
                     
+                    # Manejar actualización de nacionalidades
+                    nacionalidad_principal = request.POST.get('nacionalidad')
+                    nacionalidad_secundaria = request.POST.get('segunda_nacionalidad')
+                    
+                    # Eliminar todas las nacionalidades existentes del tutor
+                    TutorNacionalidad.objects.filter(id_tutor=tutor_existente).delete()
+                    
+                    # Guardar nacionalidad principal si existe
+                    if nacionalidad_principal:
+                        try:
+                            nacionalidad_obj = Nacionalidad.objects.get(id_nacionalidad=nacionalidad_principal)
+                            TutorNacionalidad.objects.create(
+                                id_tutor=tutor_existente,
+                                id_nacionalidad=nacionalidad_obj,
+                                fecha_registro=datetime.now()
+                            )
+                            logger.info(f"Nacionalidad principal actualizada: {nacionalidad_obj.nacionalidad}")
+                        except Nacionalidad.DoesNotExist:
+                            logger.error(f"Nacionalidad con ID {nacionalidad_principal} no encontrada")
+                    
+                    # Guardar nacionalidad secundaria si existe
+                    if nacionalidad_secundaria:
+                        try:
+                            nacionalidad_obj = Nacionalidad.objects.get(id_nacionalidad=nacionalidad_secundaria)
+                            TutorNacionalidad.objects.create(
+                                id_tutor=tutor_existente,
+                                id_nacionalidad=nacionalidad_obj,
+                                fecha_registro=datetime.now()
+                            )
+                            logger.info(f"Nacionalidad secundaria actualizada: {nacionalidad_obj.nacionalidad}")
+                        except Nacionalidad.DoesNotExist:
+                            logger.error(f"Nacionalidad con ID {nacionalidad_secundaria} no encontrada")
+                    
                     logger.info(f"Tutor actualizado exitosamente: {tutor_existente}")
                     tutor_guardado = tutor_existente
                     
@@ -189,6 +222,15 @@ def registrar_tutor_view(request):
             
             # Si el tutor se guardó exitosamente (creado o actualizado), precargar el formulario
             if tutor_guardado:
+                # Obtener las nacionalidades del tutor desde la tabla TutorNacionalidad
+                nacionalidades_tutor = TutorNacionalidad.objects.filter(id_tutor=tutor_guardado).order_by('fecha_registro')
+                
+                # La primera nacionalidad registrada será la principal
+                nacionalidad_principal = nacionalidades_tutor.first().id_nacionalidad if nacionalidades_tutor.exists() else None
+                
+                # La segunda nacionalidad (si existe) será la secundaria
+                nacionalidad_secundaria = nacionalidades_tutor[1].id_nacionalidad if nacionalidades_tutor.count() > 1 else None
+                
                 # Crear un formulario precargado con los datos del tutor
                 form_data = {
                     'nro_documento': tutor_guardado.nro_documento,
@@ -199,7 +241,8 @@ def registrar_tutor_view(request):
                     'celular': tutor_guardado.celular,
                     'telefono': tutor_guardado.telefono,
                     'fecha_nacimiento': tutor_guardado.fecha_nacimiento,
-                    'nacionalidad': None,  # Por ahora no se maneja la nacionalidad
+                    'nacionalidad': nacionalidad_principal,
+                    'segunda_nacionalidad': nacionalidad_secundaria,
                     'region': tutor_guardado.id_comuna.id_provincia.id_region,
                     'provincia': tutor_guardado.id_comuna.id_provincia,
                     'comuna': tutor_guardado.id_comuna,
@@ -241,12 +284,19 @@ def registrar_tutor_view(request):
     # Obtener todas las nacionalidades para el dropdown de segunda nacionalidad
     nacionalidades = Nacionalidad.objects.all()
     
+    # Determinar si el tutor tiene segunda nacionalidad para controlar la visibilidad del botón
+    tiene_segunda_nacionalidad = False
+    if tutor_guardado:
+        nacionalidades_tutor = TutorNacionalidad.objects.filter(id_tutor=tutor_guardado)
+        tiene_segunda_nacionalidad = nacionalidades_tutor.count() > 1
+    
     return render(request, 'tutores/registrar_tutor.html', {
         'form': form,
         'tutor_guardado': tutor_guardado,
         'modo_edicion': modo_edicion,
         'mensaje_exito': mensaje_exito,
-        'nacionalidades': nacionalidades
+        'nacionalidades': nacionalidades,
+        'tiene_segunda_nacionalidad': tiene_segunda_nacionalidad
     })
 
 @csrf_exempt

@@ -188,6 +188,20 @@ class RegistrarTutorForm(forms.Form):
         })
     )
     
+    segunda_nacionalidad = forms.ModelChoiceField(
+        label='Segunda Nacionalidad',
+        queryset=Nacionalidad.objects.all(),
+        required=False,
+        empty_label="Seleccione Segunda Nacionalidad",
+        error_messages={
+            'invalid_choice': 'Seleccione una nacionalidad válida',
+        },
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+            'style': 'border-radius: 5px; border: 1px solid #ddd; padding: 10px 12px; font-size: 0.65rem;'
+        })
+    )
+    
     region = forms.ModelChoiceField(
         label='Región (*)',
         queryset=Region.objects.all(),
