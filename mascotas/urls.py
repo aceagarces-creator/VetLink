@@ -21,4 +21,5 @@ urlpatterns = [
     path('documento-atencion/descargar/<int:documento_id>/', views.descargar_documento_atencion, name='descargar_documento_atencion'),
     path('documento-atencion/ver/<int:documento_id>/', views.ver_documento_atencion, name='ver_documento_atencion'),
     path('validar_mascota_duplicada/', views.validar_mascota_duplicada, name='validar_mascota_duplicada'),
+    path('buscar-mascotas-por-tutor/', views.buscar_mascotas_por_tutor, name='buscar_mascotas_por_tutor'),
 ]

@@ -342,17 +342,33 @@ def ficha_clinica_view(request):
     nro_chip_get = request.GET.get('nro_chip')
     
     if request.method == 'POST':
-        form = BuscarFichaClinicaForm(request.POST)
+        # Verificar si se está enviando mascota_id desde el modal
+        mascota_id = request.POST.get('mascota_id')
         
-        if form.is_valid():
-            nro_chip = form.cleaned_data['nro_chip']
+        if mascota_id:
+            # Búsqueda por ID de mascota (desde modal)
             try:
-                mascota_encontrada = Mascota.objects.get(nro_chip=nro_chip)
+                mascota_encontrada = Mascota.objects.get(id_mascota=mascota_id)
                 historial_atenciones = AtencionClinica.objects.filter(
                     id_mascota=mascota_encontrada
                 ).order_by('-fecha_atencion')
+                form = BuscarFichaClinicaForm()  # Formulario vacío ya que no se usa
             except Mascota.DoesNotExist:
-                mensaje = f"No se encontraron registros para este número de chip: {nro_chip}"
+                mensaje = f"No se encontró la mascota con ID: {mascota_id}"
+                form = BuscarFichaClinicaForm()
+        else:
+            # Búsqueda por microchip (formulario original)
+            form = BuscarFichaClinicaForm(request.POST)
+            
+            if form.is_valid():
+                nro_chip = form.cleaned_data['nro_chip']
+                try:
+                    mascota_encontrada = Mascota.objects.get(nro_chip=nro_chip)
+                    historial_atenciones = AtencionClinica.objects.filter(
+                        id_mascota=mascota_encontrada
+                    ).order_by('-fecha_atencion')
+                except Mascota.DoesNotExist:
+                    mensaje = f"No se encontraron registros para este número de chip: {nro_chip}"
     else:
         # Si hay nro_chip en GET, precargar la búsqueda
         if nro_chip_get:
@@ -767,6 +783,77 @@ def validar_mascota_duplicada(request):
         })
     except Exception as e:
         logger.error(f"Error en validar_mascota_duplicada: {e}")
+        return JsonResponse({
+            'success': False,
+            'error': 'Error interno del servidor'
+        })
+
+
+@csrf_exempt
+def buscar_mascotas_por_tutor(request):
+    """
+    Vista AJAX para buscar mascotas asociadas a un tutor por RUT
+    """
+    if request.method != 'POST':
+        return JsonResponse({
+            'success': False,
+            'error': 'Método no permitido'
+        })
+    
+    try:
+        # Parsear datos JSON
+        data = json.loads(request.body)
+        rut_tutor = data.get('rut_tutor', '').strip()
+        
+        # Validar que tengamos el RUT
+        if not rut_tutor:
+            return JsonResponse({
+                'success': False,
+                'error': 'RUT del tutor es requerido'
+            })
+        
+        logger.info(f"Buscando mascotas para tutor con RUT: {rut_tutor}")
+        
+        # Buscar tutor por RUT
+        tutor = Tutor.objects.filter(nro_documento=rut_tutor).first()
+        
+        if not tutor:
+            return JsonResponse({
+                'success': False,
+                'error': 'No se encontró un tutor con este RUT'
+            })
+        
+        # Buscar mascotas asociadas al tutor
+        mascotas = Mascota.objects.filter(id_tutor=tutor).select_related('id_especie')
+        
+        logger.info(f"Encontradas {mascotas.count()} mascotas para el tutor {tutor}")
+        
+        # Preparar datos de mascotas para JSON
+        mascotas_data = []
+        for mascota in mascotas:
+            mascota_info = {
+                'id_mascota': mascota.id_mascota,
+                'nro_chip': mascota.nro_chip,
+                'nombre': mascota.nombre,
+                'especie': mascota.id_especie.nombre if mascota.id_especie else 'No especificada',
+                'sexo': mascota.sexo if mascota.sexo else 'No especificado',
+                'estado_vital': mascota.estado_vital if mascota.estado_vital else 'No especificado'
+            }
+            mascotas_data.append(mascota_info)
+        
+        return JsonResponse({
+            'success': True,
+            'mascotas': mascotas_data,
+            'total_mascotas': len(mascotas_data)
+        })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'error': 'Datos JSON inválidos'
+        })
+    except Exception as e:
+        logger.error(f"Error en buscar_mascotas_por_tutor: {e}")
         return JsonResponse({
             'success': False,
             'error': 'Error interno del servidor'

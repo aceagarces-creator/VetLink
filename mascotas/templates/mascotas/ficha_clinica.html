@@ -8,37 +8,19 @@
 <!-- Título principal con espacio superior reducido y en mayúsculas -->
 <h1 style="text-align: center; font-weight: bold; margin-top: 0.1rem; margin-bottom: 20px; color: #333; font-size: 1.3rem; text-transform: uppercase;">Consultar Ficha Médica</h1>
 
-<!-- Formulario de búsqueda reorganizado horizontalmente -->
-<div style="display: flex; justify-content: center; margin-bottom: 15px;">
-    <form method="post" class="mb-4 buscar-mascota-form" style="display: flex; align-items: center; gap: 15px; max-width: 600px;">
-        {% csrf_token %}
-        <label for="{{ form.nro_chip.id_for_label }}" style="display: block; font-weight: bold; color: #333; white-space: nowrap; font-size: 0.8rem;">
-            {{ form.nro_chip.label }}
-        </label>
-        {{ form.nro_chip }}
-        <button type="submit" name="buscar_mascota" class="btn btn-primary" id="btn-buscar" style="padding: 8px 16px; border-radius: 4px; background-color: #007bff; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer;">
-            Buscar
-        </button>
-        {% if mascota_encontrada %}
-        <button type="button" class="btn btn-success" id="btn-nueva-busqueda" style="padding: 8px 16px; border-radius: 4px; background-color: #28a745; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer;">
-            Realizar Nueva Búsqueda
-        </button>
-        {% endif %}
-    </form>
-</div>
+<!-- CSRF Token para AJAX -->
+{% csrf_token %}
 
-<!-- Mensaje de error para RUT -->
-{% if form.nro_chip.errors %}
-    <div style="text-align: center; margin-bottom: 15px;">
-        <div style="color: #dc3545; font-size: 0.65rem; margin-top: 3px;">
-            {% for error in form.nro_chip.errors %}{{ error }}{% endfor %}
-        </div>
-    </div>
-{% endif %}
-
-<!-- Help text del formulario -->
-<div style="text-align: center; margin-bottom: 20px;">
-    <small style="color: #6c757d; font-size: 0.65rem;">{{ form.nro_chip.help_text }}</small>
+<!-- Botones para seleccionar mascota y nueva búsqueda -->
+<div style="width: 80%; margin-left: auto; margin-right: auto; display: flex; justify-content: flex-end; gap: 15px; margin-bottom: 20px;">
+    <button type="button" id="btnSeleccionarMascota" class="btn btn-primary" onclick="abrirModalSeleccionarMascota()" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer;">
+        <i class="fas fa-search"></i> Seleccionar Mascota
+    </button>
+    {% if mascota_encontrada %}
+    <button type="button" class="btn btn-success" onclick="realizarNuevaBusqueda()" style="background-color: #28a745; border: none; padding: 8px 16px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer;">
+        <i class="fas fa-refresh"></i> Realizar Nueva Búsqueda
+    </button>
+    {% endif %}
 </div>
 
 {% if mascota_encontrada %}
@@ -366,6 +348,74 @@
     </div>
 </div>
 
+<!-- Modal para seleccionar mascota -->
+<div id="modalSeleccionarMascota" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center;">
+    <div class="modal-content" style="background-color: #fefefe; margin: auto; padding: 0; border-radius: 12px; width: 95%; max-width: 800px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); animation: modalFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); overflow: hidden;">
+        <div class="modal-header" style="background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; position: relative;">
+            <h3 style="margin: 0; color: #ffffff; font-size: 1.1rem; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-paw"></i> Seleccionar Mascota
+            </h3>
+            <button type="button" onclick="cerrarModalSeleccionarMascota()" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; padding: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body" style="padding: 25px; max-height: 70vh; overflow-y: auto; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);">
+            <!-- Formulario de búsqueda por RUT -->
+            <div style="margin-bottom: 20px;">
+                <form id="formBuscarTutor" style="display: flex; align-items: end;">
+                    <div style="margin-right: 10px;">
+                        <label style="display: block; font-weight: bold; color: #333; font-size: 0.9rem; margin-bottom: 8px;">Ingrese el Rut del Tutor(a):</label>
+                        <input type="text" id="rutTutor" name="rut_tutor" placeholder="Ej: 12345678-9" required 
+                               style="width: 200px; padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <button type="button" onclick="buscarMascotasPorTutor()" class="btn btn-primary" 
+                                style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer; white-space: nowrap;">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Área de resultados -->
+            <div id="resultadosMascotas" style="display: none;">
+                <h4 style="color: #333; margin-bottom: 15px; font-size: 1rem;">Mascotas encontradas:</h4>
+                <div style="overflow-x: auto;">
+                    <table id="tablaMascotas" style="width: 100%; border-collapse: collapse; border: 1px solid #ddd; background-color: #fff;">
+                        <thead style="background-color: #f8f9fa;">
+                            <tr>
+                                <th style="padding: 10px; border-bottom: 1px solid #ddd; font-size: 0.8rem; text-align: left;">Microchip</th>
+                                <th style="padding: 10px; border-bottom: 1px solid #ddd; font-size: 0.8rem; text-align: left;">Nombre</th>
+                                <th style="padding: 10px; border-bottom: 1px solid #ddd; font-size: 0.8rem; text-align: left;">Especie</th>
+                                <th style="padding: 10px; border-bottom: 1px solid #ddd; font-size: 0.8rem; text-align: left;">Sexo</th>
+                                <th style="padding: 10px; border-bottom: 1px solid #ddd; font-size: 0.8rem; text-align: left;">Estado</th>
+                                <th style="padding: 10px; border-bottom: 1px solid #ddd; font-size: 0.8rem; text-align: center;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyMascotas">
+                            <!-- Los resultados se cargarán dinámicamente aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Mensaje de error -->
+            <div id="mensajeError" style="display: none; background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 4px; margin-top: 15px; font-size: 0.9rem;"></div>
+            
+            <!-- Loading -->
+            <div id="loadingBusqueda" style="display: none; text-align: center; padding: 20px;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #007bff; margin-bottom: 15px;"></i>
+                <p style="color: #666; font-size: 1rem; margin: 0;">Buscando mascotas...</p>
+            </div>
+        </div>
+        <div class="modal-footer" style="padding: 20px 25px; border-top: 1px solid #e9ecef; text-align: right; background-color: #f8f9fa; position: relative;">
+            <button type="button" class="btn btn-secondary" onclick="cerrarModalSeleccionarMascota()" style="background-color: #6c757d; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer;">
+                <i class="fas fa-times"></i> Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
 <style>
     /* Estilos adicionales para mejorar la apariencia */
     .container {
@@ -410,29 +460,20 @@
         transition: all 0.2s ease-in-out;
     }
     
-    .btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    
-         /* Estilo para la forma de búsqueda */
-     .buscar-mascota-form input[type="text"] {
-         max-width: 250px !important;
+         .btn:hover {
+         transform: translateY(-1px);
+         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
      }
      
-     /* Estilo para botón deshabilitado (mantiene color azul pero inactivo) */
-     .btn-primary:disabled {
-         background-color: #007bff !important;
+     /* Estilo para botón deshabilitado */
+     .btn:disabled {
          opacity: 0.6 !important;
          cursor: not-allowed !important;
+         transform: none !important;
+         box-shadow: none !important;
      }
-     
-     /* Estilo para input deshabilitado (mismo estilo que otros campos readonly) */
-     input:disabled {
-         background-color: #f8f9fa !important;
-         color: #333 !important;
-         cursor: not-allowed !important;
-     }
+    
+
      
      /* Animación para el modal */
      @keyframes modalFadeIn {
@@ -481,28 +522,18 @@
 
  <script>
      document.addEventListener('DOMContentLoaded', function() {
-         const inputChip = document.getElementById('{{ form.nro_chip.id_for_label }}');
-         const btnBuscar = document.getElementById('btn-buscar');
-         const btnNuevaBusqueda = document.getElementById('btn-nueva-busqueda');
-         
-         // Si hay una mascota encontrada, deshabilitar solo el input y el botón Buscar
+         // Verificar estado del consentimiento al cargar la página si hay mascota encontrada
          {% if mascota_encontrada %}
-         if (inputChip && btnBuscar) {
-             inputChip.disabled = true;
-             btnBuscar.disabled = true;
-         }
-         
-         // Verificar estado del consentimiento al cargar la página
          verificarConsentimiento({{ mascota_encontrada.id_mascota }});
-         {% endif %}
          
-         // Evento para el botón "Realizar una nueva búsqueda"
-         if (btnNuevaBusqueda) {
-             btnNuevaBusqueda.addEventListener('click', function() {
-                 // Redirigir a la página inicial del formulario
-                 window.location.href = '/mascotas/ficha-clinica/';
-             });
+         // Deshabilitar el botón "Seleccionar Mascota" si ya hay una mascota seleccionada
+         const btnSeleccionarMascota = document.getElementById('btnSeleccionarMascota');
+         if (btnSeleccionarMascota) {
+             btnSeleccionarMascota.disabled = true;
+             btnSeleccionarMascota.style.opacity = '0.6';
+             btnSeleccionarMascota.style.cursor = 'not-allowed';
          }
+         {% endif %}
      });
      
      // Variables globales
@@ -763,12 +794,16 @@
      window.onclick = function(event) {
          const modalVer = document.getElementById('modalVerConsentimiento');
          const modalSubir = document.getElementById('modalSubirConsentimiento');
+         const modalSeleccionar = document.getElementById('modalSeleccionarMascota');
          
          if (event.target === modalVer) {
              cerrarModalVerConsentimiento();
          }
          if (event.target === modalSubir) {
              cerrarModalSubirConsentimiento();
+         }
+         if (event.target === modalSeleccionar) {
+             cerrarModalSeleccionarMascota();
          }
      }
      
@@ -777,6 +812,7 @@
          if (event.key === 'Escape') {
              cerrarModalVerConsentimiento();
              cerrarModalSubirConsentimiento();
+             cerrarModalSeleccionarMascota();
          }
      });
      
@@ -790,6 +826,137 @@
              // Si no hay mascota encontrada, redirigir al formulario sin parámetros
              window.location.href = '/atencion-medica/registrar-atencion/';
          {% endif %}
+     }
+     
+     // Funciones para el modal de selección de mascota
+     function abrirModalSeleccionarMascota() {
+         document.getElementById('modalSeleccionarMascota').style.display = 'flex';
+         // Limpiar formulario y resultados
+         document.getElementById('formBuscarTutor').reset();
+         document.getElementById('resultadosMascotas').style.display = 'none';
+         document.getElementById('mensajeError').style.display = 'none';
+         document.getElementById('loadingBusqueda').style.display = 'none';
+     }
+     
+     function cerrarModalSeleccionarMascota() {
+         document.getElementById('modalSeleccionarMascota').style.display = 'none';
+     }
+     
+     function buscarMascotasPorTutor() {
+         const rutTutor = document.getElementById('rutTutor').value.trim();
+         
+         if (!rutTutor) {
+             mostrarError('Por favor ingrese el RUT del tutor');
+             return;
+         }
+         
+         // Mostrar loading
+         document.getElementById('loadingBusqueda').style.display = 'block';
+         document.getElementById('resultadosMascotas').style.display = 'none';
+         document.getElementById('mensajeError').style.display = 'none';
+         
+         // Realizar búsqueda AJAX
+         fetch('/mascotas/buscar-mascotas-por-tutor/', {
+             method: 'POST',
+             headers: {
+                 'Content-Type': 'application/json',
+                 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+             },
+             body: JSON.stringify({
+                 rut_tutor: rutTutor
+             })
+         })
+         .then(response => response.json())
+         .then(data => {
+             document.getElementById('loadingBusqueda').style.display = 'none';
+             
+             if (data.success) {
+                 if (data.mascotas && data.mascotas.length > 0) {
+                     mostrarResultadosMascotas(data.mascotas);
+                 } else {
+                     mostrarError('No se encontraron mascotas para este tutor');
+                 }
+             } else {
+                 mostrarError(data.error || 'Error al buscar mascotas');
+             }
+         })
+         .catch(error => {
+             document.getElementById('loadingBusqueda').style.display = 'none';
+             mostrarError('Error de conexión al buscar mascotas');
+             console.error('Error:', error);
+         });
+     }
+     
+     function mostrarResultadosMascotas(mascotas) {
+         const tbody = document.getElementById('tbodyMascotas');
+         tbody.innerHTML = '';
+         
+         mascotas.forEach(mascota => {
+             const row = document.createElement('tr');
+             row.innerHTML = `
+                 <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 0.8rem;">${mascota.nro_chip || 'No registrado'}</td>
+                 <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 0.8rem;">${mascota.nombre}</td>
+                 <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 0.8rem;">${mascota.especie || 'No especificada'}</td>
+                 <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 0.8rem;">${mascota.sexo || 'No especificado'}</td>
+                 <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 0.8rem;">${mascota.estado_vital || 'No especificado'}</td>
+                 <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">
+                     <button type="button" onclick="seleccionarMascota(${mascota.id_mascota})" class="btn btn-success" 
+                             style="background-color: #28a745; border: none; padding: 6px 12px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 0.65rem; cursor: pointer;">
+                         <i class="fas fa-check"></i> Seleccionar
+                     </button>
+                 </td>
+             `;
+             tbody.appendChild(row);
+         });
+         
+         document.getElementById('resultadosMascotas').style.display = 'block';
+     }
+     
+     function mostrarError(mensaje) {
+         const errorDiv = document.getElementById('mensajeError');
+         errorDiv.textContent = mensaje;
+         errorDiv.style.display = 'block';
+     }
+     
+     function seleccionarMascota(idMascota) {
+         // Cerrar el modal
+         cerrarModalSeleccionarMascota();
+         
+         // Deshabilitar el botón "Seleccionar Mascota"
+         const btnSeleccionarMascota = document.getElementById('btnSeleccionarMascota');
+         if (btnSeleccionarMascota) {
+             btnSeleccionarMascota.disabled = true;
+             btnSeleccionarMascota.style.opacity = '0.6';
+             btnSeleccionarMascota.style.cursor = 'not-allowed';
+         }
+         
+         // Crear un formulario temporal para enviar el ID de la mascota
+         const form = document.createElement('form');
+         form.method = 'POST';
+         form.action = '/mascotas/ficha-clinica/';
+         
+         // Agregar CSRF token
+         const csrfToken = document.createElement('input');
+         csrfToken.type = 'hidden';
+         csrfToken.name = 'csrfmiddlewaretoken';
+         csrfToken.value = document.querySelector('[name=csrfmiddlewaretoken]').value;
+         form.appendChild(csrfToken);
+         
+         // Agregar el ID de la mascota
+         const mascotaId = document.createElement('input');
+         mascotaId.type = 'hidden';
+         mascotaId.name = 'mascota_id';
+         mascotaId.value = idMascota;
+         form.appendChild(mascotaId);
+         
+         // Agregar el formulario al DOM y enviarlo
+         document.body.appendChild(form);
+         form.submit();
+     }
+     
+     function realizarNuevaBusqueda() {
+         // Redirigir a la página inicial del formulario para volver al estado inicial
+         window.location.href = '/mascotas/ficha-clinica/';
      }
  </script>
 
