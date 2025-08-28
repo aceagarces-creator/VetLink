@@ -111,6 +111,31 @@ def registrar_atencion_unificada_view(request):
             mensaje_error = f"No se encontró una mascota con el número de chip: {nro_chip_get}"
             logger.info(f"Mascota no encontrada con chip por GET: {nro_chip_get}")
     
+    elif id_mascota_get:
+        logger.info(f"Parámetro id_mascota recibido por GET: {id_mascota_get}")
+        try:
+            # Buscar mascota por ID
+            mascota_encontrada = Mascota.objects.select_related(
+                'id_tutor',
+                'id_especie',
+                'id_raza'
+            ).get(id_mascota=id_mascota_get)
+            
+            logger.info(f"Mascota encontrada por ID GET: {mascota_encontrada}")
+            
+            # Configurar el formulario de atención médica con la mascota encontrada
+            atencion_form = AtencionMedicaForm(initial={
+                'id_mascota': mascota_encontrada,
+                'fecha_atencion': timezone.now().date(),
+            })
+            
+        except Mascota.DoesNotExist:
+            mensaje_error = f"No se encontró una mascota con el ID: {id_mascota_get}"
+            logger.info(f"Mascota no encontrada con ID por GET: {id_mascota_get}")
+        except ValueError:
+            mensaje_error = f"ID de mascota inválido: {id_mascota_get}"
+            logger.info(f"ID de mascota inválido por GET: {id_mascota_get}")
+    
     if request.method == 'POST':
         logger.info("=== DETECTADO POST REQUEST ===")
         logger.info(f"Keys en POST: {list(request.POST.keys())}")
