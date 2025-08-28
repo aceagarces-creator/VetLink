@@ -843,9 +843,9 @@
      // Función para registrar nueva atención médica
      function registrarNuevaAtencion() {
          {% if mascota_encontrada %}
-             // Redirigir al formulario de atención médica con el número de chip precargado
-             const nroChip = '{{ mascota_encontrada.nro_chip }}';
-             window.location.href = '/atencion-medica/registrar-atencion/?nro_chip=' + encodeURIComponent(nroChip);
+             // Redirigir al formulario de atención médica con el ID de mascota precargado
+             const idMascota = '{{ mascota_encontrada.id_mascota }}';
+             window.location.href = '/atencion-medica/registrar-atencion/?id_mascota=' + encodeURIComponent(idMascota);
          {% else %}
              // Si no hay mascota encontrada, redirigir al formulario sin parámetros
              window.location.href = '/atencion-medica/registrar-atencion/';
