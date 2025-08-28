@@ -88,8 +88,10 @@ def registrar_atencion_unificada_view(request):
     logger.info(f"Servicios encontrados para clínica {clinica_id}: {[s.nombre for s in servicios]}")
     logger.info(f"Servicios detalle encontrados para clínica {clinica_id}: {[sd.nombre for sd in servicios_detalle]}")
     
-    # Verificar si hay un parámetro nro_chip en GET (redirección desde Consultar Tutor)
+    # Verificar si hay parámetros en GET (redirección desde otros formularios)
     nro_chip_get = request.GET.get('nro_chip')
+    id_mascota_get = request.GET.get('id_mascota')
+    
     if nro_chip_get:
         logger.info(f"Parámetro nro_chip recibido por GET: {nro_chip_get}")
         try:
@@ -116,7 +118,34 @@ def registrar_atencion_unificada_view(request):
         logger.info(f"'buscar_mascota' en POST: {'buscar_mascota' in request.POST}")
         
         # Determinar qué formulario se está enviando
-        if 'buscar_mascota' in request.POST:
+        if 'mascota_id' in request.POST:
+            logger.info("=== PROCESANDO SELECCIÓN DE MASCOTA DESDE MODAL ===")
+            try:
+                mascota_id = request.POST.get('mascota_id')
+                logger.info(f"Buscando mascota con ID para atención médica: {mascota_id}")
+                
+                mascota_encontrada = Mascota.objects.select_related(
+                    'id_tutor',
+                    'id_especie',
+                    'id_raza'
+                ).get(id_mascota=mascota_id)
+                
+                logger.info(f"Mascota encontrada para atención: {mascota_encontrada.nombre} (ID: {mascota_encontrada.id_mascota})")
+                
+                # Configurar el formulario de atención médica con la mascota encontrada
+                atencion_form = AtencionMedicaForm(initial={
+                    'id_mascota': mascota_encontrada,
+                    'fecha_atencion': timezone.now().date(),
+                })
+                
+            except Mascota.DoesNotExist:
+                logger.warning(f"No se encontró mascota con ID: {mascota_id}")
+                mensaje_error = f"No se encontró una mascota con el ID: {mascota_id}"
+            except ValueError:
+                logger.warning(f"ID de mascota inválido: {request.POST.get('mascota_id')}")
+                mensaje_error = "ID de mascota inválido"
+        
+        elif 'buscar_mascota' in request.POST:
             logger.info("=== PROCESANDO BÚSQUEDA DE MASCOTA ===")
             # Búsqueda de mascota
             buscar_form = BuscarMascotaAtencionForm(request.POST)
