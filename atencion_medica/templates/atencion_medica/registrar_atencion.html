@@ -164,6 +164,19 @@
                 </div>
             </div>
              
+             <!-- NUEVA FILA: Tipo de Identificación y Microchip -->
+             <div class="grid-3" style="margin-top: 10px;">
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Tipo de Identificación</label>
+                     <input type="text" value="{{ mascota_encontrada.tipo_identificacion|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+                 <div>
+                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Microchip</label>
+                     <input type="text" value="{% if mascota_encontrada.tipo_identificacion == 'EXTERNO' %}Sin número de chip{% else %}{{ mascota_encontrada.nro_chip }}{% endif %}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                 </div>
+                 <div></div> <!-- Columna vacía -->
+             </div>
+             
              <!-- TERCERA FILA: Mascota, Especie, Raza -->
              <div class="grid-3" style="margin-top: 10px;">
                  <div>
