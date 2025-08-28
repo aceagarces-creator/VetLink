@@ -74,11 +74,25 @@
     <!-- Bloque "Datos de la Mascota" -->
     <div class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 auto; width: 80%;">
         <div class="card-body" style="padding: 12px 25px;">
-            <!-- Primera fila: Microchip, Nombre, Especie -->
+            <!-- Nueva fila: Tipo de Identificación -->
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
                 <div>
+                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Tipo de Identificación</label>
+                    <input type="text" value="{{ mascota_encontrada.tipo_identificacion|default:'' }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                </div>
+                <div>
+                    <!-- Columna vacía -->
+                </div>
+                <div>
+                    <!-- Columna vacía -->
+                </div>
+            </div>
+            
+            <!-- Primera fila: Microchip, Nombre, Especie -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 10px;">
+                <div>
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Microchip</label>
-                    <input type="text" value="{{ mascota_encontrada.nro_chip }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                    <input type="text" value="{% if mascota_encontrada.tipo_identificacion == 'EXTERNO' %}No registrado{% else %}{{ mascota_encontrada.nro_chip }}{% endif %}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
                 </div>
                 <div>
                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Nombre</label>
