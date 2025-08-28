@@ -140,31 +140,30 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Inicializar validación de RUT usando la librería global
     if (rutInput) {
-        rutInput.addEventListener('input', function(e) {
-            let value = this.value;
-            value = value.replace(/[^0-9Kk\-]/g, '');
-            value = value.replace(/k/g, 'K');
+        // Usar el elemento directamente en lugar de buscar por ID
+        inicializarValidacionRutElemento(rutInput);
+    }
+    
+    // Validar RUT antes de enviar el formulario
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const rut = rutInput.value.trim();
             
-            const parts = value.split('-');
-            if (parts.length > 2) {
-                value = parts[0] + '-' + parts.slice(1).join('');
+            if (!rut) {
+                e.preventDefault();
+                alert('Por favor ingrese el RUT del tutor');
+                return false;
             }
             
-            this.value = value;
-        });
-        
-        rutInput.addEventListener('paste', function(e) {
-            e.preventDefault();
-            let pastedText = (e.clipboardData || window.clipboardData).getData('text');
-            pastedText = pastedText.replace(/[^0-9Kk\-]/g, '').replace(/k/g, 'K');
-            
-            const start = this.selectionStart;
-            const end = this.selectionEnd;
-            const currentValue = this.value;
-            
-            this.value = currentValue.substring(0, start) + pastedText + currentValue.substring(end);
-            this.setSelectionRange(start + pastedText.length, start + pastedText.length);
+            // Validar RUT usando la librería global
+            if (!validarRutConLibreria(rut)) {
+                e.preventDefault();
+                alert('RUT inválido. Verifique el número y dígito verificador.');
+                return false;
+            }
         });
     }
 });
