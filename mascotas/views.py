@@ -491,15 +491,20 @@ def subir_consentimiento(request, mascota_id):
         # Actualizar consentimiento de la mascota
         url_relativa = f'consentimientos/{mascota.id_tutor.id_tutor}/{nombre_archivo}'
         
+        # Obtener la clínica con ID 1
+        clinica = ClinicaVeterinaria.objects.get(id_clinica=1)
+        
         mascota.consentimiento = True
         mascota.fecha_consentimiento = datetime.now().date()
         mascota.url_doc_consentimiento = url_relativa
-        mascota.id_clinica_consentimiento_id = 1
+        mascota.id_clinica_consentimiento = clinica
         mascota.save()
         
         return JsonResponse({
             'success': True,
             'mensaje': 'Documento de consentimiento subido exitosamente',
+            'clinica_consentimiento': clinica.nombre,
+            'fecha_consentimiento': mascota.fecha_consentimiento.strftime('%d/%m/%Y'),
             'documento': {
                 'id': mascota.id_mascota,
                 'nombre': archivo.name,

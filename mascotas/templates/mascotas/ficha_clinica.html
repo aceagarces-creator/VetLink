@@ -700,9 +700,6 @@
                   
                   // Actualizar campos del consentimiento
                   actualizarCamposConsentimiento(data);
-                  
-                  // Mostrar mensaje de éxito
-                  alert('Documento de consentimiento subido exitosamente');
               } else {
                   errorDiv.textContent = data.error || 'Error al subir el documento';
                   errorDiv.style.display = 'block';
@@ -718,6 +715,8 @@
      
            // Función para actualizar campos del consentimiento
       function actualizarCamposConsentimiento(data) {
+          console.log('Actualizando campos con datos:', data);
+          
           // Actualizar radio button "Sí"
           const radioSi = document.querySelector(`input[name="consentimiento_{{ mascota_encontrada.id_mascota }}"][value="si"]`);
           const radioNo = document.querySelector(`input[name="consentimiento_{{ mascota_encontrada.id_mascota }}"][value="no"]`);
@@ -727,57 +726,68 @@
               radioNo.checked = false;
           }
           
-          // Buscar todos los labels y encontrar los específicos
+          // Método 1: Buscar campos por el texto de sus labels
           const labels = document.querySelectorAll('label');
           let clinicaInput = null;
           let fechaInput = null;
           
+          console.log('Buscando labels...');
           for (let label of labels) {
-              if (label.textContent.includes('Clínica donde firma el consentimiento')) {
-                  // Buscar el input siguiente al label
-                  const parentDiv = label.closest('div');
-                  if (parentDiv) {
-                      clinicaInput = parentDiv.querySelector('input[readonly]');
-                  }
+              console.log('Label encontrado:', label.textContent.trim());
+              if (label.textContent.trim() === 'Clínica donde firma el consentimiento') {
+                  console.log('✅ Label clínica encontrado');
+                  const parentDiv = label.parentElement;
+                  clinicaInput = parentDiv.querySelector('input[readonly]');
               }
-              if (label.textContent.includes('Fecha de consentimiento')) {
-                  // Buscar el input siguiente al label
-                  const parentDiv = label.closest('div');
-                  if (parentDiv) {
-                      fechaInput = parentDiv.querySelector('input[readonly]');
-                  }
+              if (label.textContent.trim() === 'Fecha de consentimiento') {
+                  console.log('✅ Label fecha encontrado');
+                  const parentDiv = label.parentElement;
+                  fechaInput = parentDiv.querySelector('input[readonly]');
               }
           }
           
-          // Actualizar clínica de consentimiento
-          if (clinicaInput && data.clinica_consentimiento) {
-              clinicaInput.value = data.clinica_consentimiento;
-          }
-          
-          // Actualizar fecha de consentimiento
-          if (fechaInput && data.fecha_consentimiento) {
-              fechaInput.value = data.fecha_consentimiento;
-          }
-          
-          // Método alternativo: buscar por el valor actual si no se encontraron por label
+          // Método 2: Buscar por valor actual si no se encontraron
           if (!clinicaInput) {
-              const clinicaInputs = document.querySelectorAll('input[readonly]');
-              for (let input of clinicaInputs) {
-                  if (input.value.includes('No especificada')) {
-                      input.value = data.clinica_consentimiento || 'Clínica por defecto';
+              console.log('Buscando campo clínica por valor...');
+              const inputs = document.querySelectorAll('input[readonly]');
+              for (let input of inputs) {
+                  if (input.value === 'No especificada') {
+                      clinicaInput = input;
+                      console.log('✅ Campo clínica encontrado por valor');
                       break;
                   }
               }
           }
           
           if (!fechaInput) {
-              const fechaInputs = document.querySelectorAll('input[readonly]');
-              for (let input of fechaInputs) {
-                  if (input.value.includes('No registrada')) {
-                      input.value = data.fecha_consentimiento || new Date().toLocaleDateString('es-ES');
+              console.log('Buscando campo fecha por valor...');
+              const inputs = document.querySelectorAll('input[readonly]');
+              for (let input of inputs) {
+                  if (input.value === 'No registrada') {
+                      fechaInput = input;
+                      console.log('✅ Campo fecha encontrado por valor');
                       break;
                   }
               }
+          }
+          
+          console.log('Campo clínica encontrado:', clinicaInput);
+          console.log('Campo fecha encontrado:', fechaInput);
+          
+          // Actualizar clínica de consentimiento
+          if (clinicaInput && data.clinica_consentimiento) {
+              clinicaInput.value = data.clinica_consentimiento;
+              console.log('✅ Clínica actualizada a:', data.clinica_consentimiento);
+          } else {
+              console.log('❌ No se pudo actualizar clínica');
+          }
+          
+          // Actualizar fecha de consentimiento
+          if (fechaInput && data.fecha_consentimiento) {
+              fechaInput.value = data.fecha_consentimiento;
+              console.log('✅ Fecha actualizada a:', data.fecha_consentimiento);
+          } else {
+              console.log('❌ No se pudo actualizar fecha');
           }
       }
       
