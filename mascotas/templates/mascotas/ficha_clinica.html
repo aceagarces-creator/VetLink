@@ -836,6 +836,9 @@
          document.getElementById('resultadosMascotas').style.display = 'none';
          document.getElementById('mensajeError').style.display = 'none';
          document.getElementById('loadingBusqueda').style.display = 'none';
+         
+         // Inicializar validación de RUT
+         inicializarValidacionRut('rutTutor');
      }
      
      function cerrarModalSeleccionarMascota() {
@@ -850,10 +853,19 @@
              return;
          }
          
-         // Mostrar loading
-         document.getElementById('loadingBusqueda').style.display = 'block';
+         // Validar formato y dígito verificador del RUT usando la librería
+         console.log('Validando RUT:', rutTutor);
+         if (!validarRutConLibreria(rutTutor)) {
+             console.log('RUT inválido, mostrando error');
+             mostrarError('RUT inválido. Verifique el número y dígito verificador.');
+             return;
+         }
+         console.log('RUT válido, continuando con búsqueda');
+         
+         // Ocultar mensajes anteriores y mostrar loading
          document.getElementById('resultadosMascotas').style.display = 'none';
          document.getElementById('mensajeError').style.display = 'none';
+         document.getElementById('loadingBusqueda').style.display = 'block';
          
          // Realizar búsqueda AJAX
          fetch('/mascotas/buscar-mascotas-por-tutor/', {
@@ -887,6 +899,8 @@
          });
      }
      
+
+     
      function mostrarResultadosMascotas(mascotas) {
          const tbody = document.getElementById('tbodyMascotas');
          tbody.innerHTML = '';
@@ -913,9 +927,11 @@
      }
      
      function mostrarError(mensaje) {
+         console.log('Mostrando error:', mensaje);
          const errorDiv = document.getElementById('mensajeError');
          errorDiv.textContent = mensaje;
          errorDiv.style.display = 'block';
+         console.log('Error div display:', errorDiv.style.display);
      }
      
      function seleccionarMascota(idMascota) {

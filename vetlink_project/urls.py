@@ -28,6 +28,7 @@ urlpatterns = [
     path('atencion-medica/', include('atencion_medica.urls')),
 ]
 
-# Configuración para servir archivos media en desarrollo
+# Configuración para servir archivos media y estáticos en desarrollo
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
