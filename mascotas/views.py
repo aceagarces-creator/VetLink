@@ -678,9 +678,13 @@ def descargar_documento_atencion(request, documento_id):
         ruta_archivo = os.path.join(settings.MEDIA_ROOT, documento.url_archivo)
         
         if os.path.exists(ruta_archivo):
+            # Obtener el nombre real del archivo con extensión
+            nombre_real_archivo = os.path.basename(documento.url_archivo)
+            
             response = FileResponse(open(ruta_archivo, 'rb'))
             response['Content-Type'] = 'application/octet-stream'
-            response['Content-Disposition'] = f'attachment; filename="{documento.nombre_archivo}"'
+            response['Content-Disposition'] = f'attachment; filename="{nombre_real_archivo}"'
+            response['X-Filename'] = nombre_real_archivo  # Agregar nombre del archivo en header personalizado
             return response
         else:
             return JsonResponse({

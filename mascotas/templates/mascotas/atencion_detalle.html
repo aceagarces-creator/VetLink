@@ -58,20 +58,35 @@
     <!-- Bloque "Datos de la Mascota" -->
     <div class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 auto; width: 80%;">
         <div class="card-body" style="padding: 12px 25px;">
-                         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
-                 <div>
-                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Microchip</label>
-                     <input type="text" value="{{ atencion.id_mascota.nro_chip }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                 </div>
-                 <div>
-                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Nombre</label>
-                     <input type="text" value="{{ atencion.id_mascota.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                 </div>
-                 <div>
-                     <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Especie</label>
-                     <input type="text" value="{{ atencion.id_mascota.id_especie.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
-                 </div>
-             </div>
+            <!-- Nueva fila: Tipo de Identificación -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
+                <div>
+                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Tipo de Identificación</label>
+                    <input type="text" value="{{ atencion.id_mascota.tipo_identificacion }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                </div>
+                <div>
+                    <!-- Columna 2 vacía -->
+                </div>
+                <div>
+                    <!-- Columna 3 vacía -->
+                </div>
+            </div>
+            
+            <!-- Fila existente: Microchip, Nombre, Especie -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                <div>
+                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Microchip</label>
+                    <input type="text" value="{% if atencion.id_mascota.tipo_identificacion == 'EXTERNO' %}Sin microchip{% else %}{{ atencion.id_mascota.nro_chip }}{% endif %}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Nombre</label>
+                    <input type="text" value="{{ atencion.id_mascota.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: bold; color: #666; font-size: 0.65rem; margin-bottom: 5px;">Especie</label>
+                    <input type="text" value="{{ atencion.id_mascota.id_especie.nombre }}" readonly style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; color: #333; box-sizing: border-box; font-size: 0.65rem;">
+                </div>
+            </div>
              
              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 10px;">
                  <div>
@@ -193,7 +208,7 @@
 
          <!-- Botón Volver a Ficha Clínica (al final) -->
      <div style="text-align: center; margin-top: 1.5rem;">
-                  <a href="/mascotas/ficha-clinica/?nro_chip={{ atencion.id_mascota.nro_chip }}" class="btn btn-primary" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 12px; text-decoration: none; display: inline-block; cursor: pointer; transition: all 0.3s ease;">
+                  <a href="/mascotas/ficha-clinica/?id_mascota={{ atencion.id_mascota.id_mascota }}" class="btn btn-primary" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 12px; text-decoration: none; display: inline-block; cursor: pointer; transition: all 0.3s ease;">
              <i class="fas fa-arrow-left"></i> Volver a Ficha Clínica
          </a>
      </div>
@@ -309,7 +324,37 @@
      // Función para descargar el documento de atención
      function descargarDocumentoAtencion() {
          if (documentoAtencionActual) {
-             window.open(`/mascotas/documento-atencion/descargar/${documentoAtencionActual}/`, '_blank');
+             // Usar fetch para descargar el archivo
+             fetch(`/mascotas/documento-atencion/descargar/${documentoAtencionActual}/`)
+                 .then(response => {
+                     if (response.ok) {
+                         // Obtener el nombre del archivo del header personalizado
+                         const filename = response.headers.get('X-Filename') || `documento_${documentoAtencionActual}`;
+                         return response.blob().then(blob => ({ blob, filename }));
+                     }
+                     throw new Error('Error al descargar el documento');
+                 })
+                 .then(({ blob, filename }) => {
+                     // Crear URL del blob
+                     const url = window.URL.createObjectURL(blob);
+                     
+                     // Crear enlace temporal para descarga
+                     const link = document.createElement('a');
+                     link.href = url;
+                     link.download = filename;
+                     
+                     // Agregar al DOM, hacer clic y limpiar
+                     document.body.appendChild(link);
+                     link.click();
+                     document.body.removeChild(link);
+                     
+                     // Liberar la URL del blob
+                     window.URL.revokeObjectURL(url);
+                 })
+                 .catch(error => {
+                     console.error('Error al descargar:', error);
+                     alert('Error al descargar el documento. Por favor, inténtelo de nuevo.');
+                 });
          }
      }
      
