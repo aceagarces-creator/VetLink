@@ -42,13 +42,19 @@
             {{ buscar_tutor_form.rut_tutor.label }}
         </label>
         <div style="position: relative;">
-            {{ buscar_tutor_form.rut_tutor }}
-            <div id="rut-validation-message" style="display: none; margin-top: 5px; padding: 8px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: 500; align-items: center; gap: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"></div>
+            <input type="text" name="{{ buscar_tutor_form.rut_tutor.name }}" id="{{ buscar_tutor_form.rut_tutor.id_for_label }}"
+                   value="{{ buscar_tutor_form.rut_tutor.value|default:'' }}"
+                   placeholder="Ej: 12345678-9" required
+                   style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.65rem; box-sizing: border-box;"
+                   oninput="formatearRutInput(this)" onblur="validarRutCampo(this)"
+                   onkeypress="return /[0-9kK-]/i.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'Tab'">
+            <!-- Mensaje de validación de RUT -->
+            <div id="rutValidationMessage" class="rut-validation-message"></div>
         </div>
         <button type="submit" name="buscar_tutor" class="btn btn-primary" id="btn-buscar-tutor" style="padding: 8px 16px; border-radius: 4px; background-color: #007bff; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px;">
             Buscar
         </button>
-        {% if tutor_encontrado %}
+        {% if buscar_tutor_form.is_bound %}
         <button type="button" class="btn btn-success" id="btn-nueva-busqueda-tutor" style="padding: 8px 16px; border-radius: 4px; background-color: #28a745; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px; text-transform: none;">
             Realizar Nueva Búsqueda
         </button>
@@ -66,13 +72,9 @@
     </div>
 {% endif %}
 
-{% if buscar_tutor_form.rut_tutor.help_text %}
-    <div style="display: flex; justify-content: center; margin-bottom: 10px;">
-        <div style="color: #6c757d; font-size: 0.65rem; text-align: center;">
-            {{ buscar_tutor_form.rut_tutor.help_text }}
-        </div>
-    </div>
-{% endif %}
+{% comment %}
+Ocultar help_text para evitar confusión con rut-validation.js
+{% endcomment %}
 
 {% if tutor_encontrado %}
     <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 80%; margin-left: auto; margin-right: auto;">ANTECEDENTES DEL TUTOR(A)</h5>
@@ -826,36 +828,32 @@ input[name="nro_chip"].chip-success {
     box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
 }
 
-/* Estilos para validación del RUT */
+/* Estilos para validación de RUT (consistentes con chip en mascotas) */
 .rut-validation-message {
     margin-top: 5px;
     padding: 8px 12px;
     border-radius: 4px;
     font-size: 0.65rem;
     font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.rut-validation-message.success {
-    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-    color: #155724;
-    border: 1px solid #c3e6cb;
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
 .rut-validation-message.error {
     background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
     color: #721c24;
     border: 1px solid #f5c6cb;
+}
+
+/* Animación para el mensaje de error del RUT */
+.rut-validation-message.error {
     animation: shake 0.5s ease-in-out;
 }
 
-.rut-validation-message.warning {
-    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-    color: #856404;
-    border: 1px solid #ffeaa7;
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
 }
 
 /* Estilo para el input cuando hay error de RUT */
@@ -990,151 +988,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-     const rutInput = document.querySelector('input[name="rut_tutor"]');
-     const btnBuscarTutor = document.getElementById('btn-buscar-tutor');
-     const rutValidationMessage = document.getElementById('rut-validation-message');
-     let rutTimeoutId;
-     let rutValido = false;
-     
-     if (rutInput) {
-         rutInput.addEventListener('input', function(e) {
-             let value = this.value;
-             
-             value = value.replace(/[^0-9Kk\-]/g, '');
-             value = value.replace(/k/g, 'K');
-             
-             const parts = value.split('-');
-             if (parts.length > 2) {
-                 value = parts[0] + '-' + parts.slice(1).join('');
-             }
-             
-             this.value = value;
-             
-             clearTimeout(rutTimeoutId);
-             
-             if (rutValidationMessage) {
-                 rutValidationMessage.style.display = 'none';
-                 rutValidationMessage.className = 'rut-validation-message';
-                 rutValidationMessage.innerHTML = '';
-             }
-             
-             rutValido = false;
-             habilitarBotonBuscar(false);
-             
-             if (value.length > 0) {
-                 rutTimeoutId = setTimeout(() => {
-                     validarRut(value, this);
-                 }, 500);
-             }
-         });
-         
-         rutInput.addEventListener('paste', function(e) {
-             e.preventDefault();
-             let pastedText = (e.clipboardData || window.clipboardData).getData('text');
-             
-             pastedText = pastedText.replace(/[^0-9Kk\-]/g, '').replace(/k/g, 'K');
-             
-             const start = this.selectionStart;
-             const end = this.selectionEnd;
-             const currentValue = this.value;
-             
-             this.value = currentValue.substring(0, start) + pastedText + currentValue.substring(end);
-             this.setSelectionRange(start + pastedText.length, start + pastedText.length);
-         });
-     }
-     
-     function habilitarBotonBuscar(habilitado) {
-         if (btnBuscarTutor) {
-             if (habilitado) {
-                 btnBuscarTutor.disabled = false;
-                 btnBuscarTutor.style.backgroundColor = '#007bff';
-                 btnBuscarTutor.style.cursor = 'pointer';
-                 btnBuscarTutor.title = 'Buscar tutor';
-             } else {
-                 btnBuscarTutor.disabled = true;
-                 btnBuscarTutor.style.backgroundColor = '#6c757d';
-                 btnBuscarTutor.style.cursor = 'not-allowed';
-                 btnBuscarTutor.title = 'Ingrese un RUT válido para buscar';
-             }
-         }
-     }
-     
-     function validarRut(rut, inputElement) {
-         if (rutValidationMessage) {
-             rutValidationMessage.style.display = 'none';
-             rutValidationMessage.className = 'rut-validation-message';
-         }
-         
-         if (!/^\d{7,8}-[0-9K]$/.test(rut)) {
-             mostrarMensajeRut('error', '❌ Formato de RUT inválido. Use: 12345678-9', inputElement);
-             return;
-         }
-         
-         const numero = rut.split('-')[0];
-         const dv = rut.split('-')[1];
-         
-         let suma = 0;
-         let multiplicador = 2;
-         
-         for (let i = numero.length - 1; i >= 0; i--) {
-             suma += parseInt(numero[i]) * multiplicador;
-             multiplicador = multiplicador === 7 ? 2 : multiplicador + 1;
-         }
-         
-         let dvCalculado = 11 - (suma % 11);
-         if (dvCalculado === 11) {
-             dvCalculado = '0';
-         } else if (dvCalculado === 10) {
-             dvCalculado = 'K';
-         } else {
-             dvCalculado = dvCalculado.toString();
-         }
-         
-         if (dv.toUpperCase() === dvCalculado) {
-             mostrarMensajeRut('success', '✅ RUT válido', inputElement);
-             rutValido = true;
-             habilitarBotonBuscar(true);
-         } else {
-             mostrarMensajeRut('error', '❌ Dígito verificador incorrecto', inputElement);
-             rutValido = false;
-             habilitarBotonBuscar(false);
-         }
-     }
-     
-     function mostrarMensajeRut(tipo, mensaje, inputElement) {
-         if (rutValidationMessage) {
-             rutValidationMessage.className = `rut-validation-message ${tipo}`;
-             rutValidationMessage.innerHTML = mensaje;
-             
-             // Solo mostrar si hay un mensaje
-             if (mensaje && mensaje.trim().length > 0) {
-                 rutValidationMessage.style.display = 'flex';
-             } else {
-                 rutValidationMessage.style.display = 'none';
-             }
-             
-             // Aplicar estilos al input
-             inputElement.classList.remove('rut-error', 'rut-success');
-             if (tipo === 'error') {
-                 inputElement.classList.add('rut-error');
-             } else if (tipo === 'success') {
-                 inputElement.classList.add('rut-success');
-             }
-         }
-     }
-     
-     const buscarTutorForm = document.querySelector('.buscar-tutor-form');
-     if (buscarTutorForm) {
-         buscarTutorForm.addEventListener('submit', function(e) {
-             if (!rutValido && rutInput && rutInput.value.trim().length > 0) {
-                 e.preventDefault();
-                 alert('Por favor, ingrese un RUT válido antes de buscar.');
-                 return false;
-             }
-         });
-     }
-     
-     habilitarBotonBuscar(false);
+     // La validación de RUT ahora se maneja completamente por rut-validation.js
     
     const mascotaFormControls = document.querySelectorAll('.card-body input, .card-body select, .card-body textarea');
     mascotaFormControls.forEach(control => {
@@ -1466,9 +1320,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.registrarAtencionMedica = function() {
         {% if mascota_guardada %}
-            // Redirigir al formulario de atención médica con el número de chip precargado
-            const nroChip = '{{ mascota_guardada.nro_chip }}';
-            window.location.href = '/atencion-medica/registrar/?nro_chip=' + encodeURIComponent(nroChip);
+            // Redirigir al formulario de atención médica con el ID de la mascota precargado
+            const idMascota = '{{ mascota_guardada.id_mascota }}';
+            window.location.href = '/atencion-medica/registrar/?id_mascota=' + encodeURIComponent(idMascota);
         {% else %}
             // Si no hay mascota guardada, redirigir al formulario sin parámetros
             window.location.href = '/atencion-medica/registrar/';
@@ -1483,7 +1337,53 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
      const inputRutTutor = document.getElementById('{{ buscar_tutor_form.rut_tutor.id_for_label }}');
+     const btnBuscarTutor = document.getElementById('btn-buscar-tutor');
      const btnNuevaBusquedaTutor = document.getElementById('btn-nueva-busqueda-tutor');
+     
+     // Inicializar validación de RUT para el formulario de búsqueda de tutor
+     if (inputRutTutor) {
+         inicializarValidacionRutElemento(inputRutTutor);
+         
+         // Agregar funcionalidad para habilitar/deshabilitar botón según validez del RUT
+         function habilitarBotonBuscar(habilitado) {
+             if (btnBuscarTutor) {
+                 if (habilitado) {
+                     btnBuscarTutor.disabled = false;
+                     btnBuscarTutor.style.backgroundColor = '#007bff';
+                     btnBuscarTutor.style.cursor = 'pointer';
+                     btnBuscarTutor.title = 'Buscar tutor';
+                 } else {
+                     btnBuscarTutor.disabled = true;
+                     btnBuscarTutor.style.backgroundColor = '#6c757d';
+                     btnBuscarTutor.style.cursor = 'not-allowed';
+                     btnBuscarTutor.title = 'Ingrese un RUT válido para buscar';
+                 }
+             }
+         }
+         
+         // Inicialmente deshabilitar el botón
+         habilitarBotonBuscar(false);
+         
+         // Agregar validación en tiempo real
+         inputRutTutor.addEventListener('input', function() {
+             const rut = this.value.trim();
+             if (rut && validarRutConLibreria(rut)) {
+                 habilitarBotonBuscar(true);
+             } else {
+                 habilitarBotonBuscar(false);
+             }
+         });
+         
+         // Validación al perder el foco
+         inputRutTutor.addEventListener('blur', function() {
+             const rut = this.value.trim();
+             if (rut && validarRutConLibreria(rut)) {
+                 habilitarBotonBuscar(true);
+             } else {
+                 habilitarBotonBuscar(false);
+             }
+         });
+     }
      
      {% if tutor_encontrado %}
      if (inputRutTutor && btnBuscarTutor) {
@@ -1491,6 +1391,12 @@ document.addEventListener('DOMContentLoaded', function() {
          btnBuscarTutor.disabled = true;
          btnBuscarTutor.style.backgroundColor = '#6c757d';
          btnBuscarTutor.style.cursor = 'not-allowed';
+         
+         // Asegurar que el botón "Realizar Nueva Búsqueda" esté visible y funcional
+         if (btnNuevaBusquedaTutor) {
+             btnNuevaBusquedaTutor.style.display = 'inline-block';
+             btnNuevaBusquedaTutor.disabled = false;
+         }
      }
      {% endif %}
     
@@ -1918,7 +1824,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const inputMicrochip = document.getElementById('input_microchip');
         const mensajeExterno = document.getElementById('mensaje_externo');
         
-        if (!tipoIdentificacionSelect || !labelMicrochip || !inputMicrochip || !mensajeExterno) {
+        // Solo ejecutar si estamos en la página de registro de mascotas y el formulario está presente
+        if (!tipoIdentificacionSelect) {
+            // No estamos en la página de registro de mascotas, no hacer nada
+            return;
+        }
+        
+        if (!labelMicrochip || !inputMicrochip || !mensajeExterno) {
             console.log('Elementos no encontrados, reintentando en 100ms...');
             setTimeout(inicializarTipoIdentificacion, 100);
             return;

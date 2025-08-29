@@ -67,7 +67,7 @@ def registrar_mascota_view(request):
                         logger.info(f"Tutor encontrado: {tutor_encontrado}")
                     else:
                         logger.info("Tutor no encontrado")
-                        buscar_tutor_form.add_error('rut_tutor', 'No se encontró un tutor con este RUT')
+                        buscar_tutor_form.add_error('rut_tutor', f'No existe un tutor registrado asociado al RUT {rut_tutor}')
                 
                 except Exception as e:
                     logger.error(f"Error al buscar tutor: {e}")
