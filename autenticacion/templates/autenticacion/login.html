@@ -1,0 +1,337 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetLink - Iniciar Sesión</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            height: 600px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .left-panel {
+            flex: 1;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            position: relative;
+        }
+
+        .brand-logo {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .brand-logo img {
+            max-width: 200px;
+            height: auto;
+        }
+
+
+
+        .description {
+            text-align: center;
+            color: #666;
+            font-size: 1rem;
+            line-height: 1.5;
+            max-width: 300px;
+        }
+
+        .right-panel {
+            flex: 2;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .login-form {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+        }
+
+        .recaptcha-container {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .login-button:hover {
+            background-color: #0056b3;
+        }
+
+        .forgot-password {
+            text-align: center;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .forgot-password:hover {
+            color: #007bff;
+        }
+
+        .alert {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+                height: auto;
+                margin: 20px;
+            }
+
+            .left-panel {
+                padding: 20px;
+            }
+
+            .right-panel {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Panel izquierdo - Branding -->
+        <div class="left-panel">
+            <div class="brand-logo">
+                <img src="{% static 'core/img/vetlink_logo.png' %}?v=2" alt="VetLink Logo">
+            </div>
+            <div class="description">
+                Plataforma centralizada para la gestión integral de información clínica veterinaria.
+            </div>
+        </div>
+
+        <!-- Panel derecho - Formulario de login -->
+        <div class="right-panel">
+            <div class="login-form">
+                <h1 class="login-title">Iniciar Sesión</h1>
+
+                <!-- Mensajes de error/éxito -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{% if message.tags == 'error' %}error{% else %}success{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post" id="loginForm">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="id_username">Usuario</label>
+                        <div class="input-container">
+                            <i class="fas fa-user input-icon"></i>
+                            {{ form.username }}
+                        </div>
+                        {% if form.username.errors %}
+                            <div class="alert alert-error">
+                                {% for error in form.username.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="id_password">Contraseña</label>
+                        <div class="input-container">
+                            <i class="fas fa-lock input-icon"></i>
+                            {{ form.password }}
+                        </div>
+                        {% if form.password.errors %}
+                            <div class="alert alert-error">
+                                {% for error in form.password.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- reCAPTCHA -->
+                    <div class="recaptcha-container">
+                        <div class="g-recaptcha" 
+                             data-sitekey="{{ recaptcha_site_key }}"
+                             data-callback="onRecaptchaSuccess"
+                             data-expired-callback="onRecaptchaExpired"></div>
+                    </div>
+
+                    <!-- Campo oculto para reCAPTCHA response -->
+                    <input type="hidden" name="recaptcha_response" id="recaptchaResponse">
+
+                    <button type="submit" class="login-button">Iniciar Sesión</button>
+                </form>
+
+                <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para manejar el éxito del reCAPTCHA
+        function onRecaptchaSuccess() {
+            const response = grecaptcha.getResponse();
+            document.getElementById('recaptchaResponse').value = response;
+            console.log('reCAPTCHA completado:', response ? 'Sí' : 'No');
+        }
+
+        // Función para manejar la expiración del reCAPTCHA
+        function onRecaptchaExpired() {
+            document.getElementById('recaptchaResponse').value = '';
+            console.log('reCAPTCHA expirado');
+        }
+
+        // Validar formulario antes de enviar
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            console.log('Formulario enviándose...');
+            
+            // Obtener valores del formulario
+            const username = document.getElementById('id_username').value;
+            const password = document.getElementById('id_password').value;
+            const recaptchaResponse = grecaptcha.getResponse();
+            
+            console.log('Usuario:', username ? 'Completado' : 'Vacío');
+            console.log('Contraseña:', password ? 'Completado' : 'Vacío');
+            console.log('reCAPTCHA:', recaptchaResponse ? 'Completado' : 'No completado');
+            
+            // Validar campos requeridos
+            if (!username || !password) {
+                e.preventDefault();
+                alert('Por favor complete todos los campos requeridos.');
+                return false;
+            }
+            
+            // Validar reCAPTCHA
+            if (!recaptchaResponse) {
+                e.preventDefault();
+                alert('Por favor complete el reCAPTCHA.');
+                return false;
+            }
+            
+            // Si todo está bien, actualizar el campo oculto y permitir el envío
+            document.getElementById('recaptchaResponse').value = recaptchaResponse;
+            console.log('Formulario válido, enviando...');
+        });
+
+        // Debug: Verificar que el reCAPTCHA se carga correctamente
+        window.onload = function() {
+            console.log('Página cargada');
+            if (typeof grecaptcha !== 'undefined') {
+                console.log('reCAPTCHA cargado correctamente');
+            } else {
+                console.log('reCAPTCHA no está disponible');
+            }
+        };
+    </script>
+</body>
+</html>

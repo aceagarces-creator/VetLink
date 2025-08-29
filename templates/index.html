@@ -3,13 +3,65 @@
 {% block content %}
 <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
     <!-- Título principal -->
-    <div style="text-align: center; margin-bottom: 40px;">
+    <div style="text-align: center; margin-bottom: 30px;">
         <h1 style="color: #333; font-size: 2.5rem; margin-bottom: 15px;">¡Bienvenido a VetLink!</h1>
         <p style="color: #666; font-size: 1.2rem;">Gestiona tutores, mascotas y atenciones clínicas de forma fácil y centralizada.</p>
     </div>
 
+    <!-- Información del usuario -->
+    <div style="background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 25px; margin-bottom: 30px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+            <!-- Información del usuario -->
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <!-- Foto del usuario (placeholder) -->
+                <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #007bff, #0056b3); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; border: 3px solid #e9ecef;">
+                    <i class="fas fa-user"></i>
+                </div>
+                
+                                           <!-- Datos del usuario -->
+                           <div>
+                               <h2 style="color: #333; font-size: 1.5rem; margin-bottom: 5px; font-weight: 600;">
+                                   {{ request.session.nombre_personal|default:"Usuario" }}
+                               </h2>
+                               <p style="color: #666; font-size: 1rem; margin-bottom: 5px;">
+                                   <strong>Rol:</strong> 
+                                   {% if request.session.rol_usuario == 'VETERINARIO' %}
+                                       <span style="color: #28a745; font-weight: 600;">Veterinario</span>
+                                   {% elif request.session.rol_usuario == 'RECEPCIONISTA' %}
+                                       <span style="color: #007bff; font-weight: 600;">Recepcionista</span>
+                                   {% elif request.session.rol_usuario == 'ADMINISTRADOR' %}
+                                       <span style="color: #dc3545; font-weight: 600;">Administrador</span>
+                                   {% else %}
+                                       <span style="color: #6c757d; font-weight: 600;">{{ request.session.rol_usuario|default:"No definido" }}</span>
+                                   {% endif %}
+                               </p>
+                               <p style="color: #666; font-size: 1rem; margin-bottom: 5px;">
+                                   <strong>Profesión:</strong> 
+                                   <span style="color: #495057; font-weight: 600;">{{ request.session.profesion_personal|default:"No especificada" }}</span>
+                               </p>
+                               <p style="color: #666; font-size: 1rem; margin-bottom: 0;">
+                                   <strong>Clínica:</strong> 
+                                   <span style="color: #495057; font-weight: 600;">{{ request.session.nombre_clinica|default:"No asignada" }}</span>
+                               </p>
+                </div>
+            </div>
+            
+            <!-- Acciones del usuario -->
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button onclick="alert('Funcionalidad de cambio de contraseña próximamente disponible')" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 0.9rem; cursor: pointer; transition: background-color 0.3s; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-key"></i>
+                    Cambiar Contraseña
+                </button>
+                <a href="/logout/" style="background: #dc3545; color: white; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-size: 0.9rem; transition: background-color 0.3s; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Módulos disponibles -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 40px;">
+    <div class="modules-grid" style="display: none; grid-template-columns: 1fr 1fr 1fr; gap: 25px; margin-bottom: 40px;">
         
         <!-- Módulo Tutores -->
         <div style="background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 30px; text-align: center; transition: transform 0.3s ease;">
@@ -21,11 +73,11 @@
                 Registra y consulta información de tutores de mascotas. Busca por RUT y gestiona datos personales.
             </p>
             <div style="display: flex; flex-direction: column; gap: 10px;">
-                <a href="{% url 'tutores:registrar_tutor' %}" style="background: #007bff; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: 500; transition: background-color 0.3s;">
+                <a href="{% url 'registrar_tutor' %}" style="background: #007bff; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: 500; transition: background-color 0.3s;">
                     <i class="fas fa-plus" style="margin-right: 8px;"></i>
                     Registrar Tutor
                 </a>
-                <a href="{% url 'tutores:buscar_tutor' %}" style="background: #28a745; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: 500; transition: background-color 0.3s;">
+                <a href="{% url 'buscar_tutor' %}" style="background: #28a745; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: 500; transition: background-color 0.3s;">
                     <i class="fas fa-search" style="margin-right: 8px;"></i>
                     Consultar Tutor
                 </a>
@@ -42,11 +94,11 @@
                 Registra nuevas mascotas y consulta fichas clínicas completas con historial de atenciones médicas.
             </p>
             <div style="display: flex; flex-direction: column; gap: 10px;">
-                <a href="{% url 'mascotas:registrar_mascota' %}" style="background: #28a745; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: 500; transition: background-color 0.3s;">
+                <a href="{% url 'registrar_mascota' %}" style="background: #28a745; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: 500; transition: background-color 0.3s;">
                     <i class="fas fa-plus" style="margin-right: 8px;"></i>
                     Registrar Mascota
                 </a>
-                <a href="{% url 'mascotas:ficha_clinica' %}" style="background: #17a2b8; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: 500; transition: background-color 0.3s;">
+                <a href="{% url 'ficha_clinica' %}" style="background: #17a2b8; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: 500; transition: background-color 0.3s;">
                     <i class="fas fa-file-medical" style="margin-right: 8px;"></i>
                     Consultar Ficha Clínica
                 </a>
@@ -73,7 +125,7 @@
     </div>
 
     <!-- Información adicional -->
-    <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 12px; padding: 30px; text-align: center;">
+    <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 12px; padding: 30px; text-align: center; display: none;">
         <h3 style="color: #333; font-size: 1.3rem; margin-bottom: 15px;">Sistema Integrado de Gestión Veterinaria</h3>
         <p style="color: #666; font-size: 1rem; line-height: 1.6; margin-bottom: 20px;">
             VetLink es una plataforma completa que permite gestionar de manera eficiente toda la información 
@@ -120,6 +172,28 @@
     
     a[href*="ficha_clinica"]:hover {
         background-color: #138496 !important;
+    }
+    
+    /* Estilos para los botones de usuario */
+    button:hover {
+        background-color: #138496 !important;
+    }
+    
+    a[href="/logout/"]:hover {
+        background-color: #c82333 !important;
+    }
+    
+    /* Responsive design para los módulos */
+    @media (max-width: 1200px) {
+        .modules-grid {
+            grid-template-columns: 1fr 1fr !important;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .modules-grid {
+            grid-template-columns: 1fr !important;
+        }
     }
 </style>
 {% endblock %}

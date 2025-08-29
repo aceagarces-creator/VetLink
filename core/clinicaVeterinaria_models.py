@@ -48,6 +48,7 @@ class ClinicaVeterinaria(models.Model):
     telefono = models.CharField(max_length=20, blank=True, null=True)
     celular = models.CharField(max_length=20, blank=True, null=True)
     sitio_web = models.CharField(max_length=100, blank=True, null=True)
+    url_logo = models.CharField(max_length=255, blank=True, null=True)
     
     # Dirección
     calle = models.CharField(max_length=100, blank=True, null=True)

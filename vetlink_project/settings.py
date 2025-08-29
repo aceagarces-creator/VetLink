@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'tutores',
     'mascotas',
     'atencion_medica',
+    'autenticacion',
 ]
 
 MIDDLEWARE = [
@@ -165,3 +166,18 @@ LOGGING = {
         },
     },
 }
+
+# Configuración de autenticación personalizada para VetLink
+AUTHENTICATION_BACKENDS = [
+    'autenticacion.backends.VetLinkAuthBackend',
+    'django.contrib.auth.backends.ModelBackend',  # Fallback al backend por defecto
+]
+
+# Configuración de reCAPTCHA (claves de prueba para desarrollo)
+RECAPTCHA_SITE_KEY = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
+RECAPTCHA_SECRET_KEY = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
+
+# Configuración de sesiones
+SESSION_COOKIE_AGE = 3600  # 1 hora
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_SAVE_EVERY_REQUEST = True

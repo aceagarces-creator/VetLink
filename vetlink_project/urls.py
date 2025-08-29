@@ -19,13 +19,18 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from core import views
+from autenticacion import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
+    path('login/', auth_views.LoginView.as_view(), name='login'),
+    path('logout/', auth_views.logout_view, name='logout'),
+    path('dashboard/', auth_views.dashboard_view, name='dashboard'),
     path('tutores/', include('tutores.urls')),
     path('mascotas/', include('mascotas.urls')),
     path('atencion-medica/', include('atencion_medica.urls')),
+    path('autenticacion/', include('autenticacion.urls')),
 ]
 
 # Configuración para servir archivos media y estáticos en desarrollo

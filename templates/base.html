@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* Estilos para Select2 para que coincidan con .form-control */
         .select2-container--bootstrap-5 .select2-selection {
@@ -89,7 +91,7 @@
         }
         
         .sidebar-header {
-            padding: 20px;
+            padding: 10px;
             border-bottom: 1px solid #e9ecef;
             text-align: center;
         }
@@ -103,98 +105,196 @@
             margin: 0 auto 0;
         }
         
-        .system-name {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #2d3a4a;
-            margin: 10px 0 0 0;
+        /* Modules container styles */
+        .modules-container {
+            padding: 15px;
         }
         
-        .sidebar-menu {
-            padding: 20px 0;
+        .modules-title {
+            color: #2d3a4a;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            text-align: left;
+            font-weight: 600;
         }
         
-        .menu-item {
-            display: block;
-            padding: 12px 20px;
+        .modules-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        .module-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 8px 10px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            gap: 8px;
+        }
+        
+        .module-card:hover {
+            background: rgba(135,206,250,0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-color: #87CEEB;
+        }
+        
+        .module-card.active {
+            border-color: #87CEEB;
+            background: rgba(135,206,250,0.15);
+        }
+        
+        .module-icon {
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .module-icon.registrar-tutor {
+            color: #28a745;
+        }
+        
+        .module-icon.buscar-tutor {
+            color: #17a2b8;
+        }
+        
+        .module-icon.registrar-mascota {
+            color: #ffc107;
+        }
+        
+        .module-icon.ficha-clinica {
+            color: #6f42c1;
+        }
+        
+        .module-icon.registrar-atencion {
+            color: #dc3545;
+        }
+        
+        .module-label {
             color: #2d3a4a;
-            text-decoration: none;
-            font-weight: 500;
             font-size: 0.8rem;
-            transition: all 0.3s ease;
-            border-left: 3px solid transparent;
-            position: relative;
+            font-weight: 500;
+            line-height: 1.2;
+            text-align: left;
         }
         
-        .menu-item:hover {
-            background-color: #f8f9fa;
-            color: #007bff;
-            border-left-color: #007bff;
+        /* Top Header Menu */
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: 250px;
+            right: 0;
+            height: 60px;
+            background: #F8F9FA;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-logo {
+            height: 70px;
+            width: auto;
+            margin-right: 4px;
+        }
+
+        .system-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar-icon {
+            font-size: 1.2rem;
+            color: #666;
+            background: rgba(128,128,128,0.1);
+            border-radius: 50%;
+            padding: 6px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(128,128,128,0.3);
+        }
+
+        .user-name {
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-btn {
+            background: none;
+            border: none;
+            color: #333;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .header-btn:hover {
+            background: rgba(0,0,0,0.1);
         }
         
-        .menu-item.active {
-            background-color: #e3f2fd;
-            color: #007bff;
-            border-left-color: #007bff;
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
         }
         
-        /* Submenu styles */
-        .submenu {
-            display: none;
-            background-color: #f8f9fa;
-            border-left: 3px solid #e9ecef;
-            margin-left: 20px;
+        .logout-btn:hover {
+            background: #c82333;
         }
-        
-        .submenu.open {
-            display: block;
-        }
-        
-        .submenu-item {
-            display: block;
-            padding: 8px 20px 8px 40px;
-            color: #6c757d;
-            text-decoration: none;
-            font-weight: 400;
-            font-size: 0.75rem;
-            transition: all 0.3s ease;
-            border-left: 2px solid transparent;
-        }
-        
-        .submenu-item:hover {
-            background-color: #e9ecef;
-            color: #007bff;
-            border-left-color: #007bff;
-        }
-        
-        .submenu-item.active {
-            background-color: #e3f2fd;
-            color: #007bff;
-            border-left-color: #007bff;
-        }
-        
-        /* Dropdown arrow */
-        .menu-item.has-submenu::after {
-            content: '▼';
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 0.7rem;
-            transition: transform 0.3s ease;
-        }
-        
-        .menu-item.has-submenu.open::after {
-            transform: translateY(-50%) rotate(180deg);
-        }
-        
+
         /* Main content area */
         .main-content {
             flex: 1;
             margin-left: 250px;
+            margin-top: 60px;
             padding: 10px 20px 10px 20px;
-            background: #f8f9fa;
-            min-height: 100vh;
+            background: #F5F5F5;
+            min-height: calc(100vh - 60px);
         }
         
         .content-wrapper {
@@ -274,46 +374,81 @@
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <img src="/static/core/img/vetlink_logo.png" alt="VetLink Logo" class="logo">
-            <h1 class="system-name">VetLink</h1>
+            {% if request.session.nombre_clinica %}
+                {% if request.session.url_logo_clinica %}
+                    <img src="{{ request.session.url_logo_clinica }}?v=6" alt="Logo {{ request.session.nombre_clinica }}" class="logo" onerror="this.src='/static/core/img/vetlink_logo.png?v=6'">
+                {% else %}
+                    <img src="/static/core/img/vetlink_logo.png?v=6" alt="VetLink Logo" class="logo">
+                {% endif %}
+            {% else %}
+                <img src="/static/core/img/vetlink_logo.png?v=6" alt="VetLink Logo" class="logo">
+            {% endif %}
         </div>
         
-        <nav class="sidebar-menu">
-            <a href="#" class="menu-item has-submenu" id="menu-tutores" onclick="toggleSubmenu('tutores')">
-                Gestión Tutores
-            </a>
-                         <div class="submenu" id="submenu-tutores">
-                 <a href="/tutores/registrar/" class="submenu-item" id="submenu-registrar-tutor">
-                     Registrar Tutor
-                 </a>
-                 <a href="/tutores/buscar/" class="submenu-item" id="submenu-buscar-tutor">
-                     Consultar Tutor
-                 </a>
-             </div>
-            
-            <a href="#" class="menu-item has-submenu" id="menu-mascotas" onclick="toggleSubmenu('mascotas')">
-                Gestión Mascotas
-            </a>
-            <div class="submenu" id="submenu-mascotas">
-                <a href="/mascotas/registrar/" class="submenu-item" id="submenu-registrar-mascota">
-                    Registrar Nueva Mascota
-                </a>
-                <a href="/mascotas/ficha-clinica/" class="submenu-item" id="submenu-consultar-mascota">
-                    Consultar Ficha Médica
-                </a>
+        <div class="modules-container">
+            <div class="modules-grid">
+                <!-- Módulo Registrar Tutor -->
+                <div class="module-card" onclick="window.location.href='/tutores/registrar/'">
+                    <div class="module-icon registrar-tutor">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="module-label">Registrar Tutor</div>
+                </div>
+                
+                <!-- Módulo Buscar Tutor -->
+                <div class="module-card" onclick="window.location.href='/tutores/buscar/'">
+                    <div class="module-icon buscar-tutor">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="module-label">Buscar Tutor</div>
+                </div>
+                
+                <!-- Módulo Registrar Mascota -->
+                <div class="module-card" onclick="window.location.href='/mascotas/registrar/'">
+                    <div class="module-icon registrar-mascota">
+                        <i class="fas fa-paw"></i>
+                    </div>
+                    <div class="module-label">Registrar Mascota</div>
+                </div>
+                
+                <!-- Módulo Ficha Clínica -->
+                <div class="module-card" onclick="window.location.href='/mascotas/ficha-clinica/'">
+                    <div class="module-icon ficha-clinica">
+                        <i class="fas fa-file-medical"></i>
+                    </div>
+                    <div class="module-label">Ficha Clínica</div>
+                </div>
+                
+                <!-- Módulo Registrar Atención -->
+                <div class="module-card" onclick="window.location.href='/atencion-medica/registrar/'">
+                    <div class="module-icon registrar-atencion">
+                        <i class="fas fa-stethoscope"></i>
+                    </div>
+                    <div class="module-label">Registrar Atención</div>
+                </div>
             </div>
-            
-            <a href="#" class="menu-item has-submenu" id="menu-atencion" onclick="toggleSubmenu('atencion')">
-                Atención Médica
-            </a>
-            <div class="submenu" id="submenu-atencion">
-                <a href="/atencion-medica/registrar/" class="submenu-item" id="submenu-registrar-atencion">
-                    Registrar Atención Médica
-                </a>
-            </div>
-        </nav>
+        </div>
     </aside>
     
+    <!-- Top Header Menu -->
+    <header class="top-header">
+        <div class="header-left">
+            <img src="{% static 'core/img/vetlink_logo_sintext.png' %}?v=3" alt="VetLink Logo" class="header-logo">
+            <h1 class="system-title">VetLink - Sistema de Gestión Veterinaria</h1>
+        </div>
+        <div class="header-right">
+            <div class="user-profile">
+                <i class="fas fa-user user-avatar-icon"></i>
+                <span class="user-name">{{ request.session.nombre_personal|default:"Usuario" }}</span>
+            </div>
+            <div class="header-actions">
+                <button class="logout-btn" title="Cerrar Sesión" onclick="window.location.href='/logout/'">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
     <!-- Main content area -->
     <main class="main-content">
         <div class="content-wrapper">
@@ -337,70 +472,18 @@
             overlay.classList.remove('open');
         }
         
-        // Submenu functionality
-        function toggleSubmenu(menuId) {
-            const menuItem = document.getElementById('menu-' + menuId);
-            const submenu = document.getElementById('submenu-' + menuId);
-            
-            // Close other submenus
-            const allSubmenus = document.querySelectorAll('.submenu');
-            const allMenuItems = document.querySelectorAll('.menu-item.has-submenu');
-            
-            allSubmenus.forEach(sub => {
-                if (sub !== submenu) {
-                    sub.classList.remove('open');
-                }
-            });
-            
-            allMenuItems.forEach(item => {
-                if (item !== menuItem) {
-                    item.classList.remove('open');
-                }
-            });
-            
-            // Toggle current submenu
-            submenu.classList.toggle('open');
-            menuItem.classList.toggle('open');
-        }
-        
-        // Set active menu item based on current URL
+        // Set active module card based on current URL
         document.addEventListener('DOMContentLoaded', function() {
             const currentPath = window.location.pathname;
-            const menuItems = document.querySelectorAll('.menu-item');
-            const submenuItems = document.querySelectorAll('.submenu-item');
+            const moduleCards = document.querySelectorAll('.module-card');
             
-            // Check main menu items
-            menuItems.forEach(item => {
-                const href = item.getAttribute('href');
-                if (href && href !== '#' && currentPath.startsWith(href)) {
-                    item.classList.add('active');
-                    
-                    // If it's a submenu parent, open the submenu
-                    if (item.classList.contains('has-submenu')) {
-                        const menuId = item.id.replace('menu-', '');
-                        const submenu = document.getElementById('submenu-' + menuId);
-                        if (submenu) {
-                            submenu.classList.add('open');
-                            item.classList.add('open');
-                        }
-                    }
-                }
-            });
-            
-            // Check submenu items
-            submenuItems.forEach(item => {
-                const href = item.getAttribute('href');
-                if (currentPath === href) {
-                    item.classList.add('active');
-                    
-                    // Open parent submenu
-                    const parentSubmenu = item.closest('.submenu');
-                    if (parentSubmenu) {
-                        parentSubmenu.classList.add('open');
-                        const parentMenuItem = document.getElementById(parentSubmenu.id.replace('submenu-', 'menu-'));
-                        if (parentMenuItem) {
-                            parentMenuItem.classList.add('open');
-                        }
+            // Check module cards and highlight active one
+            moduleCards.forEach(card => {
+                const onclick = card.getAttribute('onclick');
+                if (onclick) {
+                    const url = onclick.match(/href='([^']+)'/);
+                    if (url && currentPath === url[1]) {
+                        card.classList.add('active');
                     }
                 }
             });
