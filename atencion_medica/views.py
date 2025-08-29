@@ -208,12 +208,12 @@ def registrar_atencion_unificada_view(request):
             
             try:
                 # Obtener datos del formulario
-                nro_chip = request.POST.get('nro_chip_busqueda')
-                logger.info(f"Número de chip obtenido: {nro_chip}")
+                id_mascota = request.POST.get('id_mascota_busqueda')
+                logger.info(f"ID de mascota obtenido: {id_mascota}")
                 
-                if not nro_chip:
-                    mensaje_error = "No se proporcionó el número de chip de la mascota"
-                    logger.error("No se encontró número de chip en el formulario")
+                if not id_mascota:
+                    mensaje_error = "No se proporcionó el ID de la mascota"
+                    logger.error("No se encontró ID de mascota en el formulario")
                     return render(request, 'atencion_medica/registrar_atencion.html', {
                         'buscar_form': buscar_form,
                         'atencion_form': atencion_form,
@@ -226,15 +226,28 @@ def registrar_atencion_unificada_view(request):
                         'servicios_detalle': servicios_detalle,
                     })
                 
-                # Buscar mascota
+                # Buscar mascota por ID
                 try:
                     mascota_encontrada = Mascota.objects.select_related(
                         'id_tutor',
                         'id_especie',
                         'id_raza'
-                    ).get(nro_chip=nro_chip)
+                    ).get(id_mascota=id_mascota)
                 except Mascota.DoesNotExist:
-                    mensaje_error = f"No se encontró una mascota con el número de chip: {nro_chip}"
+                    mensaje_error = f"No se encontró una mascota con el ID: {id_mascota}"
+                    return render(request, 'atencion_medica/registrar_atencion.html', {
+                        'buscar_form': buscar_form,
+                        'atencion_form': atencion_form,
+                        'mascota_encontrada': mascota_encontrada,
+                        'atencion_guardada': atencion_guardada,
+                        'mensaje_exito': mensaje_exito,
+                        'mensaje_error': mensaje_error,
+                        'medico_tratante': medico_tratante,
+                        'servicios': servicios,
+                        'servicios_detalle': servicios_detalle,
+                    })
+                except ValueError:
+                    mensaje_error = f"ID de mascota inválido: {id_mascota}"
                     return render(request, 'atencion_medica/registrar_atencion.html', {
                         'buscar_form': buscar_form,
                         'atencion_form': atencion_form,
