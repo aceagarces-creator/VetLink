@@ -76,7 +76,7 @@ class LoginView(View):
                     usuario.fecha_ultima_sesion = timezone.now()
                     usuario.save()
                     
-                    messages.success(request, f'Bienvenido, {usuario.id_personal.nombres}!')
+                    # Mensaje de bienvenida eliminado para evitar que aparezca en otros formularios
                     print("=== DEBUG: Redirigiendo a página principal ===")
                     return redirect('/')
                 else:

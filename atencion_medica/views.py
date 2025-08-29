@@ -33,6 +33,13 @@ def registrar_atencion_unificada_view(request):
     logger.info(f"POST data: {request.POST}")
     logger.info(f"FILES data: {request.FILES}")
     
+    # Verificar variables de sesión disponibles
+    logger.info(f"Variables de sesión disponibles:")
+    logger.info(f"  - id_clinica: {request.session.get('id_clinica')}")
+    logger.info(f"  - id_personal: {request.session.get('id_personal')}")
+    logger.info(f"  - nombre_personal: {request.session.get('nombre_personal')}")
+    logger.info(f"  - nombre_clinica: {request.session.get('nombre_clinica')}")
+    
     mascota_encontrada = None
     atencion_guardada = None
     mensaje_exito = None
@@ -42,25 +49,33 @@ def registrar_atencion_unificada_view(request):
     buscar_form = BuscarMascotaAtencionForm()
     atencion_form = AtencionMedicaForm()
     
-    # Obtener médico tratante para mostrar en el formulario
+    # Obtener médico tratante para mostrar en el formulario desde la sesión
     try:
-        medico_tratante = PersonalClinica.objects.get(usuario=1)
-        logger.info(f"Médico tratante obtenido: {medico_tratante.nombres} {medico_tratante.apellido_paterno}")
+        id_personal_sesion = request.session.get('id_personal')
+        if id_personal_sesion:
+            medico_tratante = PersonalClinica.objects.get(id_personal=id_personal_sesion)
+            logger.info(f"Médico tratante obtenido desde sesión: {medico_tratante.nombres} {medico_tratante.apellido_paterno}")
+        else:
+            medico_tratante = None
+            logger.warning("No se encontró id_personal en la sesión")
     except PersonalClinica.DoesNotExist:
         medico_tratante = None
-        logger.warning("No se encontró médico tratante con usuario = 1")
+        logger.warning("No se encontró médico tratante con id_personal de la sesión")
     
     # Obtener servicios y servicios detalle asociados a la clínica del usuario autenticado
-    # Hipotéticamente estamos con id_usuario = 1 e id_clinica = 1
     try:
-        # Obtener la clínica del usuario autenticado
-        usuario_autenticado = PersonalClinica.objects.get(usuario=1)
-        clinica_id = usuario_autenticado.id_clinica.id_clinica
-        logger.info(f"Clínica del usuario autenticado: {clinica_id}")
-    except PersonalClinica.DoesNotExist:
+        # Obtener la clínica del usuario autenticado desde la sesión
+        clinica_id_sesion = request.session.get('id_clinica')
+        if clinica_id_sesion:
+            clinica_id = clinica_id_sesion
+            logger.info(f"Clínica del usuario autenticado desde sesión: {clinica_id}")
+        else:
+            clinica_id = 1
+            logger.warning("No se encontró id_clinica en la sesión, usando clínica 1 como fallback")
+    except Exception as e:
         # Fallback a clínica 1 si no se encuentra el usuario
         clinica_id = 1
-        logger.warning("Usuario no encontrado, usando clínica 1 como fallback")
+        logger.warning(f"Error obteniendo clínica de sesión: {e}, usando clínica 1 como fallback")
     
     # Obtener servicios detalle asociados a la clínica
     clinica_servicios = ClinicaServicio.objects.filter(
@@ -260,19 +275,42 @@ def registrar_atencion_unificada_view(request):
                         'servicios_detalle': servicios_detalle,
                     })
                 
-                # Obtener clínica del usuario autenticado
+                # Obtener clínica del usuario autenticado desde la sesión
                 try:
-                    usuario_autenticado = PersonalClinica.objects.get(usuario=1)
-                    clinica = usuario_autenticado.id_clinica
-                except PersonalClinica.DoesNotExist:
+                    clinica_id_sesion = request.session.get('id_clinica')
+                    if clinica_id_sesion:
+                        clinica = ClinicaVeterinaria.objects.get(id_clinica=clinica_id_sesion)
+                        logger.info(f"Clínica obtenida desde sesión: {clinica.id_clinica} - {clinica.nombre}")
+                    else:
+                        # Fallback a clínica 1
+                        clinica = ClinicaVeterinaria.objects.get(id_clinica=1)
+                        logger.warning("No se encontró id_clinica en la sesión, usando clínica 1 como fallback")
+                except ClinicaVeterinaria.DoesNotExist:
                     # Fallback a clínica 1
                     clinica = ClinicaVeterinaria.objects.get(id_clinica=1)
+                    logger.warning("Clínica de sesión no encontrada, usando clínica 1 como fallback")
                 
-                # Obtener médico tratante
+                # Obtener médico tratante desde la sesión
                 try:
-                    medico_tratante = PersonalClinica.objects.get(usuario=1)
+                    id_personal_sesion = request.session.get('id_personal')
+                    if id_personal_sesion:
+                        medico_tratante = PersonalClinica.objects.get(id_personal=id_personal_sesion)
+                        logger.info(f"Médico tratante obtenido desde sesión: {medico_tratante.id_personal} - {medico_tratante.nombres} {medico_tratante.apellido_paterno}")
+                    else:
+                        mensaje_error = "No se encontró el ID del personal en la sesión"
+                        return render(request, 'atencion_medica/registrar_atencion.html', {
+                            'buscar_form': buscar_form,
+                            'atencion_form': atencion_form,
+                            'mascota_encontrada': mascota_encontrada,
+                            'atencion_guardada': atencion_guardada,
+                            'mensaje_exito': mensaje_exito,
+                            'mensaje_error': mensaje_error,
+                            'medico_tratante': medico_tratante,
+                            'servicios': servicios,
+                            'servicios_detalle': servicios_detalle,
+                        })
                 except PersonalClinica.DoesNotExist:
-                    mensaje_error = "No se encontró el médico tratante"
+                    mensaje_error = "No se encontró el médico tratante con el ID de la sesión"
                     return render(request, 'atencion_medica/registrar_atencion.html', {
                         'buscar_form': buscar_form,
                         'atencion_form': atencion_form,
@@ -485,7 +523,7 @@ def registrar_atencion_unificada_view(request):
                         documentos_guardados.append(documento)
                         logger.info(f"Documento guardado en BD: {documento}")
                     
-                    # Mensaje de éxito
+                    # Datos para el modal de éxito
                     num_documentos = len(documentos_guardados)
                     if num_documentos > 0:
                         mensaje_exito = f"Atención médica registrada exitosamente. Se adjuntaron {num_documentos} documento(s)."
@@ -496,10 +534,25 @@ def registrar_atencion_unificada_view(request):
                     logger.info(f"Atención médica creada exitosamente: {atencion}")
                     logger.info("=== FIN DE TRANSACCIÓN ===")
                     
-                    # Redirigir a la misma página con mensaje de éxito
-                    from django.contrib import messages
-                    messages.success(request, mensaje_exito)
-                    return redirect('atencion_medica:registrar_atencion')
+                    # Renderizar la página con datos para el modal
+                    return render(request, 'atencion_medica/registrar_atencion.html', {
+                        'buscar_form': buscar_form,
+                        'atencion_form': atencion_form,
+                        'mascota_encontrada': mascota_encontrada,
+                        'atencion_guardada': atencion_guardada,
+                        'mensaje_exito': mensaje_exito,
+                        'mensaje_error': None,
+                        'medico_tratante': medico_tratante,
+                        'servicios': servicios,
+                        'servicios_detalle': servicios_detalle,
+                        'mostrar_modal_exito': True,
+                        'datos_modal': {
+                            'mascota_nombre': mascota_encontrada.nombre,
+                            'fecha_atencion': request.POST.get('fecha_atencion'),
+                            'servicio': next((sd.nombre for sd in servicios_detalle if sd.id_servicio_detalle == int(request.POST.get('id_servicio_detalle', 0))), 'N/A'),
+                            'medico': f"{medico_tratante.nombres} {medico_tratante.apellido_paterno}"
+                        }
+                    })
                     
             except Exception as e:
                 logger.error(f"Error al registrar atención médica: {e}")
@@ -659,15 +712,20 @@ def cargar_servicios_detalle(request):
             servicio_id = data.get('servicio_id')
             
             if servicio_id:
-                # Obtener la clínica del usuario autenticado
+                # Obtener la clínica del usuario autenticado desde la sesión
                 try:
-                    usuario_autenticado = PersonalClinica.objects.get(usuario=1)
-                    clinica_id = usuario_autenticado.id_clinica.id_clinica
-                    logger.info(f"Clínica del usuario autenticado para AJAX: {clinica_id}")
-                except PersonalClinica.DoesNotExist:
-                    # Fallback a clínica 1 si no se encuentra el usuario
+                    clinica_id_sesion = request.session.get('id_clinica')
+                    if clinica_id_sesion:
+                        clinica_id = clinica_id_sesion
+                        logger.info(f"Clínica del usuario autenticado para AJAX desde sesión: {clinica_id}")
+                    else:
+                        # Fallback a clínica 1 si no se encuentra en la sesión
+                        clinica_id = 1
+                        logger.warning("No se encontró id_clinica en la sesión para AJAX, usando clínica 1 como fallback")
+                except Exception as e:
+                    # Fallback a clínica 1 si hay error
                     clinica_id = 1
-                    logger.warning("Usuario no encontrado en AJAX, usando clínica 1 como fallback")
+                    logger.warning(f"Error obteniendo clínica de sesión para AJAX: {e}, usando clínica 1 como fallback")
                 
                 # Verificar que el servicio existe y está activo
                 try:
