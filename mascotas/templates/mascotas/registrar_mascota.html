@@ -515,10 +515,12 @@ Ocultar help_text para evitar confusión con rut-validation.js
     /* Estilo específico para el botón de búsqueda */
     #btn-buscar-tutor {
         background-color: #17a2b8 !important;
+        text-transform: none !important;
     }
     
     #btn-buscar-tutor:not(:disabled) {
         background-color: #17a2b8 !important;
+        text-transform: none !important;
     }
     
     /* Estilo específico para el botón de registrar mascota */
@@ -1423,7 +1425,7 @@ document.addEventListener('DOMContentLoaded', function() {
              if (btnBuscarTutor) {
                  if (habilitado) {
                      btnBuscarTutor.disabled = false;
-                     btnBuscarTutor.style.backgroundColor = '#007bff';
+                     btnBuscarTutor.style.backgroundColor = '#17a2b8';
                      btnBuscarTutor.style.cursor = 'pointer';
                      btnBuscarTutor.title = 'Buscar tutor';
                  } else {
