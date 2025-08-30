@@ -24,11 +24,11 @@
                         <p style="color: #155724; font-size: 1.1rem; margin: 0;">{{ mensaje_exito }}</p>
                     </div>
                 </div>
-                <div class="modal-footer" style="padding: 20px 25px; border-top: 1px solid #e9ecef; text-align: right; background-color: #f8f9fa; position: relative;">
-                    <a href="/mascotas/registrar/?tutor_id={{ tutor_guardado.id_tutor }}" class="btn btn-primary" style="margin-right: 10px; background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;">
-                        <i class="fas fa-paw"></i> Registrar Nueva Mascota
+                <div class="modal-footer" style="padding: 20px 25px; border-top: 1px solid #e9ecef; background-color: #f8f9fa; position: relative; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+                    <a href="/mascotas/registrar/?tutor_id={{ tutor_guardado.id_tutor }}" class="btn btn-primary" style="background-color: #17a2b8; border: none; padding: 10px 20px; border-radius: 8px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px; display: inline-flex; align-items: center; gap: 8px; transition: background-color 0.3s ease;">
+                        <i class="fas fa-plus"></i> Registrar Nueva Mascota
                     </a>
-                    <button type="button" class="btn btn-secondary" onclick="cerrarModalExito()" style="background-color: #6c757d; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModalExito()" style="background-color: #6c757d; border: none; padding: 10px 20px; border-radius: 8px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px; display: inline-flex; align-items: center; gap: 8px; transition: background-color 0.3s ease;">
                         <i class="fas fa-times"></i> Cerrar Ventana
                     </button>
                 </div>
@@ -50,11 +50,11 @@
                         <p id="modalMensaje" style="color: #721c24; font-size: 1.1rem; margin: 0;"></p>
                     </div>
                 </div>
-                <div class="modal-footer" style="padding: 20px 25px; border-top: 1px solid #e9ecef; text-align: right; background-color: #f8f9fa; position: relative;">
-                    <a id="btnVerTutor" href="#" class="btn btn-primary" style="margin-right: 10px; background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+                <div class="modal-footer" style="padding: 20px 25px; border-top: 1px solid #e9ecef; background-color: #f8f9fa; position: relative; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+                    <a id="btnVerTutor" href="#" class="btn btn-primary" style="background-color: #17a2b8; border: none; padding: 10px 20px; border-radius: 8px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px; display: inline-flex; align-items: center; gap: 8px; transition: background-color 0.3s ease;">
                         <i class="fas fa-search"></i> Ver datos del tutor
                     </a>
-                    <button type="button" class="btn btn-secondary" onclick="cerrarModalRutDuplicado()" style="background-color: #6c757d; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModalRutDuplicado()" style="background-color: #6c757d; border: none; padding: 10px 20px; border-radius: 8px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px; display: inline-flex; align-items: center; gap: 8px; transition: background-color 0.3s ease;">
                         <i class="fas fa-times"></i> Cerrar ventana
                     </button>
                 </div>
@@ -181,8 +181,8 @@
                               {% endif %}
                           </div>
                                                    <div id="segunda-nacionalidad-container" style="display: {% if tiene_segunda_nacionalidad %}none{% else %}flex{% endif %}; align-items: flex-start; justify-content: center; padding-top: 25px;">
-                              <button type="button" id="btn-segunda-nacionalidad" class="btn btn-sm" style="background-color: #e6a700; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; white-space: nowrap; text-decoration: none; display: inline-block; width: 80%; cursor: pointer; transition: all 0.3s ease;">
-                                  Segunda Nacionalidad
+                              <button type="button" id="btn-segunda-nacionalidad" class="btn btn-sm" style="background-color: #F3BA20; color: #FFFFFF; border: none; padding: 8px 16px; border-radius: 8px; font-size: 0.65rem; font-weight: bold; white-space: nowrap; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; width: 80%; cursor: pointer; transition: all 0.3s ease;">
+                                  <i class="fas fa-globe"></i> Segunda Nacionalidad
                               </button>
                           </div>
                           
@@ -287,12 +287,12 @@
             
                      <!-- Buttons -->
          <div style="text-align: center; margin-top: 1.5rem;">
-             <button type="submit" id="btn-registrar-tutor" class="btn btn-primary" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.3s ease;">
-                 {% if tutor_guardado %}Actualizar Tutor(a){% else %}Registrar Tutor(a){% endif %}
+             <button type="submit" id="btn-registrar-tutor" class="btn btn-primary" style="background-color: #17a2b8; border: none; padding: 10px 20px; border-radius: 8px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px;">
+                 <i class="fas fa-user-plus"></i> {% if tutor_guardado %}Actualizar Tutor(a){% else %}Registrar Tutor(a){% endif %}
              </button>
              {% if tutor_guardado %}
-             <a href="/mascotas/registrar/?tutor_id={{ tutor_guardado.id_tutor }}" class="btn btn-primary" style="margin-left: 10px; background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;">
-                 <i class="fas fa-paw"></i> Registrar Nueva Mascota
+             <a href="/mascotas/registrar/?tutor_id={{ tutor_guardado.id_tutor }}" class="btn btn-primary" style="margin-left: 10px; background-color: #17a2b8; border: none; padding: 10px 20px; border-radius: 8px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px; display: inline-flex; align-items: center; gap: 8px; transition: background-color 0.3s ease;">
+                 <i class="fas fa-plus"></i> Registrar Nueva Mascota
              </a>
              {% endif %}
          </div>
@@ -318,7 +318,7 @@
                  <p style="margin: 20px 0 0 0; color: #666; font-size: 0.8rem; font-style: italic; text-align: center;">Los campos obligatorios están marcados con (*)</p>
              </div>
              <div class="modal-footer" style="padding: 20px 25px; border-top: 1px solid #e9ecef; text-align: right; background-color: #f8f9fa; position: relative;">
-                 <button type="button" class="btn-cerrar-modal" style="background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);">
+                 <button type="button" class="btn-cerrar-modal" style="background-color: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px;">
                      <i class="fas fa-times"></i> Cerrar
                  </button>
              </div>
@@ -335,13 +335,39 @@
     
     .form-control:focus {
         outline: none;
-        border-color: #007bff;
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        border-color: #17a2b8;
+        box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25);
     }
     
     .btn:disabled {
         opacity: 0.6;
         cursor: not-allowed;
+    }
+    
+    /* Efectos hover para botones */
+    .btn-primary:hover {
+        background-color: #138496 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    .btn-secondary:hover {
+        background-color: #5a6268 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    .btn-cerrar-modal:hover {
+        background-color: #5a6268 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    /* Efecto hover específico para el botón de segunda nacionalidad */
+    #btn-segunda-nacionalidad:hover {
+        background-color: #D4AF37 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
     
     .errorlist {
