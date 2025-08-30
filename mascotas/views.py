@@ -7,7 +7,8 @@ from django.http import JsonResponse, FileResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection, transaction
 from core.models import Tutor, Mascota, Especie, Raza, ClinicaVeterinaria, AtencionClinica, DocumentoAdjunto
-from .forms import BuscarTutorMascotaForm, RegistrarMascotaForm, BuscarFichaClinicaForm
+from .forms import BuscarTutorMascotaForm, RegistrarMascotaForm
+# from .forms import BuscarFichaClinicaForm  # CÓDIGO COMENTADO - Formulario no utilizado
 import json
 import logging
 import re
@@ -126,8 +127,15 @@ def registrar_mascota_view(request):
                                 
                                 # Asignar clínica de consentimiento solo si existe documento
                                 if tiene_consentimiento:
-                                    clinica_consentimiento = ClinicaVeterinaria.objects.get(id_clinica=1)
-                                    logger.info(f"Documento de consentimiento presente. Clínica asignada: {clinica_consentimiento}")
+                                    # Obtener clínica desde la sesión del usuario autenticado
+                                    clinica_id_sesion = request.session.get('id_clinica')
+                                    if clinica_id_sesion:
+                                        clinica_consentimiento = ClinicaVeterinaria.objects.get(id_clinica=clinica_id_sesion)
+                                        logger.info(f"Documento de consentimiento presente. Clínica asignada desde sesión: {clinica_consentimiento}")
+                                    else:
+                                        # Fallback a clínica 1 si no hay sesión
+                                        clinica_consentimiento = ClinicaVeterinaria.objects.get(id_clinica=1)
+                                        logger.warning("No se encontró id_clinica en la sesión, usando clínica 1 como fallback")
                                     
                                     # Procesar el archivo adjunto
                                     archivo_consentimiento = registrar_mascota_form.cleaned_data['documento_consentimiento']
@@ -354,7 +362,7 @@ def ficha_clinica_view(request):
     mensaje = None
     
     # Verificar si hay parámetros en GET (para redirección desde otros formularios)
-    nro_chip_get = request.GET.get('nro_chip')
+    # nro_chip_get = request.GET.get('nro_chip')  # CÓDIGO COMENTADO - Búsqueda por chip no utilizada
     id_mascota_get = request.GET.get('id_mascota')
     
     if request.method == 'POST':
@@ -365,60 +373,98 @@ def ficha_clinica_view(request):
             # Búsqueda por ID de mascota (desde modal)
             try:
                 mascota_encontrada = Mascota.objects.get(id_mascota=mascota_id)
-                historial_atenciones = AtencionClinica.objects.filter(
-                    id_mascota=mascota_encontrada
-                ).order_by('-fecha_atencion')
-                form = BuscarFichaClinicaForm()  # Formulario vacío ya que no se usa
-            except Mascota.DoesNotExist:
-                mensaje = f"No se encontró la mascota con ID: {mascota_id}"
-                form = BuscarFichaClinicaForm()
-        else:
-            # Búsqueda por microchip (formulario original)
-            form = BuscarFichaClinicaForm(request.POST)
-            
-            if form.is_valid():
-                nro_chip = form.cleaned_data['nro_chip']
-                try:
-                    mascota_encontrada = Mascota.objects.get(nro_chip=nro_chip)
+                
+                # Filtrar historial según consentimiento de interoperabilidad
+                if mascota_encontrada.consentimiento:
+                    # Si hay consentimiento, mostrar historial completo
                     historial_atenciones = AtencionClinica.objects.filter(
                         id_mascota=mascota_encontrada
                     ).order_by('-fecha_atencion')
-                except Mascota.DoesNotExist:
-                    mensaje = f"No se encontraron registros para este número de chip: {nro_chip}"
+                    logger.info(f"Mostrando historial completo para mascota {mascota_encontrada.id_mascota} (consentimiento: True)")
+                else:
+                    # Si no hay consentimiento, mostrar solo atenciones de la clínica del usuario autenticado
+                    clinica_usuario = request.session.get('id_clinica')
+                    if clinica_usuario:
+                        historial_atenciones = AtencionClinica.objects.filter(
+                            id_mascota=mascota_encontrada,
+                            id_clinica=clinica_usuario
+                        ).order_by('-fecha_atencion')
+                        logger.info(f"Mostrando historial filtrado por clínica {clinica_usuario} para mascota {mascota_encontrada.id_mascota} (consentimiento: False)")
+                    else:
+                        # Si no hay sesión de clínica, no mostrar nada
+                        historial_atenciones = []
+                        logger.warning("No se encontró id_clinica en la sesión, no se muestran atenciones")
+                
+                # form = BuscarFichaClinicaForm()  # CÓDIGO COMENTADO - Formulario no utilizado
+            except Mascota.DoesNotExist:
+                mensaje = f"No se encontró la mascota con ID: {mascota_id}"
+                # form = BuscarFichaClinicaForm()  # CÓDIGO COMENTADO - Formulario no utilizado
+        # else:
+        #     # CÓDIGO COMENTADO - Búsqueda por microchip (formulario original) no utilizada
+        #     form = BuscarFichaClinicaForm(request.POST)
+        #     
+        #     if form.is_valid():
+        #         nro_chip = form.cleaned_data['nro_chip']
+        #         try:
+        #             mascota_encontrada = Mascota.objects.get(nro_chip=nro_chip)
+        #             historial_atenciones = AtencionClinica.objects.filter(
+        #                 id_mascota=mascota_encontrada
+        #             ).order_by('-fecha_atencion')
+        #         except Mascota.DoesNotExist:
+        #             mensaje = f"No se encontraron registros para este número de chip: {nro_chip}"
     else:
         # Si hay parámetros en GET, precargar la búsqueda
         if id_mascota_get:
             # Priorizar búsqueda por ID de mascota
             try:
                 mascota_encontrada = Mascota.objects.get(id_mascota=id_mascota_get)
-                historial_atenciones = AtencionClinica.objects.filter(
-                    id_mascota=mascota_encontrada
-                ).order_by('-fecha_atencion')
+                
+                # Filtrar historial según consentimiento de interoperabilidad
+                if mascota_encontrada.consentimiento:
+                    # Si hay consentimiento, mostrar historial completo
+                    historial_atenciones = AtencionClinica.objects.filter(
+                        id_mascota=mascota_encontrada
+                    ).order_by('-fecha_atencion')
+                    logger.info(f"Mostrando historial completo para mascota {mascota_encontrada.id_mascota} (consentimiento: True)")
+                else:
+                    # Si no hay consentimiento, mostrar solo atenciones de la clínica del usuario autenticado
+                    clinica_usuario = request.session.get('id_clinica')
+                    if clinica_usuario:
+                        historial_atenciones = AtencionClinica.objects.filter(
+                            id_mascota=mascota_encontrada,
+                            id_clinica=clinica_usuario
+                        ).order_by('-fecha_atencion')
+                        logger.info(f"Mostrando historial filtrado por clínica {clinica_usuario} para mascota {mascota_encontrada.id_mascota} (consentimiento: False)")
+                    else:
+                        # Si no hay sesión de clínica, no mostrar nada
+                        historial_atenciones = []
+                        logger.warning("No se encontró id_clinica en la sesión, no se muestran atenciones")
+                
                 # Crear formulario vacío ya que no se usa el campo de búsqueda
-                form = BuscarFichaClinicaForm()
+                # form = BuscarFichaClinicaForm()  # CÓDIGO COMENTADO - Formulario no utilizado
             except Mascota.DoesNotExist:
                 mensaje = f"No se encontró la mascota con ID: {id_mascota_get}"
-                form = BuscarFichaClinicaForm()
+                # form = BuscarFichaClinicaForm()  # CÓDIGO COMENTADO - Formulario no utilizado
             except (ValueError, TypeError):
                 mensaje = f"ID de mascota inválido: {id_mascota_get}"
-                form = BuscarFichaClinicaForm()
-        elif nro_chip_get:
-            # Búsqueda por número de chip (mantener compatibilidad)
-            try:
-                mascota_encontrada = Mascota.objects.get(nro_chip=nro_chip_get)
-                historial_atenciones = AtencionClinica.objects.filter(
-                    id_mascota=mascota_encontrada
-                ).order_by('-fecha_atencion')
-                # Crear formulario con el nro_chip precargado
-                form = BuscarFichaClinicaForm(initial={'nro_chip': nro_chip_get})
-            except Mascota.DoesNotExist:
-                mensaje = f"No se encontraron registros para este número de chip: {nro_chip_get}"
-                form = BuscarFichaClinicaForm()
-        else:
-            form = BuscarFichaClinicaForm()
+                # form = BuscarFichaClinicaForm()  # CÓDIGO COMENTADO - Formulario no utilizado
+        # elif nro_chip_get:
+        #     # CÓDIGO COMENTADO - Búsqueda por número de chip (mantener compatibilidad) no utilizada
+        #     try:
+        #         mascota_encontrada = Mascota.objects.get(nro_chip=nro_chip_get)
+        #         historial_atenciones = AtencionClinica.objects.filter(
+        #             id_mascota=mascota_encontrada
+        #         ).order_by('-fecha_atencion')
+        #         # Crear formulario con el nro_chip precargado
+        #         form = BuscarFichaClinicaForm(initial={'nro_chip': nro_chip_get})
+        #     except Mascota.DoesNotExist:
+        #         mensaje = f"No se encontraron registros para este número de chip: {nro_chip_get}"
+        #         form = BuscarFichaClinicaForm()
+        # else:
+        #     form = BuscarFichaClinicaForm()  # CÓDIGO COMENTADO - Formulario no utilizado
     
     return render(request, 'mascotas/ficha_clinica.html', {
-        'form': form,
+        # 'form': form,  # CÓDIGO COMENTADO - Formulario no utilizado
         'mascota_encontrada': mascota_encontrada,
         'historial_atenciones': historial_atenciones,
         'mensaje': mensaje,
@@ -523,8 +569,15 @@ def subir_consentimiento(request, mascota_id):
         # Actualizar consentimiento de la mascota
         url_relativa = f'consentimientos/{mascota.id_tutor.id_tutor}/{nombre_archivo}'
         
-        # Obtener la clínica con ID 1
-        clinica = ClinicaVeterinaria.objects.get(id_clinica=1)
+        # Obtener la clínica desde la sesión del usuario autenticado
+        clinica_id_sesion = request.session.get('id_clinica')
+        if clinica_id_sesion:
+            clinica = ClinicaVeterinaria.objects.get(id_clinica=clinica_id_sesion)
+            logger.info(f"Clínica obtenida desde sesión para consentimiento: {clinica.id_clinica} - {clinica.nombre}")
+        else:
+            # Fallback a clínica 1 si no hay sesión
+            clinica = ClinicaVeterinaria.objects.get(id_clinica=1)
+            logger.warning("No se encontró id_clinica en la sesión, usando clínica 1 como fallback para consentimiento")
         
         mascota.consentimiento = True
         mascota.fecha_consentimiento = datetime.now().date()

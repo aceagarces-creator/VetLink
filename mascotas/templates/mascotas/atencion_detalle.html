@@ -193,7 +193,7 @@
                          <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem;">{{ documento.tipo_documento|default:'No especificado' }}</td>
                          <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem;">{{ documento.nombre_archivo|default:'Sin nombre' }}</td>
                                                    <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center; vertical-align: middle;">
-                              <button type="button" onclick="manejarDocumentoAtencion({{ documento.id_documento }})" class="btn btn-sm" style="background-color: #e6a700; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; white-space: nowrap; cursor: pointer;">
+                              <button type="button" onclick="manejarDocumentoAtencion({{ documento.id_documento }})" class="btn btn-sm" style="background-color: #F3BA20; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; white-space: nowrap; cursor: pointer;">
                                   <i class="fas fa-eye"></i> Ver Documento
                               </button>
                           </td>
@@ -208,7 +208,7 @@
 
          <!-- Botón Volver a Ficha Clínica (al final) -->
      <div style="text-align: center; margin-top: 1.5rem;">
-                  <a href="/mascotas/ficha-clinica/?id_mascota={{ atencion.id_mascota.id_mascota }}" class="btn btn-primary" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 12px; text-decoration: none; display: inline-block; cursor: pointer; transition: all 0.3s ease;">
+                  <a href="/mascotas/ficha-clinica/?id_mascota={{ atencion.id_mascota.id_mascota }}" class="btn btn-primary" style="background-color: #17a2b8; border: none; padding: 8px 16px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 12px; text-decoration: none; display: inline-block; cursor: pointer; transition: all 0.3s ease;">
              <i class="fas fa-arrow-left"></i> Volver a Ficha Clínica
          </a>
      </div>
@@ -266,6 +266,14 @@
      
            /* Estilo específico para el botón "Volver a Ficha Clínica" con efectos hover */
       .btn-primary:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+          background-color: #138496 !important;
+      }
+
+      /* Efectos hover para botones amarillos */
+      .btn[style*="#F3BA20"]:hover {
+          background-color: #E0A800 !important;
           transform: translateY(-1px);
           box-shadow: 0 2px 4px rgba(0,0,0,0.2);
       }

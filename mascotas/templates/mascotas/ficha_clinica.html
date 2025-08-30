@@ -13,11 +13,11 @@
 
 <!-- Botones para seleccionar mascota y nueva búsqueda -->
 <div style="width: 80%; margin-left: auto; margin-right: auto; display: flex; justify-content: flex-end; gap: 15px; margin-bottom: 20px;">
-    <button type="button" id="btnSeleccionarMascota" class="btn btn-primary" onclick="abrirModalSeleccionarMascota()" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer;">
+    <button type="button" id="btnSeleccionarMascota" class="btn btn-primary" onclick="abrirModalSeleccionarMascota()" style="padding: 10px 20px; border-radius: 8px; background-color: #17a2b8; border: none; white-space: nowrap; color: #FFFFFF; font-weight: 500; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background-color 0.3s ease;">
         <i class="fas fa-search"></i> Seleccionar Mascota
     </button>
     {% if mascota_encontrada %}
-    <button type="button" class="btn btn-success" onclick="realizarNuevaBusqueda()" style="background-color: #28a745; border: none; padding: 8px 16px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer;">
+    <button type="button" id="btnNuevaBusqueda" class="btn btn-success" onclick="realizarNuevaBusqueda()" style="padding: 10px 20px; border-radius: 8px; background-color: #87CEEB; border: none; white-space: nowrap; color: #FFFFFF; font-weight: 500; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background-color 0.3s ease;">
         <i class="fas fa-refresh"></i> Realizar Nueva Búsqueda
     </button>
     {% endif %}
@@ -199,12 +199,13 @@
                     <button type="button" id="consentimiento-link-{{ mascota_encontrada.id_mascota }}" 
                             onclick="manejarConsentimiento({{ mascota_encontrada.id_mascota }})" 
                             class="btn btn-sm" 
-                            style="background-color: #e6a700; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; white-space: nowrap; text-decoration: none; display: inline-block; cursor: pointer;">
-                        {% if mascota_encontrada.consentimiento %}
-                            Visualizar Documento
-                        {% else %}
-                            Adjuntar Documento de Consentimiento
-                        {% endif %}
+                            style="padding: 8px 16px; border-radius: 8px; background-color: #D96C80; border: none; color: #FFFFFF; font-weight: 500; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background-color 0.3s ease;">
+                        <i class="fas fa-file-alt"></i>
+                                            {% if mascota_encontrada.consentimiento %}
+                        Visualizar Documento
+                    {% else %}
+                        Adjuntar Documento
+                    {% endif %}
                     </button>
                 </div>
             </div>
@@ -233,6 +234,16 @@
     <!-- Título "Historial de Atenciones Médicas" -->
     <h5 style="color: #333; margin-bottom: 15px; font-size: 0.8rem; width: 80%; margin-left: auto; margin-right: auto; margin-top: 20px;">HISTORIAL DE ATENCIONES MÉDICAS</h5>
     
+    <!-- Mensaje informativo sobre filtrado por consentimiento -->
+    {% if mascota_encontrada and not mascota_encontrada.consentimiento %}
+        <div style="width: 80%; margin-left: auto; margin-right: auto; margin-bottom: 15px;">
+            <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 10px 15px; border-radius: 5px; font-size: 0.7rem; text-align: center;">
+                <i class="fas fa-info-circle" style="margin-right: 5px;"></i>
+                <strong>Información:</strong> Al no existir consentimiento de interoperabilidad, solo se muestran las atenciones médicas realizadas en esta clínica.
+            </div>
+        </div>
+    {% endif %}
+    
     {% if historial_atenciones %}
         <!-- Tabla de Historial de Atenciones con ancho ajustado al 80% -->
         <div style="width: 80%; margin-left: auto; margin-right: auto;">
@@ -256,8 +267,8 @@
                         <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem;">{{ atencion.id_servicio_detalle.nombre|default:"" }}</td>
                         <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.65rem;">{{ atencion.id_personal.nombres|default:"" }} {{ atencion.id_personal.apellido_paterno|default:"" }}</td>
                         <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center; vertical-align: middle;">
-                            <a href="/mascotas/atencion-detalle/{{ atencion.id_atencion }}/" class="btn btn-sm" style="background-color: #e6a700; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; white-space: nowrap; text-decoration: none; display: inline-block;">
-                                Ver Detalle
+                            <a href="/mascotas/atencion-detalle/{{ atencion.id_atencion }}/" class="btn btn-sm" style="padding: 6px 12px; border-radius: 8px; background-color: #F3BA20; border: none; color: #FFFFFF; font-weight: 500; font-size: 10px; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: background-color 0.3s ease; text-decoration: none;">
+                                <i class="fas fa-eye"></i> Ver Detalle
                             </a>
                         </td>
                     </tr>
@@ -268,16 +279,24 @@
         
         <!-- Botón "Registrar Nueva Atención" centrado -->
         <div style="text-align: center; margin-top: 1.5rem;">
-            <button class="btn btn-primary" onclick="registrarNuevaAtencion()" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer;">
+            <button class="btn btn-primary" onclick="registrarNuevaAtencion()" style="padding: 10px 20px; border-radius: 8px; background-color: #17a2b8; border: none; color: #FFFFFF; font-weight: 500; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background-color 0.3s ease; margin: 0 auto;">
                 <i class="fas fa-stethoscope"></i> Registrar Nueva Atención
             </button>
         </div>
     {% else %}
-        <p style="color: #666; margin-bottom: 30px; font-size: 0.65rem; width: 80%; margin-left: auto; margin-right: auto; text-align: center;">No hay atenciones médicas registradas para esta mascota.</p>
+        {% if mascota_encontrada and not mascota_encontrada.consentimiento %}
+            <p style="color: #856404; margin-bottom: 30px; font-size: 0.65rem; width: 80%; margin-left: auto; margin-right: auto; text-align: center;">
+                <i class="fas fa-info-circle" style="margin-right: 5px;"></i>
+                No hay atenciones médicas registradas en esta clínica para esta mascota. 
+                <br><small style="color: #666;">(El historial completo solo es visible con consentimiento de interoperabilidad)</small>
+            </p>
+        {% else %}
+            <p style="color: #666; margin-bottom: 30px; font-size: 0.65rem; width: 80%; margin-left: auto; margin-right: auto; text-align: center;">No hay atenciones médicas registradas para esta mascota.</p>
+        {% endif %}
         
         <!-- Botón "Registrar Nueva Atención" centrado -->
         <div style="text-align: center; margin-top: 1.5rem;">
-            <button class="btn btn-primary" onclick="registrarNuevaAtencion()" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer;">
+            <button class="btn btn-primary" onclick="registrarNuevaAtencion()" style="padding: 10px 20px; border-radius: 8px; background-color: #17a2b8; border: none; color: #FFFFFF; font-weight: 500; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background-color 0.3s ease; margin: 0 auto;">
                 <i class="fas fa-stethoscope"></i> Registrar Nueva Atención
             </button>
         </div>
@@ -309,7 +328,7 @@
             </div>
         </div>
                  <div class="modal-footer" style="padding: 20px 25px; border-top: 1px solid #e9ecef; text-align: right; background-color: #f8f9fa; position: relative;">
-             <button type="button" class="btn btn-secondary" onclick="cerrarModalVerConsentimiento()" style="background-color: #6c757d; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer;">
+             <button type="button" class="btn btn-secondary" onclick="cerrarModalVerConsentimiento()" style="padding: 8px 16px; border-radius: 8px; background-color: #6c757d; border: none; color: #FFFFFF; font-weight: 500; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background-color 0.3s ease; margin-left: auto;">
                  <i class="fas fa-times"></i> Cerrar
              </button>
          </div>
@@ -352,10 +371,10 @@
              </form>
          </div>
         <div class="modal-footer" style="padding: 20px 25px; border-top: 1px solid #e9ecef; text-align: right; background-color: #f8f9fa; position: relative;">
-            <button type="button" class="btn btn-secondary" onclick="cerrarModalSubirConsentimiento()" style="background-color: #6c757d; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px; margin-right: 10px;">
+            <button type="button" class="btn btn-secondary" onclick="cerrarModalSubirConsentimiento()" style="padding: 8px 16px; border-radius: 8px; background-color: #6c757d; border: none; color: #FFFFFF; font-weight: 500; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background-color 0.3s ease; margin-right: 10px;">
                 <i class="fas fa-times"></i> Cancelar
             </button>
-            <button type="button" class="btn btn-primary" onclick="subirConsentimiento()" style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+            <button type="button" class="btn btn-primary" onclick="subirConsentimiento()" style="padding: 8px 16px; border-radius: 8px; background-color: #17a2b8; border: none; color: #FFFFFF; font-weight: 500; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background-color 0.3s ease;">
                 <i class="fas fa-save"></i> Guardar
             </button>
         </div>
@@ -380,11 +399,15 @@
                     <div style="margin-right: 10px;">
                         <label style="display: block; font-weight: bold; color: #333; font-size: 0.9rem; margin-bottom: 8px;">Ingrese el Rut del Tutor(a):</label>
                         <input type="text" id="rutTutor" name="rut_tutor" placeholder="Ej: 12345678-9" required 
-                               style="width: 200px; padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; box-sizing: border-box;">
+                               style="width: 200px; padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; box-sizing: border-box;"
+                               oninput="formatearRutInput(this)" onblur="validarRutCampo(this)"
+                               onkeypress="return /[0-9kK-]/i.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'Tab'">
+                        <!-- Mensaje de validación de RUT -->
+                        <div id="rutValidationMessage" class="rut-validation-message"></div>
                     </div>
                     <div>
                         <button type="button" onclick="buscarMascotasPorTutor()" class="btn btn-primary" 
-                                style="background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer; white-space: nowrap;">
+                                style="padding: 8px 16px; border-radius: 8px; background-color: #17a2b8; border: none; color: #FFFFFF; font-weight: 500; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background-color 0.3s ease; white-space: nowrap;">
                             <i class="fas fa-search"></i> Buscar
                         </button>
                     </div>
@@ -423,7 +446,7 @@
             </div>
         </div>
         <div class="modal-footer" style="padding: 20px 25px; border-top: 1px solid #e9ecef; text-align: right; background-color: #f8f9fa; position: relative;">
-            <button type="button" class="btn btn-secondary" onclick="cerrarModalSeleccionarMascota()" style="background-color: #6c757d; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px; cursor: pointer;">
+            <button type="button" class="btn btn-secondary" onclick="cerrarModalSeleccionarMascota()" style="padding: 8px 16px; border-radius: 8px; background-color: #6c757d; border: none; color: #FFFFFF; font-weight: 500; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background-color 0.3s ease; margin-left: auto;">
                 <i class="fas fa-times"></i> Cerrar
             </button>
         </div>
@@ -469,14 +492,110 @@
         vertical-align: middle;
     }
     
-    /* Estilo para el botón Buscar */
+    /* Estilos unificados para botones */
     .btn {
-        transition: all 0.2s ease-in-out;
+        transition: all 0.3s ease;
     }
     
-         .btn:hover {
-         transform: translateY(-1px);
-         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    /* Efectos hover específicos para botones principales */
+    #btnSeleccionarMascota:hover {
+        background-color: #138496 !important;
+    }
+    
+    #btnSeleccionarMascota:disabled {
+        background-color: #17a2b8 !important;
+        color: #FFFFFF !important;
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    
+    #btnNuevaBusqueda {
+        background-color: #87CEEB !important;
+    }
+    
+    #btnNuevaBusqueda:hover {
+        background-color: #6B9BC3 !important;
+    }
+    
+    #btnNuevaBusqueda:disabled {
+        background-color: #87CEEB !important;
+        color: #FFFFFF !important;
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    
+    /* Efectos hover para botones de modal */
+    .btn-cerrar-modal:hover {
+        background-color: #5a6268 !important;
+    }
+    
+    /* Efectos hover para botones de búsqueda */
+    button[onclick="buscarMascotasPorTutor()"]:hover {
+        background-color: #138496 !important;
+    }
+    
+    button[onclick="cerrarModalSeleccionarMascota()"]:hover {
+        background-color: #5a6268 !important;
+    }
+    
+    /* Efectos hover para botones de consentimiento */
+    button[id^="consentimiento-link"]:hover {
+        background-color: #C55A6E !important;
+        color: #FFFFFF !important;
+    }
+
+    /* Efectos hover para botones amarillos */
+    .btn[style*="#F3BA20"]:hover {
+        background-color: #E0A800 !important;
+        color: #FFFFFF !important;
+    }
+    
+    /* Efectos hover para botones de selección */
+    .btn.btn-success:hover {
+        background-color: #1e7e34 !important;
+    }
+    
+    /* Animación para modales */
+    @keyframes modalFadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.8) translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+    
+    /* Estilos para modales */
+    .modal-content {
+        animation: modalFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    /* Estilos para validación de RUT */
+    .rut-validation-message {
+        color: #dc3545;
+        font-size: 0.8rem;
+        margin-top: 5px;
+        display: none;
+    }
+    
+    .rut-error {
+        color: #dc3545;
+        font-size: 0.8rem;
+        margin-top: 5px;
+        display: block;
+    }
+    
+    .is-invalid {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+    }
      }
      
      /* Estilo para botón deshabilitado */
@@ -592,7 +711,7 @@
                       if (data.existe_documento) {
                           linkElement.textContent = 'Visualizar Documento';
                       } else {
-                          linkElement.textContent = 'Adjuntar Documento de Consentimiento';
+                          linkElement.textContent = 'Adjuntar Documento';
                       }
                   }
               })
@@ -729,80 +848,13 @@
      
            // Función para actualizar campos del consentimiento
       function actualizarCamposConsentimiento(data) {
-          console.log('Actualizando campos con datos:', data);
+          console.log('Consentimiento subido exitosamente:', data);
           
-          // Actualizar radio button "Sí"
-          const radioSi = document.querySelector(`input[name="consentimiento_{{ mascota_encontrada.id_mascota }}"][value="si"]`);
-          const radioNo = document.querySelector(`input[name="consentimiento_{{ mascota_encontrada.id_mascota }}"][value="no"]`);
-          
-          if (radioSi && radioNo) {
-              radioSi.checked = true;
-              radioNo.checked = false;
-          }
-          
-          // Método 1: Buscar campos por el texto de sus labels
-          const labels = document.querySelectorAll('label');
-          let clinicaInput = null;
-          let fechaInput = null;
-          
-          console.log('Buscando labels...');
-          for (let label of labels) {
-              console.log('Label encontrado:', label.textContent.trim());
-              if (label.textContent.trim() === 'Clínica donde firma el consentimiento') {
-                  console.log('✅ Label clínica encontrado');
-                  const parentDiv = label.parentElement;
-                  clinicaInput = parentDiv.querySelector('input[readonly]');
-              }
-              if (label.textContent.trim() === 'Fecha de consentimiento') {
-                  console.log('✅ Label fecha encontrado');
-                  const parentDiv = label.parentElement;
-                  fechaInput = parentDiv.querySelector('input[readonly]');
-              }
-          }
-          
-          // Método 2: Buscar por valor actual si no se encontraron
-          if (!clinicaInput) {
-              console.log('Buscando campo clínica por valor...');
-              const inputs = document.querySelectorAll('input[readonly]');
-              for (let input of inputs) {
-                  if (input.value === 'No especificada') {
-                      clinicaInput = input;
-                      console.log('✅ Campo clínica encontrado por valor');
-                      break;
-                  }
-              }
-          }
-          
-          if (!fechaInput) {
-              console.log('Buscando campo fecha por valor...');
-              const inputs = document.querySelectorAll('input[readonly]');
-              for (let input of inputs) {
-                  if (input.value === 'No registrada') {
-                      fechaInput = input;
-                      console.log('✅ Campo fecha encontrado por valor');
-                      break;
-                  }
-              }
-          }
-          
-          console.log('Campo clínica encontrado:', clinicaInput);
-          console.log('Campo fecha encontrado:', fechaInput);
-          
-          // Actualizar clínica de consentimiento
-          if (clinicaInput && data.clinica_consentimiento) {
-              clinicaInput.value = data.clinica_consentimiento;
-              console.log('✅ Clínica actualizada a:', data.clinica_consentimiento);
-          } else {
-              console.log('❌ No se pudo actualizar clínica');
-          }
-          
-          // Actualizar fecha de consentimiento
-          if (fechaInput && data.fecha_consentimiento) {
-              fechaInput.value = data.fecha_consentimiento;
-              console.log('✅ Fecha actualizada a:', data.fecha_consentimiento);
-          } else {
-              console.log('❌ No se pudo actualizar fecha');
-          }
+          // Recargar la página para actualizar todos los datos
+          console.log('🔄 Recargando página para actualizar formulario e historial...');
+          setTimeout(() => {
+              window.location.reload();
+          }, 1000); // Esperar 1 segundo para que el usuario vea el mensaje de éxito
       }
       
       // Funciones para cerrar modales
@@ -860,6 +912,16 @@
          document.getElementById('resultadosMascotas').style.display = 'none';
          document.getElementById('mensajeError').style.display = 'none';
          document.getElementById('loadingBusqueda').style.display = 'none';
+         
+         // Limpiar errores de validación de RUT
+         const rutInput = document.getElementById('rutTutor');
+         if (rutInput) {
+             rutInput.classList.remove('is-invalid');
+             const errorDiv = rutInput.parentNode.querySelector('.rut-error');
+             if (errorDiv) {
+                 errorDiv.style.display = 'none';
+             }
+         }
          
          // Inicializar validación de RUT
          inicializarValidacionRut('rutTutor');
@@ -939,7 +1001,7 @@
                  <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 0.8rem;">${mascota.estado_vital || 'No especificado'}</td>
                  <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">
                      <button type="button" onclick="seleccionarMascota(${mascota.id_mascota})" class="btn btn-success" 
-                             style="background-color: #28a745; border: none; padding: 6px 12px; border-radius: 4px; color: #FFFFFF; font-weight: bold; font-size: 0.65rem; cursor: pointer;">
+                             style="padding: 6px 12px; border-radius: 8px; background-color: #28a745; border: none; color: #FFFFFF; font-weight: 500; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: background-color 0.3s ease; margin: 0 auto;">
                          <i class="fas fa-check"></i> Seleccionar
                      </button>
                  </td>

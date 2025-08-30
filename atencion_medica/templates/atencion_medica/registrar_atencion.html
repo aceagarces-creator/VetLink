@@ -477,10 +477,13 @@ document.addEventListener('DOMContentLoaded', function() {
      const fechaDisplay = document.getElementById('fecha_display');
      const fechaHidden = document.getElementById('fecha_hidden');
      if (fechaDisplay && fechaHidden) {
+         // Usar la fecha del servidor en lugar de la fecha del navegador
          const today = new Date();
-         const formattedDate = today.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+         // Ajustar a la zona horaria de Chile (UTC-3)
+         const chileTime = new Date(today.getTime() - (3 * 60 * 60 * 1000));
+         const formattedDate = chileTime.toISOString().split('T')[0]; // Formato YYYY-MM-DD
          fechaHidden.value = formattedDate;
-         fechaDisplay.value = today.toLocaleDateString('es-ES'); // Formato DD/MM/YYYY para mostrar
+         fechaDisplay.value = chileTime.toLocaleDateString('es-ES'); // Formato DD/MM/YYYY para mostrar
      }
      
      // Función para cargar servicios detalle cuando se selecciona un servicio

@@ -381,31 +381,32 @@ class RegistrarMascotaForm(forms.Form):
     )
 
 
-class BuscarFichaClinicaForm(forms.Form):
-    """
-    Formulario para buscar una mascota por número de chip para mostrar su ficha clínica.
-    Solo para consultas - no valida unicidad.
-    """
-    nro_chip = forms.CharField(
-        max_length=30,
-        label='Número de Chip',
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Ingrese el número de chip de la mascota',
-            'style': 'max-width: 300px;'
-        }),
-        help_text='Ingrese el número de chip único de identificación de la mascota'
-    )
-
-    def clean_nro_chip(self):
-        nro_chip = self.cleaned_data['nro_chip']
-        
-        # Normalizar el valor: recortar espacios en blanco pero conservar ceros a la izquierda
-        nro_chip = nro_chip.strip()
-        
-        if not nro_chip:
-            raise forms.ValidationError('El número de chip es obligatorio')
-        
-        # Solo normalizar, sin validar existencia (esto es para consultas, no para registro)
-        return nro_chip
+# CÓDIGO COMENTADO - Búsqueda por número de chip no utilizada en la interfaz actual
+# class BuscarFichaClinicaForm(forms.Form):
+#     """
+#     Formulario para buscar una mascota por número de chip para mostrar su ficha clínica.
+#     Solo para consultas - no valida unicidad.
+#     """
+#     nro_chip = forms.CharField(
+#         max_length=30,
+#         label='Número de Chip',
+#         widget=forms.TextInput(attrs={
+#             'class': 'form-control',
+#             'placeholder': 'Ingrese el número de chip de la mascota',
+#             'style': 'max-width: 300px;'
+#         }),
+#         help_text='Ingrese el número de chip único de identificación de la mascota'
+#     )
+# 
+#     def clean_nro_chip(self):
+#         nro_chip = self.cleaned_data['nro_chip']
+#         
+#         # Normalizar el valor: recortar espacios en blanco pero conservar ceros a la izquierda
+#         nro_chip = nro_chip.strip()
+#         
+#         if not nro_chip:
+#             raise forms.ValidationError('El número de chip es obligatorio')
+#         
+#         # Solo normalizar, sin validar existencia (esto es para consultas, no para registro)
+#         return nro_chip
 
