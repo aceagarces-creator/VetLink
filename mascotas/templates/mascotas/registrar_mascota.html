@@ -23,11 +23,11 @@
                 <p style="color: #155724; font-size: 1.1rem; margin: 0;">{{ mensaje_exito }}</p>
             </div>
         </div>
-        <div class="modal-footer" style="padding: 20px 25px; border-top: 1px solid #e9ecef; text-align: right; background-color: #f8f9fa; position: relative;">
-            <button type="button" class="btn btn-primary" onclick="registrarAtencionMedica()" style="margin-right: 10px; background-color: #007bff; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+        <div class="modal-footer" style="padding: 20px 25px; border-top: 1px solid #e9ecef; background-color: #f8f9fa; position: relative; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+            <button type="button" class="btn btn-primary" onclick="registrarAtencionMedica()" style="background-color: #17a2b8; border: none; padding: 10px 20px; border-radius: 8px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px; display: flex; align-items: center; gap: 8px; transition: background-color 0.3s ease;">
                 <i class="fas fa-stethoscope"></i> Registrar Atención Médica
             </button>
-            <button type="button" class="btn btn-secondary" onclick="cerrarModalExito()" style="background-color: #6c757d; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px;">
+            <button type="button" class="btn btn-secondary" onclick="cerrarModalExito()" style="background-color: #6c757d; border: none; padding: 10px 20px; border-radius: 8px; text-decoration: none; color: #FFFFFF; font-weight: bold; font-size: 12px; display: flex; align-items: center; gap: 8px; transition: background-color 0.3s ease;">
                 <i class="fas fa-times"></i> Cerrar Ventana
             </button>
         </div>
@@ -51,12 +51,12 @@
             <!-- Mensaje de validación de RUT -->
             <div id="rutValidationMessage" class="rut-validation-message"></div>
         </div>
-        <button type="submit" name="buscar_tutor" class="btn btn-primary" id="btn-buscar-tutor" style="padding: 8px 16px; border-radius: 4px; background-color: #007bff; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px;">
-            Buscar
+        <button type="submit" name="buscar_tutor" class="btn btn-primary" id="btn-buscar-tutor" style="padding: 10px 20px; border-radius: 8px; background-color: #17a2b8; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px; display: flex; align-items: center; gap: 8px; transition: background-color 0.3s ease;">
+            <i class="fas fa-search"></i> Buscar
         </button>
         {% if buscar_tutor_form.is_bound %}
-        <button type="button" class="btn btn-success" id="btn-nueva-busqueda-tutor" style="padding: 8px 16px; border-radius: 4px; background-color: #28a745; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px; text-transform: none;">
-            Realizar Nueva Búsqueda
+        <button type="button" class="btn btn-success" id="btn-nueva-busqueda-tutor" style="padding: 10px 20px; border-radius: 8px; background-color: #87CEEB; border: none; white-space: nowrap; color: #FFFFFF; font-weight: bold; font-size: 12px; text-transform: none; display: flex; align-items: center; gap: 8px; transition: background-color 0.3s ease;">
+            <i class="fas fa-redo"></i> Realizar Nueva Búsqueda
         </button>
         {% endif %}
     </form>
@@ -324,8 +324,8 @@ Ocultar help_text para evitar confusión con rut-validation.js
                  </div>
                  
                  <div style="text-align: center; margin-top: 2rem; margin-bottom: 2rem;">
-                     <button type="submit" name="registrar_mascota" style="background-color: #007bff; border: none; padding: 12px 24px; border-radius: 4px; color: white; font-weight: bold; font-size: 14px; cursor: pointer; transition: background-color 0.3s ease;">
-                         Registrar Mascota
+                     <button type="submit" name="registrar_mascota" style="background-color: #17a2b8; border: none; padding: 12px 30px; border-radius: 8px; color: white; font-weight: bold; font-size: 14px; cursor: pointer; transition: background-color 0.3s ease; display: flex; align-items: center; gap: 10px; margin: 0 auto;">
+                         <i class="fas fa-paw"></i> Registrar Mascota
                      </button>
                  </div>
              </form>
@@ -348,8 +348,8 @@ Ocultar help_text para evitar confusión con rut-validation.js
             <div id="modalMessage"></div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="closeModal()">
-                Entendido
+            <button type="button" class="btn btn-secondary" onclick="closeModal()" style="background-color: #6c757d; border: none; padding: 10px 20px; border-radius: 8px; color: #FFFFFF; font-weight: bold; font-size: 12px; display: flex; align-items: center; gap: 8px; transition: background-color 0.3s ease;">
+                <i class="fas fa-check"></i> Entendido
             </button>
         </div>
     </div>
@@ -366,12 +366,12 @@ Ocultar help_text para evitar confusión con rut-validation.js
         <div class="modal-body">
             <div id="mascotaDuplicadaMessage"></div>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="closeMascotaDuplicadaModal()">
-                Cancelar
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+            <button type="button" class="btn btn-secondary" onclick="closeMascotaDuplicadaModal()" style="background-color: #6c757d; border: none; padding: 10px 20px; border-radius: 8px; color: #FFFFFF; font-weight: bold; font-size: 12px; display: flex; align-items: center; gap: 8px; transition: background-color 0.3s ease;">
+                <i class="fas fa-times"></i> Cancelar
             </button>
-            <button type="button" class="btn btn-primary" onclick="confirmarRegistroMascota()">
-                Aceptar
+            <button type="button" class="btn btn-primary" onclick="confirmarRegistroMascota()" style="background-color: #17a2b8; border: none; padding: 10px 20px; border-radius: 8px; color: #FFFFFF; font-weight: bold; font-size: 12px; display: flex; align-items: center; gap: 8px; transition: background-color 0.3s ease;">
+                <i class="fas fa-check"></i> Aceptar
             </button>
         </div>
     </div>
@@ -395,8 +395,8 @@ Ocultar help_text para evitar confusión con rut-validation.js
             </div>
             <p style="margin: 20px 0 0 0; color: #666; font-size: 0.8rem; font-style: italic; text-align: center;">Los campos obligatorios están marcados con (*)</p>
         </div>
-        <div class="modal-footer" style="padding: 20px 25px; border-top: 1px solid #e9ecef; text-align: right; background-color: #f8f9fa; position: relative;">
-            <button type="button" class="btn-cerrar-modal" style="background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);">
+        <div class="modal-footer" style="padding: 20px 25px; border-top: 1px solid #e9ecef; background-color: #f8f9fa; position: relative; display: flex; justify-content: flex-end; align-items: center;">
+            <button type="button" class="btn-cerrar-modal" style="background-color: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold; transition: background-color 0.3s ease; display: flex; align-items: center; gap: 8px;">
                 <i class="fas fa-times"></i> Cerrar
             </button>
         </div>
@@ -443,11 +443,16 @@ Ocultar help_text para evitar confusión con rut-validation.js
         border: 1px solid #ddd !important;
     }
     
-    /* Estilo para botón deshabilitado (mantiene color azul pero inactivo) */
+    /* Estilo para botón deshabilitado (mantiene color azul turquesa pero inactivo) */
     .btn-primary:disabled {
-        background-color: #007bff !important;
+        background-color: #17a2b8 !important;
         opacity: 0.6 !important;
         cursor: not-allowed !important;
+    }
+    
+    /* Estilo para botón habilitado (asegura el color correcto) */
+    .btn-primary:not(:disabled) {
+        background-color: #17a2b8 !important;
     }
     
     /* Estilo para input deshabilitado (mismo estilo que otros campos readonly) */
@@ -459,13 +464,13 @@ Ocultar help_text para evitar confusión con rut-validation.js
     
     input[type="text"]:focus, input[type="email"]:focus, select:focus, textarea:focus {
         outline: none;
-        border-color: #007bff;
-        box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        border-color: #17a2b8;
+        box-shadow: 0 0 0 2px rgba(23,162,184,0.25);
     }
     
          /* Estilos globales para radio buttons */
      input[type="radio"] {
-         accent-color: #007bff !important;
+         accent-color: #17a2b8 !important;
          width: 16px !important;
          height: 16px !important;
          margin: 0 !important;
@@ -487,6 +492,75 @@ Ocultar help_text para evitar confusión con rut-validation.js
     .btn:hover {
         transform: translateY(-1px);
         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    /* Efectos hover específicos para botones */
+    .btn-primary:hover {
+        background-color: #138496 !important;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #5a6268 !important;
+    }
+    
+    .btn-success:hover {
+        background-color: #6B9BC3 !important;
+    }
+    
+    /* Efecto hover para botón de cerrar modal */
+    .btn-cerrar-modal:hover {
+        background-color: #5a6268 !important;
+    }
+    
+    /* Estilo específico para el botón de búsqueda */
+    #btn-buscar-tutor {
+        background-color: #17a2b8 !important;
+    }
+    
+    #btn-buscar-tutor:not(:disabled) {
+        background-color: #17a2b8 !important;
+    }
+    
+    /* Estilo específico para el botón de registrar mascota */
+    button[name="registrar_mascota"] {
+        background-color: #17a2b8 !important;
+    }
+    
+    button[name="registrar_mascota"]:not(:disabled) {
+        background-color: #17a2b8 !important;
+    }
+    
+    /* Estilos para botones del modal de éxito */
+    #exitoModal .btn-primary:hover {
+        background-color: #138496 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    #exitoModal .btn-secondary:hover {
+        background-color: #5a6268 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    /* Estilos para botones del modal de mascota duplicada */
+    #mascotaDuplicadaModal .btn-primary:hover {
+        background-color: #138496 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    #mascotaDuplicadaModal .btn-secondary:hover {
+        background-color: #5a6268 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    /* Estilos para botón del modal de errores */
+    #modal-errores .btn-cerrar-modal:hover {
+        background-color: #5a6268 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
     
     /* Estilo para errores de validación */
