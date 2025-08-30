@@ -502,6 +502,36 @@
         });
     </script>
     
+    <!-- Validación de Autenticación -->
+    <script>
+        // Verificar si el usuario está autenticado
+        document.addEventListener('DOMContentLoaded', function() {
+            // No validar en la página de login para evitar bucle infinito
+            const currentPath = window.location.pathname;
+            if (currentPath === '/login/' || currentPath === '/logout/') {
+                console.log('Página de autenticación detectada, omitiendo validación');
+                return;
+            }
+            
+            // Obtener datos de sesión desde el template
+            const nombrePersonal = '{{ request.session.nombre_personal }}';
+            const idPersonal = '{{ request.session.id_personal }}';
+            const idClinica = '{{ request.session.id_clinica }}';
+            
+            // Verificar si hay datos de sesión válidos
+            if (!nombrePersonal || !idPersonal || !idClinica || 
+                nombrePersonal === 'None' || idPersonal === 'None' || idClinica === 'None') {
+                
+                // Redirigir al login si no hay sesión válida
+                console.log('Usuario no autenticado. Redirigiendo al login...');
+                window.location.href = '/login/';
+                return;
+            }
+            
+            console.log('Usuario autenticado:', nombrePersonal);
+        });
+    </script>
+    
     <!-- Select2 JavaScript -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
